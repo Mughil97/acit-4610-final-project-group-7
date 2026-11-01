@@ -1,2 +1,6 @@
-# acit-4610-final-project-group-7
-Final Group Project - Group 7
+# ACIT4610 Fall Group Project 2026 - Group 7
+
+## Bees Algorithm
+
+
+## Evolution Strategy
