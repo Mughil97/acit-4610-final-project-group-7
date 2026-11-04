@@ -1,0 +1,18 @@
+{
+  "dataset": "Original five OR-Library files supplied in user upload",
+  "runs_checked": 450,
+  "summary_rows": 45,
+  "evaluations_per_run": 30000,
+  "all_recorded_runs_feasible": true,
+  "all_recomputed_allocations_feasible": true,
+  "all_npz_histories_contain_exact_budget": true,
+  "all_archives_monotone_nonincreasing": true,
+  "case_variant_groups": 45,
+  "figures_added": 30,
+  "csv_exports": [
+    "best_allocations_all_runs.csv",
+    "convergence_sampled_all_runs.csv",
+    "run_diagnostics.csv"
+  ],
+  "note": "These supplemental plots are descriptive; the original mandatory port5_alpha050 plot remains unchanged."
+}
