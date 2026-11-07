@@ -1,4 +1,7 @@
 from dataclasses import dataclass, field
+from pathlib import Path
+
+DATA_DIR = Path(__file__).resolve().parents[2] / "data"
 
 
 @dataclass
@@ -34,11 +37,11 @@ def read_portfolio_data(file_path: str) -> list[Portfolio]:
 
 
 datafiles = {
-    'port1': '../../data/port1.txt',
-    'port2': '../../data/port2.txt',
-    'port3': '../../data/port3.txt',
-    'port4': '../../data/port4.txt',
-    'port5': '../../data/port5.txt'
+    'port1': str(DATA_DIR / 'port1.txt'),
+    'port2': str(DATA_DIR / 'port2.txt'),
+    'port3': str(DATA_DIR / 'port3.txt'),
+    'port4': str(DATA_DIR / 'port4.txt'),
+    'port5': str(DATA_DIR / 'port5.txt'),
 }
 
 
