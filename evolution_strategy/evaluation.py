@@ -1,5 +1,5 @@
 
-from evolution_strategy.problem2_es.src.portfolio import Portfolio
+from evolution_strategy.portfolio import Portfolio
 
 
 def evaluate_profit(portfolio: list[Portfolio], weights: list[float]) -> float:

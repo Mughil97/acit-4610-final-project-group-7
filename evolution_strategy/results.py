@@ -1,12 +1,12 @@
 from dataclasses import dataclass, field
 import math
 
-from evolution_strategy.problem2_es.src.evolution_strategies import (
+from evolution_strategy.evolution_strategies import (
     ESResult,
     VARIANTS,
     run_es,
 )
-from evolution_strategy.problem2_es.src.portfolio import (
+from evolution_strategy.portfolio import (
     Portfolio,
     portfolio1,
     portfolio2,

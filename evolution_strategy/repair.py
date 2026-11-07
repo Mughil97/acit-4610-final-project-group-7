@@ -1,6 +1,6 @@
 
-from evolution_strategy.problem2_es.src.portfolio import Portfolio
-from evolution_strategy.problem2_es.src.evaluation import evaluate_profit
+from evolution_strategy.portfolio import Portfolio
+from evolution_strategy.evaluation import evaluate_profit
 
 def repair(portfolio: list[Portfolio], weights: list[float], target_return: float) -> list[float]:
     n = len(portfolio)
