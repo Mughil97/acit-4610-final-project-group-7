@@ -2,12 +2,12 @@ from dataclasses import dataclass
 import math
 import random
 
-from evolution_strategy.problem2_es.src.repair import repair
-from evolution_strategy.problem2_es.src.evaluation import (
+from evolution_strategy.repair import repair
+from evolution_strategy.evaluation import (
     evaluate_cost, 
     evaluate_profit
 )
-from evolution_strategy.problem2_es.src.portfolio import Portfolio
+from evolution_strategy.portfolio import Portfolio
 
 
 @dataclass

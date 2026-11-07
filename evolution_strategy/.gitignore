@@ -1,8 +1,0 @@
-.venv/
-__pycache__/
-.pytest_cache/
-*.pyc
-*.pending
-*.download
-# Original datasets, raw NPZ experiments, readable CSVs and figure PNGs are intentionally tracked
-# because the final assignment requires reproducible outputs.

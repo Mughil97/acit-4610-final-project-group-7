@@ -2,19 +2,19 @@ from dataclasses import dataclass, field
 import random
 from time import perf_counter
 
-from evolution_strategy.problem2_es.src.algorithms import (
+from evolution_strategy.algorithms import (
     run_one_plus_one,
     run_ten_comma_seventy,
     run_ten_plus_seventy,
 )
-from evolution_strategy.problem2_es.src.evaluation import (
+from evolution_strategy.evaluation import (
 
     get_target_return,
 )
-from evolution_strategy.problem2_es.src.portfolio import (
+from evolution_strategy.portfolio import (
     Portfolio,
 )
-from evolution_strategy.problem2_es.src.repair import repair
+from evolution_strategy.repair import repair
 
 VARIANTS = {
     "one_plus_one": run_one_plus_one,
