@@ -1,3 +1,4 @@
+from logger import get_logger
 from bees_algorithm.configs import (
     BENCHMARK_FUNCTIONS,
     DIMENSIONS,
@@ -7,6 +8,8 @@ from bees_algorithm.configs import (
 from bees_algorithm.configs import FunctionOptimisationConfig as foc
 from bees_algorithm.core.solver import BeesAlgorithmSolver
 from bees_algorithm.problem.continuous import ContinuousFunctionOptimisation
+
+logger = get_logger(__name__)
 
 
 def optimise_functions():
@@ -23,6 +26,6 @@ def optimise_functions():
                 solver = BeesAlgorithmSolver(problem=cfo, config=foc)
                 best_solution = solver.run()
 
-                print(
-                    f"Run: {run+1} | Dim: {dim} | Function: {func.__name__} | Best Fitness: {best_solution.fitness}"
+                logger.info(
+                    f"Run: {run+1} | Dim: {dim} | Function: {func.__name__} | Best Fitness: {best_solution.fitness} | Vector: {best_solution.site}"
                 )

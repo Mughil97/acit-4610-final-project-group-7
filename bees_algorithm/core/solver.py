@@ -75,7 +75,7 @@ class BeesAlgorithmSolver:
             self.exploit_site(elites, self.config.nre)
             self.exploit_site(best, self.config.nrb)
 
-            abandon_count = self.abandon_stagnated_sites()
-            self.replenish_scouts(abandon_count)
+            # abandon_count = self.abandon_stagnated_sites()
+            self.replenish_scouts((self.config.ns - self.config.nb))
 
         return self.global_best

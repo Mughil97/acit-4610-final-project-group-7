@@ -11,7 +11,9 @@ class ContinuousFunctionOptimisation(OptimisationProblem):
         self.upper = upper
         self.dimension = dimension
         self.function = function
-        self.coordinate_offset = 0.1  # 10% as mentioned on the requirement
+        self.allowed_range = (
+            upper - lower
+        ) * 0.1  # 10% of the allowed range (upper - lower)
 
     def initialise_scout(self):
         return [
@@ -27,10 +29,7 @@ class ContinuousFunctionOptimisation(OptimisationProblem):
                 self.lower,
                 min(
                     self.upper,
-                    i
-                    + self.rand.uniform(
-                        -i * self.coordinate_offset, i * self.coordinate_offset
-                    ),
+                    i + self.rand.uniform(-self.allowed_range, self.allowed_range),
                 ),
             )
             for i in vector
