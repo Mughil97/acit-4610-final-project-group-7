@@ -53,7 +53,7 @@ def run_es(
         portfolio: list[Portfolio],
         alpha: float = 0.5,
         variant: str = "one_plus_one",
-        max_iterations: int = 1000,
+        max_iterations: int = 30000,
         seed: int | None = None,
 ) -> ESResult:
     if seed is not None:
