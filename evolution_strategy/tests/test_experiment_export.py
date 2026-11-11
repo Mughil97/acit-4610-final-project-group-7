@@ -82,7 +82,6 @@ def test_export_rejects_incorrect_budget(tmp_path, sample_summary):
 
     assert not (folder / "complete.json").exists()
 
-
 def test_completed_cases_are_skipped(tmp_path, monkeypatch, capsys):
     """A repeated smoke run should not recompute completed cases."""
     for variant in export_experiments.VARIANTS:
@@ -93,6 +92,16 @@ def test_completed_cases_are_skipped(tmp_path, monkeypatch, capsys):
         (folder / "complete.json").write_text(
             '{"status": "complete"}', encoding="utf-8"
         )
+
+        for filename in (
+            "summary.csv",
+            "runs.csv",
+            "convergence.csv",
+            "run_histories.csv",
+        ):
+            (folder / filename).write_text(
+                "test data", encoding="utf-8"
+            )
 
     def should_not_run(**kwargs):
         pytest.fail("Completed case was unexpectedly recomputed")
