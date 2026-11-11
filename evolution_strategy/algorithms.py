@@ -28,7 +28,7 @@ def evaluate_one_plus_one(
     cost = evaluate_cost(portfolio, repaired_weights)
     return profit, cost, repaired_weights
 
-def _update_one_plus_one_sigma(sigma: float, improved: bool) -> float:
+def update_one_plus_one_sigma(sigma: float, improved: bool) -> float:
     """Apply the assignment's per-trial 1/5-success-rule update.
 
     The step size is increased after a strictly better child and decreased
@@ -72,7 +72,7 @@ def run_one_plus_one(
             current_cost = new_cost
 
         history.append(current_cost)
-        sigma = _update_one_plus_one_sigma(sigma, improved)
+        sigma = update_one_plus_one_sigma(sigma, improved)
 
     return current_weights, current_profit, current_cost, history
 
