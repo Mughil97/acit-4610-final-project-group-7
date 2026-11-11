@@ -50,7 +50,7 @@ def summarize_case(
         alpha: float,
         variant: str,
         num_runs: int = 10,
-        max_iterations: int = 1000,
+        max_iterations: int = 30000,
 ) -> CaseSummary:
     case_name = f"{dataset_name}_alpha{int(alpha * 100):03d}"
     runs: list[ESResult] = []
@@ -114,7 +114,7 @@ def run_all_experiments(
         alphas: tuple[float, ...] = ALPHAS,
         variants: tuple[str, ...] = tuple(VARIANTS.keys()),
         num_runs: int = 10,
-        max_iterations: int = 1000,
+        max_iterations: int = 30000,
 ) -> list[CaseSummary]:
     all_summaries: list[CaseSummary] = []
 

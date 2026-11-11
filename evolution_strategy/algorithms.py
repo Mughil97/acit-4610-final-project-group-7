@@ -40,7 +40,7 @@ def update_one_plus_one_sigma(sigma: float, improved: bool) -> float:
 def run_one_plus_one(
         portfolio: list[Portfolio],
         target_return: float,
-        max_iterations: int = 1000,
+        max_iterations: int = 30000,
         sigma: float | None = None,
 ):
     """Run (1+1)-ES, counting initialization as one evaluation.
@@ -80,7 +80,7 @@ def run_one_plus_one(
 def run_ten_plus_seventy(
         portfolio: list[Portfolio],
         target_return: float,
-        max_iterations: int = 1000,
+        max_iterations: int = 30000,
         mu: int = 10,
         lambda_: int = 70,
 ):
@@ -148,7 +148,7 @@ def run_ten_plus_seventy(
 def run_ten_comma_seventy(
         portfolio: list[Portfolio],
         target_return: float,
-        max_iterations: int = 1000,
+        max_iterations: int = 30000,
         mu: int = 10,
         lambda_: int = 70,
 ):
