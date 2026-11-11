@@ -12,7 +12,7 @@ class FunctionOptimisationConfig:
     nb: int = 10  # Best
     nre: int = 15  # Elite recruits
     nrb: int = 5  # Best recruits
-    stlim: int = 10  # Stagnation
+    # stlim: int = 10  # Stagnation
 
 
 @dataclass(frozen=True)

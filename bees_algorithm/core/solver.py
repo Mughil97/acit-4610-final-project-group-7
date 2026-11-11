@@ -1,4 +1,7 @@
 from bees_algorithm.core.bee import Bee
+from logger import get_logger
+
+logger = get_logger(__name__)
 
 
 class BeesAlgorithmSolver:
@@ -40,23 +43,23 @@ class BeesAlgorithmSolver:
                 if fitness < site.fitness:
                     site.site = neighbour_vector
                     site.fitness = fitness
-                    site.stagnation_count = 0
-                else:
-                    site.stagnation_count += 1
+                #     site.stagnation_count = 0
+                # else:
+                #     site.stagnation_count += 1
 
-    def abandon_stagnated_sites(self):
-        active_scouts = []
-        abandon_count = 0
+    # def abandon_stagnated_sites(self):
+    #     active_scouts = []
+    #     abandon_count = 0
 
-        for site in self.scouts:
-            if site.stagnation_count >= self.config.stlim:
-                abandon_count += 1
-            else:
-                active_scouts.append(site)
+    #     for site in self.scouts:
+    #         if site.stagnation_count >= self.config.stlim:
+    #             abandon_count += 1
+    #         else:
+    #             active_scouts.append(site)
 
-        self.scouts = active_scouts
+    #     self.scouts = active_scouts
 
-        return abandon_count
+    #     return abandon_count
 
     def replenish_scouts(self, count):
         for _ in range(count):
@@ -75,7 +78,8 @@ class BeesAlgorithmSolver:
             self.exploit_site(elites, self.config.nre)
             self.exploit_site(best, self.config.nrb)
 
-            # abandon_count = self.abandon_stagnated_sites()
+            self.scouts = elites + best
+
             self.replenish_scouts((self.config.ns - self.config.nb))
 
         return self.global_best

@@ -1,3 +1,5 @@
+import time
+
 from logger import get_logger
 from bees_algorithm.configs import (
     BENCHMARK_FUNCTIONS,
@@ -24,8 +26,10 @@ def optimise_functions():
                 )
 
                 solver = BeesAlgorithmSolver(problem=cfo, config=foc)
+                start = time.perf_counter_ns()
                 best_solution = solver.run()
+                end = time.perf_counter_ns()
 
                 logger.info(
-                    f"Run: {run+1} | Dim: {dim} | Function: {func.__name__} | Best Fitness: {best_solution.fitness} | Vector: {best_solution.site}"
+                    f"Run: {run+1} | Dim: {dim} | Function: {func.__name__} | Best Fitness: {best_solution.fitness} | Execution time: {(end-start)/1e-9} | {best_solution.site}"
                 )
