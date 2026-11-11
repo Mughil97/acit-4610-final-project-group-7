@@ -28,46 +28,51 @@ def evaluate_one_plus_one(
     cost = evaluate_cost(portfolio, repaired_weights)
     return profit, cost, repaired_weights
 
+def _update_one_plus_one_sigma(sigma: float, improved: bool) -> float:
+    """Apply the assignment's per-trial 1/5-success-rule update.
+
+    The step size is increased after a strictly better child and decreased
+    otherwise, with the specified bounds [1e-8, 1.0].
+    """
+    factor = math.exp(1.0 / 3.0) if improved else math.exp(-1.0 / 12.0)
+    return max(1e-8, min(1.0, sigma * factor))
 
 def run_one_plus_one(
         portfolio: list[Portfolio],
         target_return: float,
         max_iterations: int = 1000,
         sigma: float | None = None,
-        k: int = 20,
 ):
+    """Run (1+1)-ES, counting initialization as one evaluation.
+
+    In accordance with Portfolio 2026, Problem 2, p. 10, accept only strictly
+    lower-variance offspring and update sigma after EACH evaluated child.
+    """
     n = len(portfolio)
     if sigma is None:
         sigma = 0.1 / math.sqrt(n)
+    sigma = max(1e-8, min(1.0, sigma))
 
     current_weights = [random.uniform(0.0, 1.0) for _ in range(n)]
-    current_profit, current_cost, current_weights = evaluate_one_plus_one(portfolio, current_weights, target_return)
+    current_profit, current_cost, current_weights = evaluate_one_plus_one(
+        portfolio, current_weights, target_return
+    )
     history = [current_cost]
 
-    success_count = 0
-    one_div_five = 1.0 / 5.0  # 1/5th rule for adjusting sigma
-    c: float = 0.82  # the standard Schwefel adaptation constant from the lecture note
-
-    for step in range(1, max_iterations):
+    for _ in range(1, max_iterations):
         new_weights = [weight + random.gauss(0, sigma) for weight in current_weights]
-        new_profit, new_cost, repaired_weights = evaluate_one_plus_one(portfolio, new_weights, target_return)
+        new_profit, new_cost, repaired_weights = evaluate_one_plus_one(
+            portfolio, new_weights, target_return
+        )
 
-        if new_cost <= current_cost:
+        improved = new_cost < current_cost  # strict improvement only
+        if improved:
             current_weights = repaired_weights
             current_profit = new_profit
             current_cost = new_cost
-            success_count += 1
 
         history.append(current_cost)
-
-        if step % k == 0:
-            success_rate = success_count / k
-            if success_rate > one_div_five:
-                sigma = sigma / c
-            elif success_rate < one_div_five:
-                sigma = sigma * c
-            sigma = max(1e-8, min(1.0, sigma))
-            success_count = 0
+        sigma = _update_one_plus_one_sigma(sigma, improved)
 
     return current_weights, current_profit, current_cost, history
 
