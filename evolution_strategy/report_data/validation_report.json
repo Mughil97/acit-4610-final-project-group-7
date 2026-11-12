@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "cases": 45,
+  "runs": 450,
+  "evaluations_per_run": 30000,
+  "total_objective_evaluations": 13500000,
+  "parser_reference_port1": {
+    "equal_allocation_return": 0.003504064516129032,
+    "equal_allocation_variance": 0.0011309379437235488,
+    "alpha_050_target_return": 0.007184532258064516
+  },
+  "portfolio_checks": "all weights, computed returns, computed variances, and 1e-8 feasibility constraints",
+  "history_checks": "each evaluation count, nonincreasing per-seed archive, final values and mean curve",
+  "summary_consistency_checked": true
+}
