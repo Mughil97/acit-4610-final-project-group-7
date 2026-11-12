@@ -92,7 +92,22 @@ def export_case(summary, folder, budget):
         ),
     )
 
-    # Written last: indicates that all three exports completed.
+    # Preserve the complete best-so-far history of every seed.
+    save_csv(
+        folder / "run_histories.csv",
+        ["evaluation"] + [
+            f"seed_{run.seed}" for run in summary.runs
+        ],
+        (
+            [evaluation, *values]
+            for evaluation, values in enumerate(
+                zip(*(run.history for run in summary.runs)),
+                start=1,
+            )
+        ),
+    )
+
+    # Written last: indicates that all four CSV exports completed.
     marker = folder / "complete.json"
     temporary = folder / "complete.json.tmp"
     temporary.write_text(
@@ -141,7 +156,19 @@ def main():
                 )
                 folder = output_root / case_name
 
-                if (folder / "complete.json").exists():
+
+                required_files = (
+                    "summary.csv",
+                    "runs.csv",
+                    "convergence.csv",
+                    "run_histories.csv",
+                    "complete.json",
+                )
+
+                if all(
+                    (folder / filename).is_file()
+                    for filename in required_files
+                ):
                     print(f"SKIP: {case_name}", flush=True)
                     continue
 
