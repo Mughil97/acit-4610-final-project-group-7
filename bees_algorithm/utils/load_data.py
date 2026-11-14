@@ -20,12 +20,15 @@ def load_data(file):
                     return city_coordinates
                 else:
                     raise DataError("The no. of cities extracted did not match")
-            elif any(detail in line for detail in FILE_DETAILS):
+            elif any(detail in line for detail in FILE_DETAILS): #if any of the words are in the line you are at
+                #any: if at least one True 
                 continue
             elif "DIMENSION" in line:
                 cities = int(line.split(":")[1])
             else:
                 city, x, y = line.split()
-                x, y = map(float, (x, y))
+                city, x, y = map(float, (city, x, y))
                 city_coordinates[city] = [x, y]
                 processed_cities += 1
+
+    return city_coordinates

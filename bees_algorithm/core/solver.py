@@ -10,10 +10,10 @@ class BeesAlgorithmSolver:
         self.problem = problem
         self.config = config
         self.evaluations = 0
-        self.scouts = []
+        self.scouts = [] #list of bees
         self.global_best = None
 
-    def initialise(self):
+    def initialise(self):  #initialise the population
         for _ in range(self.config.ns):
             vector = self.problem.initialise_scout()
             fitness = self.problem.evaluate(vector)
@@ -22,15 +22,20 @@ class BeesAlgorithmSolver:
 
     def rank_and_split_sites(self):
         scouts = sorted(self.scouts, key=lambda bee: bee.fitness)
-        self.global_best = scouts[0]
-        elites = scouts[: self.config.ne]
-        best = scouts[self.config.ne : self.config.nb]
+        #for each bee, compare and sort using its fitness: lower first
 
-        return elites, best
+       # if self.global_best is None or scouts[0].
+
+
+        self.global_best = scouts[0] 
+        elites = scouts[: self.config.ne] #3 first
+        selected_sites = scouts[self.config.ne : self.config.nb] #7, but the elties are in so 10 total
+
+        return elites, selected_sites
 
     def exploit_site(self, sites, recruit_count):
 
-        for site in sites:
+        for site in sites: #site = bee, solution
             for _ in range(recruit_count):
 
                 if self.evaluations >= self.config.max_evaluations:
@@ -40,7 +45,8 @@ class BeesAlgorithmSolver:
                 fitness = self.problem.evaluate(neighbour_vector)
                 self.evaluations += 1
 
-                if fitness < site.fitness:
+                #greedy selection:
+                if fitness < site.fitness: #if the neighbour is better, replace
                     site.site = neighbour_vector
                     site.fitness = fitness
                 #     site.stagnation_count = 0
@@ -61,6 +67,10 @@ class BeesAlgorithmSolver:
 
     #     return abandon_count
 
+
+#Generates new random scout bees, as the remaining pop (not selected + elites) are discared
+#We generate new scouts to mainint pop diversity and exlore new areas
+
     def replenish_scouts(self, count):
         for _ in range(count):
             vector = self.problem.initialise_scout()
@@ -73,12 +83,12 @@ class BeesAlgorithmSolver:
 
         while self.evaluations < self.config.max_evaluations:
 
-            elites, best = self.rank_and_split_sites()
+            elites, selected_sites = self.rank_and_split_sites()
 
             self.exploit_site(elites, self.config.nre)
-            self.exploit_site(best, self.config.nrb)
+            self.exploit_site(selected_sites, self.config.nrb)
 
-            self.scouts = elites + best
+            self.scouts = elites + selected_sites
 
             self.replenish_scouts((self.config.ns - self.config.nb))
 
