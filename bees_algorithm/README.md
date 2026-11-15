@@ -15,7 +15,7 @@ The scouts are initialized randomly and the neighbours are initialized by swappi
 
 **Rounded Euclidean distance**: 
 $$
-d_{ij} = \operatorname{floor}\left\(\sqrt{(a_i-a_j)^2 + (b_i-b_j)^2} + 0.5\right)
+d_{ij} = \text{floor}\left\(\sqrt{(a_i-a_j)^2 + (b_i-b_j)^2} + 0.5\right)
 $$
 
 ## Part B - Continuous Function Optimisation
