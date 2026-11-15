@@ -7,7 +7,14 @@ The problem 1 is optimisation problem using Bees Algorithm. The problem is made 
 
 ## Part A - Symmetric Travelling Salesman Problem (TSP)
 
-> TODO
+The travelling salesman problem involves visiting a number of cities exactly once and then returning to the start city. The objective is to find the route which minimizes the total distance travelled when doing a round trip. 
+
+The routes are represented as permutations where the first element is the starting city. A bee is a route and its fitness is the total distance travelled when travelling this route. We calculate the distances using rounded Euclidean distances, and we include the return edge. 
+
+The scouts are initialized randomly and the neighbours are initialized by swapping two cities (their positions) or by reversing a segment between two cities. The first city is the starting city and will always be fixed. 
+
+**Rounded Euclidean distance**: 
+$d_{ij} = \left\lfloor \sqrt{(a_i-a_j)^2 + (b_i-b_j)^2} + 0.5 \right\rfloor$
 
 ## Part B - Continuous Function Optimisation
 
