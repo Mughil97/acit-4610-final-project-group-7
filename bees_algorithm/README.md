@@ -3,7 +3,7 @@
 The problem 1 is optimisation problem using Bees Algorithm. The problem is made up of two parts Part A Symmetric Travelling Salesman Problem (TSP) and Part B Continuous Function Optimisation.
 
 ## Bees Algorithm
-The bees algorithm is a popular-based optimization algorithm. It maintains a whole population simultaneously instead of tracking one point. A population is a collection of bees and each bee represents one possible solution to the problem. 
+The bees algorithm is a population-based optimization algorithm. It maintains a whole population simultaneously instead of tracking one point. A population is a collection of bees and each bee represents one possible solution to the problem. 
 
 A scout is a bee in the population. The bee consists of a fitness and a site. The site is a solution that can be explored further and we want to find better solutions around this site. We do this by creating new neighbouring solutions (exploitation).  The best bee is the bee with the lowest fitness and it becomes a part of the elite sites. We also select other, potentially good sites. The sites are selected based on the bee’s fitness: the lower the better. The unselected sites are replaced by new bees. 
 
