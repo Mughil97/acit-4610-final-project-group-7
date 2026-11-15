@@ -14,7 +14,9 @@ The routes are represented as permutations where the first element is the starti
 The scouts are initialized randomly and the neighbours are initialized by swapping two cities (their positions) or by reversing a segment between two cities. The first city is the starting city and will always be fixed. 
 
 **Rounded Euclidean distance**: 
-$d_{ij} = \left\lfloor \sqrt{(a_i-a_j)^2 + (b_i-b_j)^2} + 0.5 \right\rfloor$
+$
+d_{ij} = floor(\left\lfloor \sqrt{(a_i-a_j)^2 + (b_i-b_j)^2} + 0.5 \right\rfloor )
+$
 
 ## Part B - Continuous Function Optimisation
 
