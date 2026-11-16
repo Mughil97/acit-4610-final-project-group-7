@@ -7,11 +7,11 @@ from bees_algorithm.functions import ackley, rastrigin, rosenbrock, sphere
 @dataclass(frozen=True)
 class FunctionOptimisationConfig:
     max_evaluations: int = 30000
-    ns: int = 30  # Scouts
-    ne: int = 3  # Elites
-    nb: int = 10  # Best
-    nre: int = 15  # Elite recruits
-    nrb: int = 5  # Best recruits
+    ns: int = 30  # Scouts (total nr of bees)
+    ne: int = 3  # Elites (elite sites)
+    nb: int = 10  # Selected sites (elites + 10-3 sites that are good)
+    nre: int = 15  # Elite recruits (bees)
+    nrb: int = 5  # Selected recruits (bees)
     # stlim: int = 10  # Stagnation
 
 
