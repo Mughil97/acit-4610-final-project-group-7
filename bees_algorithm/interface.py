@@ -18,3 +18,8 @@ class OptimisationProblem(ABC):
     @abstractmethod
     def get_neighbour(self):
         pass
+
+    @property
+    @abstractmethod
+    def problem_type(self):
+        pass
