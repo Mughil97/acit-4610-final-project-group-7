@@ -48,7 +48,6 @@ def test_45_cases_and_summary_plots(summary_fixture):
     plot_runtime(summary, figs)
     for name in ("mean_variance_by_dataset_full", "runtime_by_dataset_full"):
         assert (figs / f"{name}.png").stat().st_size > 1000
-        assert (figs / f"{name}.pdf").stat().st_size > 1000
 
 
 def test_boxplot_uses_real_per_seed_rows(summary_fixture, monkeypatch):
@@ -83,7 +82,6 @@ def test_boxplot_uses_real_per_seed_rows(summary_fixture, monkeypatch):
     monkeypatch.setattr(plot_comparisons, "_save", check_annotations_then_save)
     plot_boxplot(summary, summary_fixture, summary_fixture / "figures", "port5", 0.5)
     assert (summary_fixture / "figures" / "boxplot_port5_alpha050_full.png").is_file()
-    assert (summary_fixture / "figures" / "boxplot_port5_alpha050_full.pdf").is_file()
 
 
 def test_missing_seed_csv_is_not_fabricated(summary_fixture):

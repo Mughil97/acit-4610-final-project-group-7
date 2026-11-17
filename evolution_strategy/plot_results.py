@@ -95,15 +95,10 @@ def plot_convergence(mode, dataset, alpha, results_root):
         dpi=300,
         bbox_inches="tight",
     )
-    fig.savefig(
-        output / f"{filename}.pdf",
-        bbox_inches="tight",
-    )
 
     plt.close(fig)
 
     print(f"Saved PNG: {output / (filename + '.png')}")
-    print(f"Saved PDF: {output / (filename + '.pdf')}")
 
 
 def main():
