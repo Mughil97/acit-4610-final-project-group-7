@@ -235,11 +235,9 @@ To regenerate and refresh the *versioned* report figures after plotting locally 
 
 ```powershell
 Copy-Item ..\es_experiment_results\figures\*_full.png .\evolution_strategy\figures\ -Force
-Copy-Item ..\es_experiment_results\figures\*_full.pdf .\evolution_strategy\figures\ -Force
 Copy-Item ..\es_experiment_results\es_summary_45_cases.csv .\evolution_strategy\report_data\ -Force
 ```
 
-Do not commit smoke plots as final experimental evidence. The 18 full figure pairs consist of **15 convergence cases** and **3 comparison figures**. Use `evolution_strategy/figures/convergence_port5_alpha050_full.pdf` for the assignment-required figure; the PNG is also available.
 
 ### Verify saved raw results (without rerunning optimization)
 
