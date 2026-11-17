@@ -4,6 +4,16 @@ FILE_DETAILS = ["NAME", "TYPE", "COMMENT", "EDGE_WEIGHT_TYPE", "NODE_COORD_SECTI
 
 
 def load_data(file):
+    """
+    Reads the TSPLib files from the path
+
+    Args:
+        file (str): Path of the TSPLib file
+
+    Returns:
+        dict[str, list[float]]: A dictionary mapping city names to their
+            [x, y] coordinates (e.g., {"Oslo": [59.91, 10.75]}).
+    """
     with open(file, "r") as f:
 
         city_coordinates = {}
@@ -20,15 +30,17 @@ def load_data(file):
                     return city_coordinates
                 else:
                     raise DataError("The no. of cities extracted did not match")
-            elif any(detail in line for detail in FILE_DETAILS): #if any of the words are in the line you are at
-                #any: if at least one True 
+            elif any(
+                detail in line for detail in FILE_DETAILS
+            ):  # if any of the words are in the line you are at
+                # any: if at least one True
                 continue
             elif "DIMENSION" in line:
                 cities = int(line.split(":")[1])
             else:
                 city, x, y = line.split()
-                city, x, y = map(float, (city, x, y))
-                city_coordinates[city] = [x, y]
+                x, y = map(float, (x, y))
+                city_coordinates[int(city)] = [x, y]
                 processed_cities += 1
 
     return city_coordinates

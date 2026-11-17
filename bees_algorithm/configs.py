@@ -48,3 +48,30 @@ BENCHMARK_FUNCTIONS = [
 DIMENSIONS = [10, 30]
 EXPERIMENT_RUNS = 10
 SEED = 45
+
+
+# ============================= TSP Config =============================
+@dataclass(frozen=True)
+class TSPConfig:
+    max_evaluations: int = 30000
+    ns: int = 30  # Scouts (total nr of bees)
+    ne: int = 3  # Elites (elite sites)
+    nb: int = 10  # Selected sites (Top selected sites includes elites)
+    nre: int = 15  # Elite recruits (bees)
+    nrb: int = 5  # Selected recruits (bees)
+    stlim: int = 100  # Stagnation count
+    shrink_factor: float = 0.2  # 20% shrink of the site/patch size
+
+
+TSPLIBS = {
+    "eil51": r"bees_algorithm/data/eil51.tsp",
+    "berlin52": r"bees_algorithm/data/berlin52.tsp",
+    "eil76": r"bees_algorithm/data/eil76.tsp",
+    "st70": r"bees_algorithm/data/st70.tsp",
+    "kroA100": r"bees_algorithm/data/kroA100.tsp",
+    "ch150": r"bees_algorithm/data/ch150.tsp",
+}
+
+SWAP = "SWAP"
+REVERSE = "REVERSE"
+NEIGHBOURHOOD_VERSIONS = [SWAP, REVERSE]
