@@ -15,6 +15,10 @@ class ContinuousFunctionOptimisation(OptimisationProblem):
             upper - lower
         ) * 0.1  # 10% of the allowed range (upper - lower)
 
+    @property
+    def problem_type(self):
+        return "CONTINUOUS"
+
     def initialise_scout(self):
         return [
             self.rand.uniform(self.lower, self.upper) for _ in range(self.dimension)
@@ -23,14 +27,17 @@ class ContinuousFunctionOptimisation(OptimisationProblem):
     def evaluate(self, vector):
         return self.function(vector)
 
-    def get_neighbour(self, vector):
+    def get_neighbour(self, bee):
+        scale = max(1e-6, (1 - bee.shrink_factor) ** bee.stagnation_count)
+        allowed_range = self.allowed_range * scale
+
         return [
             max(
                 self.lower,
                 min(
                     self.upper,
-                    i + self.rand.uniform(-self.allowed_range, self.allowed_range),
+                    i + self.rand.uniform(-allowed_range, allowed_range),
                 ),
             )
-            for i in vector
+            for i in bee.site
         ]

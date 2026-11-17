@@ -4,15 +4,17 @@ from dataclasses import dataclass
 from bees_algorithm.functions import ackley, rastrigin, rosenbrock, sphere
 
 
+# ============================= Function Optimisation Config =============================
 @dataclass(frozen=True)
 class FunctionOptimisationConfig:
     max_evaluations: int = 30000
     ns: int = 30  # Scouts (total nr of bees)
     ne: int = 3  # Elites (elite sites)
-    nb: int = 10  # Selected sites (elites + 10-3 sites that are good)
+    nb: int = 10  # Selected sites (Top selected sites includes elites)
     nre: int = 15  # Elite recruits (bees)
     nrb: int = 5  # Selected recruits (bees)
-    # stlim: int = 10  # Stagnation
+    stlim: int = 100  # Stagnation count
+    shrink_factor: float = 0.2  # 20% shrink of the site/patch size
 
 
 @dataclass(frozen=True)
