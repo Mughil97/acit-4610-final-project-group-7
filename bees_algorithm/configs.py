@@ -63,14 +63,44 @@ class TSPConfig:
     shrink_factor: float = 0.2  # 20% shrink of the site/patch size
 
 
-TSPLIBS = {
-    "eil51": r"bees_algorithm/data/eil51.tsp",
-    "berlin52": r"bees_algorithm/data/berlin52.tsp",
-    "eil76": r"bees_algorithm/data/eil76.tsp",
-    "st70": r"bees_algorithm/data/st70.tsp",
-    "kroA100": r"bees_algorithm/data/kroA100.tsp",
-    "ch150": r"bees_algorithm/data/ch150.tsp",
-}
+@dataclass(frozen=True)
+class TSPInstanceConfig:
+    name: str
+    path: str
+    cities: int
+    optimum: int
+
+
+EIL51_CONFIG = TSPInstanceConfig(
+    name="eil51", path=r"bees_algorithm/data/eil51.tsp", cities=51, optimum=426
+)
+BERLIN52_CONFIG = TSPInstanceConfig(
+    name="berlin52", path=r"bees_algorithm/data/berlin52.tsp", cities=52, optimum=7542
+)
+ST70_CONFIG = TSPInstanceConfig(
+    name="st70", path=r"bees_algorithm/data/st70.tsp", cities=70, optimum=675
+)
+EIL76_CONFIG = TSPInstanceConfig(
+    name="eil76", path=r"bees_algorithm/data/eil76.tsp", cities=76, optimum=538
+)
+KROA100_CONFIG = TSPInstanceConfig(
+    name="kroA100", path=r"bees_algorithm/data/kroA100.tsp", cities=100, optimum=21282
+)
+CH150_CONFIG = TSPInstanceConfig(
+    name="ch150", path=r"bees_algorithm/data/ch150.tsp", cities=150, optimum=6528
+)
+
+TSP_INSTANCES = [
+    EIL51_CONFIG,
+    BERLIN52_CONFIG,
+    ST70_CONFIG,
+    EIL76_CONFIG,
+    KROA100_CONFIG,
+    CH150_CONFIG,
+]
+
+TSPLIBS = {inst.name: inst.path for inst in TSP_INSTANCES}
+TSP_OPTIMA = {inst.name: inst.optimum for inst in TSP_INSTANCES}
 
 SWAP = "SWAP"
 REVERSE = "REVERSE"
