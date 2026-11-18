@@ -6,28 +6,39 @@ This folder implements and evaluates three continuous Evolution Strategy (ES) va
 
 ## 1. Problem and datasets
 
-A candidate is an asset-weight vector **w** = (w_1, ..., w_n). We minimize portfolio variance
 
-\[
-V(\mathbf w) = \sum_{i=1}^n w_i^2 s_i^2
-  + 2\sum_{i=1}^n\sum_{j=i+1}^n w_i w_j s_i s_j \rho_{ij},
-\]
+A candidate is an asset-weight vector $\mathbf{w}=(w_1,\ldots,w_n)$.
 
-subject to the nonnegative investment weights, a total invested fraction of one, and a minimum target return:
+We minimize portfolio variance:
 
-\[
-w_i \ge 0,\quad \sum_i w_i = 1,\quad
-R(\mathbf w) = \sum_i w_i r_i \ge R^*.
-\]
+$$
+V(\mathbf{w}) =
+\sum_{i=1}^{n} w_i^2 s_i^2
++ 2\sum_{i=1}^{n}\sum_{j=i+1}^{n}
+w_i w_j s_i s_j \rho_{ij}.
+$$
 
-Here `r_i` is expected asset return, `s_i` its standard deviation, and `rho_ij` the pairwise correlation. The target return is defined by
+The portfolio must satisfy the nonnegative investment weights, full-budget allocation, and minimum expected-return constraint:
 
-\[
-R^* = (1-\alpha)R_{eq} + \alpha R_{max},\qquad
-\alpha\in\{0.25, 0.50, 0.75\},
-\]
+$$
+w_i \geq 0,\qquad
+\sum_{i=1}^{n} w_i = 1,\qquad
+R(\mathbf{w}) = \sum_{i=1}^{n} w_i r_i
+\geq R^*.
+$$
 
-where `R_eq` is the mean asset return (the return of an equally weighted portfolio) and `R_max` is the largest single-asset return.
+Here, $r_i$ is the expected return of asset $i$, $s_i$ is its standard deviation, and $\rho_{ij}$ is the correlation between assets $i$ and $j$.
+
+The minimum target return is defined by:
+
+$$
+R^* = (1-\alpha)R_{\mathrm{eq}}
++ \alpha R_{\max},
+\qquad
+\alpha \in \{0.25,0.50,0.75\}.
+$$
+
+Here, $R_{\mathrm{eq}}$ is the expected return of the equally weighted portfolio, and $R_{\max}$ is the largest individual asset expected return.
 
 The OR-Library benchmark input files specified in the assignment are included under `data/` (they are versioned in this repository):
 
