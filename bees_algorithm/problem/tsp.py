@@ -86,7 +86,7 @@ class SymmetricTSP(OptimisationProblem):
         
         copy_route = list(existing_route) #w/o referencing
 
-        i, j = 0, 0
+        i, j = 1, 0
         while i != j or i > j:
             #city 1 (index 0) cannot be incldued 
             i = random.randint(1,len(self.city_coordinates)-1) #both int included
