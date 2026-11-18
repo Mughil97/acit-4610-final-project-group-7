@@ -95,13 +95,20 @@ python -m pip install -r requirements.txt
 
 The root `requirements.txt` includes `pytest` and `matplotlib>=3.9,<4`. Use `python -m pip` with the same Python interpreter that runs the project.
 
-### Tests
+
+### Evolution Strategies Tests
+
+Run the ES regression tests from the repository root:
 
 ```powershell
-python -m pytest -q
+python -m pytest evolution_strategy/tests -v
 ```
 
-These tests cover simplex repair, (1+1)-ES adaptation and strict acceptance, objective evaluation budgeting, experiment export and case skipping, and the comparison plotting workflow. **The verified Windows workflow passed 50 tests**; rerun the suite after any code changes.
+The verified Windows run passed all 34 ES tests using Python 3.13.5 and pytest 9.1.1.
+
+These tests cover feasibility repair, mutation adaptation, evaluation budgeting, experiment export, and plotting functionality.
+
+The tests validate implementation behavior but do not independently establish global optimality or replace the full experimental-results audit.
 
 ### Single seeded run
 
