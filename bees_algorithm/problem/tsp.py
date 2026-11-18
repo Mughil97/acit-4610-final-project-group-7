@@ -96,10 +96,10 @@ class SymmetricTSP(OptimisationProblem):
             copy_route[i], copy_route[j] = copy_route[j], copy_route[i]
 
             
-        else: #reverse btw two positions
-            segment = copy_route[i+1:j] #start is incl, stop isnt: so +1 to exlude start
+        else: #reverse btw two positions (inc endpoints in case we only choose i=2 and j=4 - no new neighbour if we didnt include endpoints)
+            segment = copy_route[i:j+1] #start is incl, stop isnt: so +1 to exlude start
             segment.reverse()
-            copy_route[i+1:j] = segment #replace with the reverse one
+            copy_route[i:j+1] = segment #replace with the reverse one
 
         return copy_route #new neighbour
 
