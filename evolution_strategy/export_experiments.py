@@ -12,6 +12,7 @@ from evolution_strategy.results import (
     summarize_case,
 )
 from evolution_strategy.evolution_strategies import VARIANTS
+from evolution_strategy.build_summary import SUMMARY_NAME, build_summary
 
 
 def save_csv(path, columns, rows):
@@ -156,7 +157,6 @@ def main():
                 )
                 folder = output_root / case_name
 
-
                 required_files = (
                     "summary.csv",
                     "runs.csv",
@@ -185,6 +185,12 @@ def main():
 
                 export_case(summary, folder, budget)
                 print(f"SAVED: {case_name}", flush=True)
+
+   # Generate the consolidated summary after completing the full experiment.
+    if args.mode == "full":
+        output_csv = Path(args.output) / SUMMARY_NAME
+        count = build_summary(output_root, output_csv)
+        print(f"SUMMARY: {count} cases -> {output_csv}", flush=True)
 
 
 if __name__ == "__main__":
