@@ -22,6 +22,10 @@ class ContinuousFunctionOptimisation(OptimisationProblem):
         #each coordinate can change by a random amount between this range (inc hte endpoints)
         #teh range is the [-self.allowed_range, self.allowed_range]
 
+    @property
+    def problem_type(self):
+        return "CONTINUOUS"
+
     def initialise_scout(self):
         return [
             self.rand.uniform(self.lower, self.upper) for _ in range(self.dimension)
@@ -36,14 +40,17 @@ class ContinuousFunctionOptimisation(OptimisationProblem):
 #generate new solution and returns the complete neighbouring solution
 #in min: make sure that the new coordinate is not above the upperbound
 #in max: make sure it is not below the lower band
-    def get_neighbour(self, vector):
+    def get_neighbour(self, bee):
+        scale = max(1e-6, (1 - bee.shrink_factor) ** bee.stagnation_count)
+        allowed_range = self.allowed_range * scale
+
         return [
             max(
                 self.lower,
                 min(
                     self.upper,
-                    i + self.rand.uniform(-self.allowed_range, self.allowed_range),
+                    i + self.rand.uniform(-allowed_range, allowed_range),
                 ),
             )
-            for i in vector #for every coordinate 
+            for i in bee.site
         ]

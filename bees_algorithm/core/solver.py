@@ -9,79 +9,75 @@ class BeesAlgorithmSolver:
     def __init__(self, problem, config):
         self.problem = problem
         self.config = config
-        self.evaluations = 0
-        self.scouts = [] #list of bees
-        self.global_best = None
+        self.scouts = []
 
-    def initialise(self):  #initialise the population
+    def initialise(self):
+        """
+        Initialises the population/solutions
+        """
         for _ in range(self.config.ns):
             vector = self.problem.initialise_scout()
             fitness = self.problem.evaluate(vector)
-            self.scouts.append(Bee(vector, fitness))
-            self.evaluations += 1
+            self.scouts.append(Bee(vector, fitness, self.config.shrink_factor))
 
     def rank_and_split_sites(self):
-        scouts = sorted(self.scouts, key=lambda bee: bee.fitness)
-        #for each bee, compare and sort using its fitness: lower first
+        scouts = sorted(
+            self.scouts, key=lambda bee: bee.fitness
+        )  # Sort the bee/solution using fitness, lower is better
 
-       # if self.global_best is None or scouts[0].
-
-
-        self.global_best = scouts[0] 
-        elites = scouts[: self.config.ne] #3 first
-        selected_sites = scouts[self.config.ne : self.config.nb] #7, but the elties are in so 10 total
+        elites = scouts[: self.config.ne]
+        selected_sites = scouts[self.config.ne : self.config.nb]
 
         return elites, selected_sites
 
     def exploit_site(self, sites, recruit_count):
 
-        for site in sites: #site = bee, solution
+        for site in sites:  # Site is a bee/solution
+            site_stagnated = True
             for _ in range(recruit_count):
 
-                if self.evaluations >= self.config.max_evaluations:
-                    break
-
-                neighbour_vector = self.problem.get_neighbour(site.site)
+                neighbour_vector = self.problem.get_neighbour(site)
                 fitness = self.problem.evaluate(neighbour_vector)
-                self.evaluations += 1
 
-                #greedy selection:
-                if fitness < site.fitness: #if the neighbour is better, replace
+                # Greedy selection
+                if fitness < site.fitness:  # If the neighbour is bette,replace
                     site.site = neighbour_vector
                     site.fitness = fitness
-                #     site.stagnation_count = 0
-                # else:
-                #     site.stagnation_count += 1
+                    site.stagnation_count = 0
+                    site_stagnated = False
 
-    # def abandon_stagnated_sites(self):
-    #     active_scouts = []
-    #     abandon_count = 0
+            if site_stagnated:
+                site.stagnation_count += 1
 
-    #     for site in self.scouts:
-    #         if site.stagnation_count >= self.config.stlim:
-    #             abandon_count += 1
-    #         else:
-    #             active_scouts.append(site)
+    def abandon_stagnated_sites(self):
+        active_scouts = []
+        abandon_count = 0
 
-    #     self.scouts = active_scouts
+        for site in self.scouts:
+            if site.stagnation_count >= self.config.stlim:
+                abandon_count += 1
+            else:
+                active_scouts.append(site)
 
-    #     return abandon_count
+        self.scouts = active_scouts
 
-
-#Generates new random scout bees, as the remaining pop (not selected + elites) are discared
-#We generate new scouts to mainint pop diversity and exlore new areas
+        return abandon_count
 
     def replenish_scouts(self, count):
+        """
+        Generates new random scout bees for the remaining population i.e. (ns - (nb + abandoned sites))
+        This new scouts search the global space randomly so its exploration.
+        """
+
         for _ in range(count):
             vector = self.problem.initialise_scout()
             fitness = self.problem.evaluate(vector)
-            self.scouts.append(Bee(vector, fitness))
-            self.evaluations += 1
+            self.scouts.append(Bee(vector, fitness, self.config.shrink_factor))
 
     def run(self):
         self.initialise()
 
-        while self.evaluations < self.config.max_evaluations:
+        while True:  # The evaluations are tracked in a different helper class
 
             elites, selected_sites = self.rank_and_split_sites()
 
@@ -90,6 +86,9 @@ class BeesAlgorithmSolver:
 
             self.scouts = elites + selected_sites
 
-            self.replenish_scouts((self.config.ns - self.config.nb))
+            abandoned = self.abandon_stagnated_sites()
 
-        return self.global_best
+            self.replenish_scouts((self.config.ns - (self.config.nb + abandoned)))
+
+    def save_experiment(self, run_time):
+        self.problem.save_experiment(run_time)

@@ -1,0 +1,49 @@
+{
+  "generated_at_utc": "2026-11-17T20:40:41.560210+00:00",
+  "python_version": "3.14.6",
+  "packages": {
+    "numpy": "2.5.4",
+    "matplotlib": "3.11.2",
+    "pytest": "9.2.0"
+  },
+  "seeds": [
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54
+  ],
+  "tsp_config": {
+    "max_evaluations": 30000,
+    "ns": 30,
+    "ne": 3,
+    "nb": 10,
+    "nre": 15,
+    "nrb": 5,
+    "stlim": 100,
+    "shrink_factor": 0.2
+  },
+  "function_config": {
+    "max_evaluations": 30000,
+    "ns": 30,
+    "ne": 3,
+    "nb": 10,
+    "nre": 15,
+    "nrb": 5,
+    "stlim": 100,
+    "shrink_factor": 0.2
+  },
+  "tsp_optima": {
+    "eil51": 426,
+    "berlin52": 7542,
+    "st70": 675,
+    "eil76": 538,
+    "kroA100": 21282,
+    "ch150": 6528
+  }
+}
