@@ -62,21 +62,19 @@ class SymmetricTSP(OptimisationProblem):
         return distance
 
     def initialise_scout(self):  # generate random solution (a Bee)
-        perm = []  # collection of all city IDs
-        for k in self.city_coordinates.keys():
-            perm.append(k)
-        perm.remove(
-            1
-        )  # remove city 1 because it needs to be first and Ill shuffle the list randomly
+        # City 1 will always be the first city; so it will be added after the shuffle
+        city_permutation = list(range(2, len(self.city_coordinates) + 1))
 
-        # randomy shuffle the list to create a random solution
-        self.rand.shuffle(perm)
-        perm.insert(0, 1)  # insert city 1 at index 0
+        # randomly shuffle the list to create a random solution
+        self.rand.shuffle(city_permutation)
 
-        return perm
+        # The city 1 is alway
+        city_permutation.insert(0, 1)
 
-    def evaluate(self, route):  # calcualte quality fo a solution
-        # route is a permuation
+        return city_permutation
+
+    def evaluate(self, route):  # calculate quality fo a solution
+        # route is a permutation
         total_dist = 0
 
         for index in range(len(route)):
