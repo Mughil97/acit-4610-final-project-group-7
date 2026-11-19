@@ -10,7 +10,7 @@ class SymmetricTSP(OptimisationProblem):
 
     def __init__(self, path_data, strategy):
         self.city_coordinates = load_data(path_data) #dictionary: key = ID, x and y corrdinates in a list
-        self.strategy = strategy
+        self.strategy = strategy.lower()
 
         #distance matrix: one row and one column for every city
         self.distance_matrix = []
@@ -83,6 +83,12 @@ class SymmetricTSP(OptimisationProblem):
         
 
     def get_neighbours(self, existing_route): #generate a neighbouring solution
+        NEIGHBOURHOOD_VERSIONS = ["swap", "reverse"]
+
+
+        if self.strategy not in NEIGHBOURHOOD_VERSIONS:
+            raise ValueError("Invalid strategy.")
+
         
         copy_route = list(existing_route) #w/o referencing
 
