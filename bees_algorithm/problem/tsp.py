@@ -16,7 +16,7 @@ class SymmetricTSP(OptimisationProblem):
         self.city_coordinates = load_data(
             path_data
         )  # dictionary: key = ID, x and y coordinates in a list
-        self.strategy = strategy
+        self.strategy = strategy.lower()
 
         # distance matrix: one row and one column for every city
         self.distance_matrix = []
@@ -97,13 +97,17 @@ class SymmetricTSP(OptimisationProblem):
         return total_dist
 
     def get_neighbour(self, bee):  # generate a neighbouring solution
+        NEIGHBOURHOOD_VERSIONS = ["swap", "reverse"]
+
+        if self.strategy not in NEIGHBOURHOOD_VERSIONS:
+            raise ValueError("Invalid strategy.")
 
         bee = deepcopy(bee)  # w/o referencing
         route = bee.site
 
-        i, j = 0, 0
+        i, j = 1, 0
         while i != j or i > j:
-            # city 1 (index 0) cannot be included
+            # city 1 (index 0) cannot be included 
             i = self.rand.randint(
                 1, len(self.city_coordinates) - 1
             )  # both int included
@@ -112,10 +116,8 @@ class SymmetricTSP(OptimisationProblem):
         if self.strategy == SWAP:
             route[i], route[j] = route[j], route[i]
 
-        else:  # reverse btw two positions
-            segment = route[
-                i + 1 : j
-            ]  # start is incl, stop isnt: so +1 to exlude start
+        else:  #reverse btw two positions (inc endpoints in case we only choose i=2 and j=4 - no new neighbour if we didnt include endpoints)
+            segment = route[i:j+1] #start is incl, stop isnt: so +1 to exlude start
             segment.reverse()
             route[i + 1 : j] = segment  # replace with the reverse one
 
