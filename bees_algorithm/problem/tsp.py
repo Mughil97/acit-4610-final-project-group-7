@@ -2,7 +2,7 @@ import math
 import random
 from copy import deepcopy
 
-from bees_algorithm.configs import SWAP
+from bees_algorithm.configs import SWAP, NEIGHBOURHOOD_VERSIONS, REVERSE
 from bees_algorithm.interface import OptimisationProblem
 from bees_algorithm.utils.load_data import load_data
 
@@ -16,7 +16,7 @@ class SymmetricTSP(OptimisationProblem):
         self.city_coordinates = load_data(
             path_data
         )  # dictionary: key = ID, x and y coordinates in a list
-        self.strategy = strategy.lower()
+        self.strategy = strategy
 
         # distance matrix: one row and one column for every city
         self.distance_matrix = []
@@ -95,7 +95,6 @@ class SymmetricTSP(OptimisationProblem):
         return total_dist
 
     def get_neighbour(self, bee):  # generate a neighbouring solution
-        NEIGHBOURHOOD_VERSIONS = ["swap", "reverse"]
 
         if self.strategy not in NEIGHBOURHOOD_VERSIONS:
             raise ValueError("Invalid strategy.")
@@ -103,20 +102,17 @@ class SymmetricTSP(OptimisationProblem):
         bee = deepcopy(bee)  # w/o referencing
         route = bee.site
 
-        i, j = 1, 0
-        while i != j or i > j:
-            # city 1 (index 0) cannot be included 
-            i = self.rand.randint(
-                1, len(self.city_coordinates) - 1
-            )  # both int included
-            j = self.rand.randint(1, len(self.city_coordinates) - 1)
+        # Pick two distinct indices with 1 <= i < j <= n - 1 (city 1 at index 0 stays fixed)
+        i, j = sorted(self.rand.sample(range(1, len(route)), 2))
 
         if self.strategy == SWAP:
             route[i], route[j] = route[j], route[i]
 
-        else:  #reverse btw two positions (inc endpoints in case we only choose i=2 and j=4 - no new neighbour if we didnt include endpoints)
-            segment = route[i:j+1] #start is incl, stop isnt: so +1 to exlude start
+        elif (
+            self.strategy == REVERSE
+        ):  # reverse segment between i and j (inclusive of both endpoints)
+            segment = route[i : j + 1]
             segment.reverse()
-            route[i + 1 : j] = segment  # replace with the reverse one
+            route[i : j + 1] = segment  # replace with the reversed segment
 
         return route  # new neighbour
