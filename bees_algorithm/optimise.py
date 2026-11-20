@@ -98,9 +98,9 @@ def optimise_tsp(writer: ExperimentWriter | None = None):
                 logger.info(f"Run: {run+1} | Seed: {seed}")
 
                 tsp = SymmetricTSP(seed, tsp_cfg.path, version)
-                tracked = TrackedProblem(tsp, foc.ns, foc.max_evaluations)
+                tracked = TrackedProblem(tsp, tspc.ns, tspc.max_evaluations)
 
-                solver = BeesAlgorithmSolver(problem=tracked, config=foc)
+                solver = BeesAlgorithmSolver(problem=tracked, config=tspc)
                 start = time.perf_counter_ns()
                 try:
                     solver.run()

@@ -11,10 +11,11 @@ class FunctionOptimisationConfig:
     ns: int = 30  # Scouts (total nr of bees)
     ne: int = 3  # Elites (elite sites)
     nb: int = 10  # Selected sites (Top selected sites includes elites)
-    nre: int = 15  # Elite recruits (bees)
+    nre: int = 10  # Elite recruits (bees)
     nrb: int = 5  # Selected recruits (bees)
-    stlim: int = 100  # Stagnation count
-    shrink_factor: float = 0.2  # 20% shrink of the site/patch size
+    stlim: int = 15  # Stagnation count
+    ngh: float = 0.1  # Initial patch size; 10% of allowed range
+    shrink_factor: float = 0.8  # 80% reduction in patch size
 
 
 @dataclass(frozen=True)
@@ -57,10 +58,11 @@ class TSPConfig:
     ns: int = 30  # Scouts (total nr of bees)
     ne: int = 3  # Elites (elite sites)
     nb: int = 10  # Selected sites (Top selected sites includes elites)
-    nre: int = 15  # Elite recruits (bees)
+    nre: int = 10  # Elite recruits (bees)
     nrb: int = 5  # Selected recruits (bees)
-    stlim: int = 100  # Stagnation count
-    shrink_factor: float = 0.2  # 20% shrink of the site/patch size
+    stlim: int = 15  # Stagnation count
+    ngh: float = 0.1  # Initial patch size; 10% of allowed range
+    shrink_factor: float = 0.8  # 80% reduction in patch size
 
 
 @dataclass(frozen=True)

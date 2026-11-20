@@ -18,7 +18,7 @@ class BeesAlgorithmSolver:
         for _ in range(self.config.ns):
             vector = self.problem.initialise_scout()
             fitness = self.problem.evaluate(vector)
-            self.scouts.append(Bee(vector, fitness, self.config.shrink_factor))
+            self.scouts.append(Bee(vector, fitness, self.config.ngh))
 
     def rank_and_split_sites(self):
         scouts = sorted(
@@ -48,6 +48,7 @@ class BeesAlgorithmSolver:
 
             if site_stagnated:
                 site.stagnation_count += 1
+                site.patch_size = site.patch_size * self.config.shrink_factor
 
     def abandon_stagnated_sites(self):
         active_scouts = []
@@ -65,14 +66,14 @@ class BeesAlgorithmSolver:
 
     def replenish_scouts(self, count):
         """
-        Generates new random scout bees for the remaining population i.e. (ns - (nb + abandoned sites))
+        Generates new random scout bees for the remaining population i.e. (ns - nb) + abandoned sites
         This new scouts search the global space randomly so its exploration.
         """
 
         for _ in range(count):
             vector = self.problem.initialise_scout()
             fitness = self.problem.evaluate(vector)
-            self.scouts.append(Bee(vector, fitness, self.config.shrink_factor))
+            self.scouts.append(Bee(vector, fitness, self.config.ngh))
 
     def run(self):
         self.initialise()
@@ -88,7 +89,8 @@ class BeesAlgorithmSolver:
 
             abandoned = self.abandon_stagnated_sites()
 
-            self.replenish_scouts((self.config.ns - (self.config.nb + abandoned)))
+            # 30 recruits, 10 selected, 5 abandoned; then (30 - 10) + 5 = 25 new scouts
+            self.replenish_scouts((self.config.ns - self.config.nb) + abandoned)
 
     def save_experiment(self, run_time):
         self.problem.save_experiment(run_time)
