@@ -223,6 +223,14 @@ python -m evolution_strategy.plot_comparisons --summary-only
 
 Custom results folder: `--results-dir path/to/es_experiment_results`.
 
+**Dataset correlation figure** (reads only the OR-Library files in `data/`, so it needs no experiment results):
+
+```bash
+python -m evolution_strategy.plot_datasets
+```
+
+This writes `evolution_strategy/figures/dataset_correlations.png`: panel (a) is the `port1` correlation matrix, and panel (b) shows the spread of all pairwise correlations in each of the five datasets. Use `--heatmap-dataset port5` (for example) to show a different dataset in panel (a), and `--out-dir` to write elsewhere.
+
 ### Where the report files live
 
 The repository holds the selected **report outputs**; the separate export directory holds the **raw evidence**. These are not the same folder:
@@ -292,6 +300,7 @@ The verified local export returned **45/45 complete case folders and 450/450 run
 | `export_experiments.py` | Smoke/full experiments and reproducible CSV exports |
 | `plot_results.py` | Required and supplemental convergence plots |
 | `plot_comparisons.py` | Final-variance, runtime, and per-seed boxplot comparisons |
+| `plot_datasets.py` | Dataset correlation figure (data files only) |
 | `tests/` | Regression tests |
 
 ## 7. Verified results and limitations
