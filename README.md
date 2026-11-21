@@ -17,16 +17,18 @@ For algorithms, feasibility repair, inputs, parameters, reproducibility, tests, 
 
 Useful commands, executed from this repository root:
 
-```powershell
+```bash
 python -m pip install -r requirements.txt
 python -m pytest -q
 python -m evolution_strategy.export_experiments --mode smoke
 python -u -m evolution_strategy.export_experiments --mode full
+python -m evolution_strategy.audit_results
+python -m evolution_strategy.build_summary --mode full
 python -m evolution_strategy.plot_results --mode full --dataset port5 --alpha 0.50
 python -m evolution_strategy.plot_comparisons
 ```
 
-The `plot_comparisons` command expects the completed case outputs and `es_summary_45_cases.csv` in `../es_experiment_results/` by default. Plots do **not** rerun the optimization. Matplotlib is required for plotting; install with `python -m pip install matplotlib` if needed.
+All post-processing commands read the committed raw case outputs and `es_summary_45_cases.csv` from `evolution_strategy/results/` by default (mirroring `bees_algorithm/results/`). Plots, summaries, and audits do **not** rerun the optimization. Matplotlib is required for plotting; install with `python -m pip install -r requirements.txt`.
 
 ## Problem 1: Bees Algorithm
 
@@ -46,6 +48,6 @@ The Bees Algorithm subproject addresses symmetric Travelling Salesman Problem in
 
 ## Experimental files and collaboration
 
-Raw ES results and generated figures are stored by default in **`../es_experiment_results/`**, outside the source worktree. This keeps large histories separate from code changes. Back up or share that folder separately; Git commits/pull requests of the source alone do not carry the generated results.
+Raw ES per-run results (`runs.csv`), evaluation-by-evaluation convergence logs (`convergence.csv`, `run_histories.csv`), consolidated summary (`es_summary_45_cases.csv`), and validation report (`validation_report.json`) are stored inside the repository under **`evolution_strategy/results/`**, mirroring **`bees_algorithm/results/`**. Every audit, summary, and plotting script runs out of the box after cloning.
 
 The two subprojects have different experimental designs and should be interpreted and reported separately. No claim is made here that Bees Algorithm experiments have been completed or validated.

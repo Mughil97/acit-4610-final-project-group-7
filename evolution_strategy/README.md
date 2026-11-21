@@ -141,7 +141,7 @@ Smoke mode checks `port1`, `alpha=0.50`, all three variants, two seeds and 83 ev
 python -u -m evolution_strategy.export_experiments --mode full
 ```
 
-This runs the full 45-case grid. Each case is saved under `../es_experiment_results/full/`. Completed case folders with all expected output files are skipped when the command is repeated. **The current completion check establishes file presence, not a full checksum/content audit.** An interrupted case may require rerunning all ten seeds.
+This runs the full 45-case grid. Each case is saved under `evolution_strategy/results/full/`. Completed case folders with all expected output files are skipped when the command is repeated. **The current completion check establishes file presence, not a full checksum/content audit.** An interrupted case may require rerunning all ten seeds.
 
 **Each case contains five files:**
 
@@ -153,37 +153,17 @@ This runs the full 45-case grid. Each case is saved under `../es_experiment_resu
 | `run_histories.csv` | Evaluation index and separate archive best-so-far variance for each seed |
 | `complete.json` | Case completion metadata; written last |
 
-The exporter writes full raw results to the **sibling directory** `../es_experiment_results/`, outside the Git worktree. This is deliberate: the full histories are much larger than the report deliverables. **Do not delete that folder.** The repository separately tracks the consolidated 45-case summary and report figures under `evolution_strategy/report_data/` and `evolution_strategy/figures/`. The **raw per-seed `runs.csv` and `run_histories.csv` are not included in the normal reporting commit**; back them up and include them in the final raw-data submission.
+All 45 completed cases (450 per-seed runs and 13,500,000 evaluated points) are tracked directly inside the repository under `evolution_strategy/results/`, mirroring `bees_algorithm/results/`. The report deliverables (`es_summary_45_cases.csv`, `validation_report.json`, and PNG figures) are also tracked under `evolution_strategy/report_data/` and `evolution_strategy/figures/`.
 
 ### Reconstruct the 45-row summary CSV
 
-In PowerShell, from the repository root with all full exports present:
+From the repository root (cross-platform, without rerunning optimization):
 
-```powershell
-$rows = foreach ($file in Get-ChildItem ..\es_experiment_results\full -Recurse -Filter summary.csv) {
-    $s = Import-Csv $file.FullName
-    $r = Import-Csv (Join-Path $file.DirectoryName 'runs.csv') | Select-Object -First 1
-    [pscustomobject]@{
-        dataset = $s.dataset
-        alpha = $s.alpha
-        variant = $s.variant
-        num_assets = @(ConvertFrom-Json $s.best_weights_json).Count
-        target_return = $r.target_return
-        num_runs = $s.num_runs
-        evaluations_per_run = $s.evaluations
-        best_variance = $s.best_variance
-        mean_variance = $s.mean_variance
-        std_variance = $s.std_variance
-        feasible_rate_percent = $s.feasible_rate_percent
-        mean_runtime_seconds = $s.mean_runtime_seconds
-    }
-}
-$rows = $rows | Sort-Object dataset, @{Expression={[double]$_.alpha}}, variant
-$rows | Export-Csv ..\es_experiment_results\es_summary_45_cases.csv -NoTypeInformation -Encoding UTF8
-Write-Host "Summary rows: $($rows.Count)"
+```bash
+python -m evolution_strategy.build_summary --mode full
 ```
 
-Expected: `Summary rows: 45`.
+Expected: `Saved 45 ES case rows to evolution_strategy/results/es_summary_45_cases.csv`.
 
 ## 5. Generate figures without rerunning optimization
 
@@ -209,7 +189,7 @@ foreach ($d in @('port1','port2','port3','port4','port5')) {
 python -m evolution_strategy.plot_comparisons
 ```
 
-This generates the following **PNG and PDF** pairs inside `../es_experiment_results/figures/`:
+This generates the following **PNG and PDF** pairs inside `evolution_strategy/results/figures/`:
 
 - `mean_variance_by_dataset_full` - mean final portfolio variance across datasets for each alpha, with a log-scale y-axis to retain visibility of smaller dataset values.
 - `runtime_by_dataset_full` - runtime per seed, averaged over all three return targets, shown against each dataset and asset count.
@@ -217,11 +197,11 @@ This generates the following **PNG and PDF** pairs inside `../es_experiment_resu
 
 If you only have the consolidated summary CSV, you may produce **only the first two** without fabricating seed-level values:
 
-```powershell
+```bash
 python -m evolution_strategy.plot_comparisons --summary-only
 ```
 
-Custom results folder: `--results-dir path/to/es_experiment_results`.
+Custom results folder: `--results-dir path/to/results`.
 
 **Dataset correlation figure** (reads only the OR-Library files in `data/`, so it needs no experiment results):
 
@@ -231,61 +211,43 @@ python -m evolution_strategy.plot_datasets
 
 This writes `evolution_strategy/figures/dataset_correlations.png`: panel (a) is the `port1` correlation matrix, and panel (b) shows the spread of all pairwise correlations in each of the five datasets. Use `--heatmap-dataset port5` (for example) to show a different dataset in panel (a), and `--out-dir` to write elsewhere.
 
-### Where the report files live
+### Where the results and report files live
 
-The repository holds the selected **report outputs**; the separate export directory holds the **raw evidence**. These are not the same folder:
+Both the raw experiment evidence and the report deliverables are versioned inside the repository:
 
 ```text
 <repository root>/
     evolution_strategy/
-        figures/                          # Versioned report figures: 18 PNG + 18 PDF
+        figures/                          # Versioned report figures (19 PNGs)
         report_data/
-            es_summary_45_cases.csv      # Versioned 45-case results table
-        plot_results.py                  # Generate convergence plots
-        plot_comparisons.py              # Generate comparison plots
-
-../es_experiment_results/                # Local sibling directory; preserve separately
-    es_summary_45_cases.csv
-    figures/                             # Generated images and PDFs
-    full/
-        <case_name>/
-            summary.csv
-            runs.csv
-            convergence.csv
-            run_histories.csv
-            complete.json
-    smoke/                               # Testing only; not report results
+            es_summary_45_cases.csv       # Versioned 45-case results table
+            validation_report.json        # Versioned audit report
+        results/                          # Raw per-run outputs & convergence logs (mirrors bees_algorithm/results/)
+            README.md
+            es_summary_45_cases.csv
+            validation_report.json
+            full/
+                <case_name>/
+                    summary.csv
+                    runs.csv
+                    convergence.csv
+                    run_histories.csv
+                    complete.json
+        build_summary.py                  # Rebuild consolidated summary CSV from raw cases
+        audit_results.py                  # Audit all 45 cases, 450 runs, and 13.5M evaluations
+        plot_results.py                   # Generate convergence plots
+        plot_comparisons.py               # Generate comparison plots
 ```
-
-To regenerate and refresh the *versioned* report figures after plotting locally (PowerShell from the repository root):
-
-```powershell
-Copy-Item ..\es_experiment_results\figures\*_full.png .\evolution_strategy\figures\ -Force
-Copy-Item ..\es_experiment_results\es_summary_45_cases.csv .\evolution_strategy\report_data\ -Force
-```
-
 
 ### Verify saved raw results (without rerunning optimization)
 
-From the repository root in PowerShell:
+From the repository root:
 
-```powershell
-$root = '..\es_experiment_results\full'
-$cases = @(Get-ChildItem $root -Directory)
-$required = @('summary.csv','runs.csv','convergence.csv','run_histories.csv','complete.json')
-$complete = @($cases | Where-Object {
-    $folder = $_.FullName
-    @($required | Where-Object { -not (Test-Path (Join-Path $folder $_)) }).Count -eq 0
-})
-$runCount = 0
-foreach ($case in $complete) {
-    $runCount += @(Import-Csv (Join-Path $case.FullName 'runs.csv')).Count
-}
-Write-Host "Complete cases: $($complete.Count) / 45"
-Write-Host "Individual runs: $runCount / 450"
+```bash
+python -m evolution_strategy.audit_results
 ```
 
-The verified local export returned **45/45 complete case folders and 450/450 run records**. These checks confirm presence and counts, **not** that every history has exactly 30,000 rows or that every saved weight vector meets all constraints. Keep the full raw files for deeper validation and submission.
+This verifies all **45/45 complete case folders**, **450/450 seeded runs**, **13,500,000 archive evaluations** (non-increasing histories, exact lengths, and matching mean curves), every saved portfolio weight vector against the `1e-8` feasibility constraints, and exact consistency with `evolution_strategy/report_data/es_summary_45_cases.csv`.
 
 ## 6. Main source files
 
@@ -296,8 +258,10 @@ The verified local export returned **45/45 complete case folders and 450/450 run
 | `repair.py` | Euclidean simplex projection and return-feasibility mixing |
 | `algorithms.py` | Three ES implementation variants and best-so-far archive |
 | `evolution_strategies.py` | Seeded run interface, timing, final feasibility |
-| `results.py` | 10-seed case summaries and mean convergence history |
+| `results.py` | 10-seed case summaries, mean convergence history, and default results path |
 | `export_experiments.py` | Smoke/full experiments and reproducible CSV exports |
+| `build_summary.py` | Cross-platform consolidated 45-case summary builder |
+| `audit_results.py` | Full audit of raw runs, weights, constraints, and convergence histories |
 | `plot_results.py` | Required and supplemental convergence plots |
 | `plot_comparisons.py` | Final-variance, runtime, and per-seed boxplot comparisons |
 | `plot_datasets.py` | Dataset correlation figure (data files only) |

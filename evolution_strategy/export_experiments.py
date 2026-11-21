@@ -8,6 +8,7 @@ from pathlib import Path
 
 from evolution_strategy.results import (
     ALPHAS,
+    DEFAULT_RESULTS_DIR,
     PORTFOLIOS,
     summarize_case,
 )
@@ -131,7 +132,7 @@ def main():
         "--mode", choices=["smoke", "full"], required=True
     )
     parser.add_argument(
-        "--output", default="../es_experiment_results"
+        "--output", default=str(DEFAULT_RESULTS_DIR)
     )
     args = parser.parse_args()
 

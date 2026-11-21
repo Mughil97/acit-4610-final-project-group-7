@@ -1,0 +1,2 @@
+dataset,alpha,variant,num_runs,evaluations,best_variance,mean_variance,std_variance,feasible_rate_percent,mean_runtime_seconds,best_weights_json
+port1,0.75,ten_plus_seventy,10,30000,0.002310853510263926,0.0023108535146301903,8.154139292455034e-12,100.0,1.8664177600032417,"[0.0, 0.0, 0.0, 0.0, 0.5860133026450475, 0.0, 0.0, 0.0, 0.19227348018494395, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.22171321717000858, 0.0, 0.0]"

@@ -20,7 +20,7 @@ from evolution_strategy.evaluation import (
     evaluate_profit,
     get_target_return,
 )
-from evolution_strategy.results import PORTFOLIOS
+from evolution_strategy.results import DEFAULT_RESULTS_DIR, PORTFOLIOS
 
 VARIANTS = ("one_plus_one", "ten_plus_seventy", "ten_comma_seventy")
 OR_LIBRARY_COUNTS = {"port1": 31, "port2": 85, "port3": 89, "port4": 98, "port5": 225}
@@ -214,11 +214,11 @@ def inspect_consolidated(path, case_summaries, budget, num_runs):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--results-dir", type=Path, default=Path("../es_experiment_results/full"))
+    parser.add_argument("--results-dir", type=Path, default=DEFAULT_RESULTS_DIR / "full")
     parser.add_argument("--summary", type=Path,
                         default=Path("evolution_strategy/report_data/es_summary_45_cases.csv"))
     parser.add_argument("--report-out", type=Path,
-                        default=Path("../es_experiment_results/validation_report.json"))
+                        default=DEFAULT_RESULTS_DIR / "validation_report.json")
     parser.add_argument("--budget", type=int, default=30000)
     parser.add_argument("--num-runs", type=int, default=10)
     parser.add_argument("--datasets", nargs="+", default=list(OR_LIBRARY_COUNTS))
