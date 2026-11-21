@@ -126,17 +126,15 @@ def export_case(summary, folder, budget):
     os.replace(temporary, marker)
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--mode", choices=["smoke", "full"], required=True
-    )
-    parser.add_argument(
-        "--output", default=str(DEFAULT_RESULTS_DIR)
-    )
-    args = parser.parse_args()
+def optimise_es(
+    mode: str = "full",
+    output_dir: Path | str = DEFAULT_RESULTS_DIR,
+) -> Path:
+    """Run ES experiments and export CSVs, skipping completed cases."""
+    if mode not in ("smoke", "full"):
+        raise ValueError(f"Unsupported mode: {mode!r}")
 
-    if args.mode == "smoke":
+    if mode == "smoke":
         portfolios = {"port1": PORTFOLIOS["port1"]}
         alphas = (0.50,)
         num_runs = 2
@@ -147,7 +145,8 @@ def main():
         num_runs = 10
         budget = 30000
 
-    output_root = Path(args.output) / args.mode
+    output_base = Path(output_dir)
+    output_root = output_base / mode
 
     for dataset_name, portfolio in portfolios.items():
         for alpha in alphas:
@@ -187,11 +186,25 @@ def main():
                 export_case(summary, folder, budget)
                 print(f"SAVED: {case_name}", flush=True)
 
-   # Generate the consolidated summary after completing the full experiment.
-    if args.mode == "full":
-        output_csv = Path(args.output) / SUMMARY_NAME
+    # Generate the consolidated summary after completing the full experiment.
+    if mode == "full":
+        output_csv = output_base / SUMMARY_NAME
         count = build_summary(output_root, output_csv)
         print(f"SUMMARY: {count} cases -> {output_csv}", flush=True)
+
+    return output_root
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--mode", choices=["smoke", "full"], required=True
+    )
+    parser.add_argument(
+        "--output", default=str(DEFAULT_RESULTS_DIR)
+    )
+    args = parser.parse_args()
+    optimise_es(mode=args.mode, output_dir=args.output)
 
 
 if __name__ == "__main__":
