@@ -117,6 +117,21 @@ def build_summary(cases_dir: Path, out_path: Path) -> int:
     return len(rows)
 
 
+def summarize_all_es(
+    mode: str = "full",
+    results_dir: Path | str = DEFAULT_RESULTS_DIR,
+) -> int:
+    """Build the consolidated ES summary CSV from saved case folders."""
+    base_dir = Path(results_dir)
+    cases_dir = base_dir / mode
+    out_path = base_dir / (
+        SUMMARY_NAME if mode == "full" else "es_summary_smoke.csv"
+    )
+    count = build_summary(cases_dir, out_path)
+    print(f"Saved {count} ES case rows to {out_path}")
+    return count
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(

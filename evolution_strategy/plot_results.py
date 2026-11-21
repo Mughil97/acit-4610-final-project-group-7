@@ -9,7 +9,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-from evolution_strategy.results import DEFAULT_RESULTS_DIR
+from evolution_strategy.results import ALPHAS, DEFAULT_RESULTS_DIR, PORTFOLIOS
 
 
 VARIANT_LABELS = {
@@ -104,6 +104,51 @@ def plot_convergence(mode, dataset, alpha, results_root):
     plt.close(fig)
 
     print(f"Saved PNG: {output / (filename + '.png')}")
+
+
+def generate_all_plots_es(
+    mode: str = "full",
+    results_dir: Path | str = DEFAULT_RESULTS_DIR,
+    dataset_figures_dir: Path | str | None = None,
+) -> None:
+    """Generate convergence, comparison, and dataset plots for ES results."""
+    from evolution_strategy.plot_comparisons import (
+        load_summary,
+        plot_boxplot,
+        plot_mean_variance,
+        plot_runtime,
+    )
+    from evolution_strategy.plot_datasets import (
+        DEFAULT_OUT_DIR as DEFAULT_DATASET_FIGURES_DIR,
+        FIGURE_NAME as DATASET_FIGURE_NAME,
+        plot_dataset_correlations,
+    )
+
+    results_root = Path(results_dir)
+    datasets = ("port1",) if mode == "smoke" else tuple(PORTFOLIOS.keys())
+    alphas = (0.50,) if mode == "smoke" else ALPHAS
+
+    for dataset in datasets:
+        for alpha in alphas:
+            plot_convergence(mode, dataset, alpha, results_root)
+
+    if mode == "full":
+        summary = load_summary(results_root / "es_summary_45_cases.csv")
+        figures_dir = results_root / "figures"
+        plot_mean_variance(summary, figures_dir)
+        plot_runtime(summary, figures_dir)
+        plot_boxplot(summary, results_root, figures_dir)
+
+    if dataset_figures_dir is not None:
+        dataset_out_dir = Path(dataset_figures_dir)
+    elif results_root == DEFAULT_RESULTS_DIR:
+        dataset_out_dir = DEFAULT_DATASET_FIGURES_DIR
+    else:
+        dataset_out_dir = results_root / "figures"
+
+    plot_dataset_correlations(
+        PORTFOLIOS, dataset_out_dir / DATASET_FIGURE_NAME
+    )
 
 
 def main():
