@@ -20,11 +20,10 @@ Useful commands, executed from this repository root:
 ```bash
 python -m pip install -r requirements.txt
 python -m pytest -q
-python -m evolution_strategy.export_experiments --mode smoke
-python -u -m evolution_strategy.export_experiments --mode full
+python -u -m evolution_strategy.export_experiments
 python -m evolution_strategy.audit_results
-python -m evolution_strategy.build_summary --mode full
-python -m evolution_strategy.plot_results --mode full --dataset port5 --alpha 0.50
+python -m evolution_strategy.build_summary
+python -m evolution_strategy.plot_results --dataset port5 --alpha 0.50
 python -m evolution_strategy.plot_comparisons
 ```
 
