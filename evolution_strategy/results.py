@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 import math
+from pathlib import Path
 
 from evolution_strategy.evolution_strategies import (
     ESResult,
@@ -14,6 +15,8 @@ from evolution_strategy.portfolio import (
     portfolio4,
     portfolio5,
 )
+
+DEFAULT_RESULTS_DIR = Path("evolution_strategy/results")
 
 PORTFOLIOS: dict[str, list[Portfolio]] = {
     "port1": portfolio1,

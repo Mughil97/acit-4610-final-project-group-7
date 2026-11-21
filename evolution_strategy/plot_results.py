@@ -4,7 +4,12 @@ import argparse
 import csv
 from pathlib import Path
 
+import matplotlib
+
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+
+from evolution_strategy.results import DEFAULT_RESULTS_DIR
 
 
 VARIANT_LABELS = {
@@ -109,7 +114,7 @@ def main():
     parser.add_argument("--dataset", default="port5")
     parser.add_argument("--alpha", type=float, default=0.50)
     parser.add_argument(
-        "--results-dir", default="../es_experiment_results"
+        "--results-dir", default=str(DEFAULT_RESULTS_DIR)
     )
 
     args = parser.parse_args()

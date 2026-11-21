@@ -126,3 +126,21 @@ def test_completed_cases_are_skipped(tmp_path, monkeypatch, capsys):
 
     captured = capsys.readouterr()
     assert captured.out.count("SKIP:") == 3
+
+
+def test_default_results_dir_is_in_repo_with_complete_full_grid():
+    """All raw ES results live inside the repository, mirroring bees_algorithm/results/."""
+    from evolution_strategy.results import DEFAULT_RESULTS_DIR
+
+    assert not DEFAULT_RESULTS_DIR.is_absolute()
+    assert ".." not in DEFAULT_RESULTS_DIR.parts
+    assert DEFAULT_RESULTS_DIR == export_experiments.Path("evolution_strategy/results")
+
+    full_dir = DEFAULT_RESULTS_DIR / "full"
+    assert full_dir.is_dir()
+    completed = [
+        folder for folder in full_dir.iterdir()
+        if folder.is_dir() and (folder / "complete.json").is_file()
+    ]
+    assert len(completed) == 45
+    assert (DEFAULT_RESULTS_DIR / "es_summary_45_cases.csv").is_file()

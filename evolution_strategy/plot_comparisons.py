@@ -4,8 +4,8 @@ Run from the repository root::
 
     python -m evolution_strategy.plot_comparisons
 
-The default experiment results folder is a sibling of the repository worktree:
-../es_experiment_results. This script does NOT rerun optimization.
+The default experiment results folder lives inside the repository at
+evolution_strategy/results. This script does NOT rerun optimization.
 """
 
 from __future__ import annotations
@@ -21,6 +21,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
+
+from evolution_strategy.results import DEFAULT_RESULTS_DIR
 
 
 DATASETS = ("port1", "port2", "port3", "port4", "port5")
@@ -271,7 +273,7 @@ def plot_boxplot(summary: dict, results_dir: Path, figures_dir: Path,
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--results-dir", type=Path, default=Path("../es_experiment_results"))
+    parser.add_argument("--results-dir", type=Path, default=DEFAULT_RESULTS_DIR)
     parser.add_argument("--dataset", choices=DATASETS, default="port5")
     parser.add_argument("--alpha", type=float, choices=ALPHAS, default=0.50)
     parser.add_argument("--summary-only", action="store_true",

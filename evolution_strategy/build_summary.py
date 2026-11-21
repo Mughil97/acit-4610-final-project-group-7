@@ -1,7 +1,7 @@
 # This file was generated with AI assistance; Group 7 must review it.
 """Build the consolidated ES summary from completed case exports.
 
-Run from the repository root, after extracting the archived raw results::
+Run from the repository root::
 
     python -m evolution_strategy.build_summary --mode full
 
@@ -17,6 +17,7 @@ import os
 from pathlib import Path
 
 from evolution_strategy.plot_comparisons import SUMMARY_COLUMNS
+from evolution_strategy.results import DEFAULT_RESULTS_DIR
 
 SUMMARY_NAME = "es_summary_45_cases.csv"
 
@@ -119,7 +120,7 @@ def build_summary(cases_dir: Path, out_path: Path) -> int:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--results-dir", type=Path, default=Path("../es_experiment_results"),
+        "--results-dir", type=Path, default=DEFAULT_RESULTS_DIR,
         help="Parent directory containing full/ and/or smoke/ case exports",
     )
     parser.add_argument("--mode", choices=("full", "smoke"), default="full")

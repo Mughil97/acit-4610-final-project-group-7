@@ -1,0 +1,8 @@
+{
+  "status": "complete",
+  "dataset": "port1",
+  "alpha": 0.25,
+  "variant": "ten_comma_seventy",
+  "num_runs": 10,
+  "evaluations_per_run": 30000
+}
