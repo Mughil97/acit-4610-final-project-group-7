@@ -3,7 +3,7 @@
 
 Run from the repository root::
 
-    python -m evolution_strategy.build_summary --mode full
+    python -m evolution_strategy.build_summary
 
 This tool reads saved CSV files only; it does not run optimization.
 """
@@ -118,15 +118,12 @@ def build_summary(cases_dir: Path, out_path: Path) -> int:
 
 
 def summarize_all_es(
-    mode: str = "full",
     results_dir: Path | str = DEFAULT_RESULTS_DIR,
 ) -> int:
     """Build the consolidated ES summary CSV from saved case folders."""
     base_dir = Path(results_dir)
-    cases_dir = base_dir / mode
-    out_path = base_dir / (
-        SUMMARY_NAME if mode == "full" else "es_summary_smoke.csv"
-    )
+    cases_dir = base_dir / "full"
+    out_path = base_dir / SUMMARY_NAME
     count = build_summary(cases_dir, out_path)
     print(f"Saved {count} ES case rows to {out_path}")
     return count
@@ -136,27 +133,23 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--results-dir", type=Path, default=DEFAULT_RESULTS_DIR,
-        help="Parent directory containing full/ and/or smoke/ case exports",
+        help="Parent directory containing full/ case exports",
     )
-    parser.add_argument("--mode", choices=("full", "smoke"), default="full")
     parser.add_argument(
         "--out", type=Path, default=None,
-        help="Output CSV path (default: <results-dir>/es_summary_45_cases.csv for full)",
+        help="Output CSV path (default: <results-dir>/es_summary_45_cases.csv)",
     )
     args = parser.parse_args()
-    cases_dir = args.results_dir / args.mode
-    out_path = args.out or (
-        args.results_dir / (SUMMARY_NAME if args.mode == "full" else "es_summary_smoke.csv")
-    )
-    if args.mode == "full":
-        completed_count = sum(
-            folder.is_dir() and (folder / "complete.json").is_file()
-            for folder in cases_dir.iterdir()
-        ) if cases_dir.is_dir() else 0
-        if completed_count != 45:
-            parser.error(
-                f"Expected 45 completed cases in full mode; found {completed_count}"
-            )
+    cases_dir = args.results_dir / "full"
+    out_path = args.out or (args.results_dir / SUMMARY_NAME)
+    completed_count = sum(
+        folder.is_dir() and (folder / "complete.json").is_file()
+        for folder in cases_dir.iterdir()
+    ) if cases_dir.is_dir() else 0
+    if completed_count != 45:
+        parser.error(
+            f"Expected 45 completed cases; found {completed_count}"
+        )
     count = build_summary(cases_dir, out_path)
     print(f"Saved {count} ES case rows to {out_path}")
 

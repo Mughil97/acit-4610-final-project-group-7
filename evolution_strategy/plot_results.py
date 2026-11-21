@@ -19,12 +19,9 @@ VARIANT_LABELS = {
 }
 
 
-def plot_convergence(mode, dataset, alpha, results_root):
-    budget = 83 if mode == "smoke" else 30000
-    num_runs = 2 if mode == "smoke" else 10
-
+def plot_convergence(dataset, alpha, results_root, budget=30000, num_runs=10):
     case = f"{dataset}_alpha{int(alpha * 100):03d}"
-    results_dir = results_root / mode
+    results_dir = results_root / "full"
 
     fig, ax = plt.subplots(figsize=(8, 5))
 
@@ -93,7 +90,7 @@ def plot_convergence(mode, dataset, alpha, results_root):
     output = results_root / "figures"
     output.mkdir(parents=True, exist_ok=True)
 
-    filename = f"convergence_{case}_{mode}"
+    filename = f"convergence_{case}_full"
 
     fig.savefig(
         output / f"{filename}.png",
@@ -107,7 +104,6 @@ def plot_convergence(mode, dataset, alpha, results_root):
 
 
 def generate_all_plots_es(
-    mode: str = "full",
     results_dir: Path | str = DEFAULT_RESULTS_DIR,
     dataset_figures_dir: Path | str | None = None,
 ) -> None:
@@ -125,19 +121,16 @@ def generate_all_plots_es(
     )
 
     results_root = Path(results_dir)
-    datasets = ("port1",) if mode == "smoke" else tuple(PORTFOLIOS.keys())
-    alphas = (0.50,) if mode == "smoke" else ALPHAS
 
-    for dataset in datasets:
-        for alpha in alphas:
-            plot_convergence(mode, dataset, alpha, results_root)
+    for dataset in PORTFOLIOS:
+        for alpha in ALPHAS:
+            plot_convergence(dataset, alpha, results_root)
 
-    if mode == "full":
-        summary = load_summary(results_root / "es_summary_45_cases.csv")
-        figures_dir = results_root / "figures"
-        plot_mean_variance(summary, figures_dir)
-        plot_runtime(summary, figures_dir)
-        plot_boxplot(summary, results_root, figures_dir)
+    summary = load_summary(results_root / "es_summary_45_cases.csv")
+    figures_dir = results_root / "figures"
+    plot_mean_variance(summary, figures_dir)
+    plot_runtime(summary, figures_dir)
+    plot_boxplot(summary, results_root, figures_dir)
 
     if dataset_figures_dir is not None:
         dataset_out_dir = Path(dataset_figures_dir)
@@ -153,9 +146,6 @@ def generate_all_plots_es(
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--mode", choices=["smoke", "full"], required=True
-    )
     parser.add_argument("--dataset", default="port5")
     parser.add_argument("--alpha", type=float, default=0.50)
     parser.add_argument(
@@ -165,7 +155,6 @@ def main():
     args = parser.parse_args()
 
     plot_convergence(
-        args.mode,
         args.dataset,
         args.alpha,
         Path(args.results_dir),

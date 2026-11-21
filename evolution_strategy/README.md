@@ -127,18 +127,10 @@ The tests validate implementation behavior but do not independently establish gl
 python -c "from evolution_strategy.results import PORTFOLIOS; from evolution_strategy.evolution_strategies import run_es; r = run_es(PORTFOLIOS['port1'], alpha=0.50, variant='one_plus_one', max_iterations=30000, seed=0); print('feasible=', r.is_valid, 'evaluations=', len(r.history), 'variance=', r.cost)"
 ```
 
-### Smoke export (testing only)
-
-```powershell
-python -m evolution_strategy.export_experiments --mode smoke
-```
-
-Smoke mode checks `port1`, `alpha=0.50`, all three variants, two seeds and 83 evaluations. **Do not use smoke results in the final performance comparison.**
-
 ### Full export
 
 ```powershell
-python -u -m evolution_strategy.export_experiments --mode full
+python -u -m evolution_strategy.export_experiments
 ```
 
 This runs the full 45-case grid. Each case is saved under `evolution_strategy/results/full/`. Completed case folders with all expected output files are skipped when the command is repeated. **The current completion check establishes file presence, not a full checksum/content audit.** An interrupted case may require rerunning all ten seeds.
@@ -160,7 +152,7 @@ All 45 completed cases (450 per-seed runs and 13,500,000 evaluated points) are t
 From the repository root (cross-platform, without rerunning optimization):
 
 ```bash
-python -m evolution_strategy.build_summary --mode full
+python -m evolution_strategy.build_summary
 ```
 
 Expected: `Saved 45 ES case rows to evolution_strategy/results/es_summary_45_cases.csv`.
@@ -170,7 +162,7 @@ Expected: `Saved 45 ES case rows to evolution_strategy/results/es_summary_45_cas
 **Professor-required convergence figure** - `port5`, `alpha=0.50`, 10 seeds:
 
 ```powershell
-python -m evolution_strategy.plot_results --mode full --dataset port5 --alpha 0.50
+python -m evolution_strategy.plot_results --dataset port5 --alpha 0.50
 ```
 
 **All 15 full convergence plots:**
@@ -178,7 +170,7 @@ python -m evolution_strategy.plot_results --mode full --dataset port5 --alpha 0.
 ```powershell
 foreach ($d in @('port1','port2','port3','port4','port5')) {
     foreach ($a in @(0.25,0.50,0.75)) {
-        python -m evolution_strategy.plot_results --mode full --dataset $d --alpha $a
+        python -m evolution_strategy.plot_results --dataset $d --alpha $a
     }
 }
 ```

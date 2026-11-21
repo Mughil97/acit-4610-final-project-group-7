@@ -121,7 +121,7 @@ def test_full_export_writes_the_consolidated_summary(tmp_path, monkeypatch):
         export_experiments, "summarize_case", must_not_optimize
     )
     monkeypatch.setattr(sys, "argv", [
-        "export_experiments", "--mode", "full", "--output", str(root),
+        "export_experiments", "--output", str(root),
     ])
 
     export_experiments.main()
