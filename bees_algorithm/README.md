@@ -1,6 +1,6 @@
 # Problem 1 (Optimisation using Bees Algorithm)
 
-The problem 1 is optimisation problem using Bees Algorithm. The problem is made up of two parts Part A Symmetric Travelling Salesman Problem (TSP) and Part B Continuous Function Optimisation.
+The problem 1 is optimisation problem using Bees Algorithm. The problem is made up of two parts: Part A Symmetric Travelling Salesman Problem (TSP) and Part B Continuous Function Optimisation.
 
 ## Bees Algorithm
 The bees algorithm is a population-based optimization algorithm. It maintains a whole population simultaneously instead of tracking one point. A population is a collection of bees and each bee represents one possible solution to the problem. 
