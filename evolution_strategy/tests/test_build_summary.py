@@ -98,27 +98,39 @@ def test_missing_or_empty_results_are_reported(tmp_path):
 
 
 def test_full_export_writes_the_consolidated_summary(tmp_path, monkeypatch):
-    """End-to-end full-mode integration using preexisting completed exports."""
+    """End-to-end full-mode integration verifying all 45 cases run and summarize."""
     root = tmp_path / "exports"
     cases = root / "full"
-    for dataset in export_experiments.PORTFOLIOS:
-        for alpha in export_experiments.ALPHAS:
-            for variant in export_experiments.VARIANTS:
-                folder = _case(cases, dataset, str(alpha), variant)
-                (folder / "convergence.csv").write_text("test\n", encoding="utf-8")
-                (folder / "run_histories.csv").write_text("test\n", encoding="utf-8")
-
 
     # =====================================================================
     # BEGIN AI-ASSISTED SECTION
-    # Purpose: Verify that completed experiments are not rerun.
+    # Purpose: Verify that export_experiments.main() always executes all 45
+    #          cases (even if outputs already exist) and builds the summary.
     # =====================================================================
+    for dataset in export_experiments.PORTFOLIOS:
+        for alpha in export_experiments.ALPHAS:
+            for variant in export_experiments.VARIANTS:
+                folder = _case(cases, dataset, str(alpha), variant, best=0.999)
+                (folder / "convergence.csv").write_text("stale\n", encoding="utf-8")
+                (folder / "run_histories.csv").write_text("stale\n", encoding="utf-8")
 
-    def must_not_optimize(**kwargs):
-        pytest.fail("Unexpected optimization of already-complete experiment")
+    executed_cases = []
+
+    def fake_summarize_case(**kwargs):
+        executed_cases.append(
+            (kwargs["dataset_name"], kwargs["alpha"], kwargs["variant"])
+        )
+        return (kwargs["dataset_name"], kwargs["alpha"], kwargs["variant"])
+
+    def fake_export_case(summary, folder, budget):
+        dataset, alpha, variant = summary
+        _case(cases, dataset, str(alpha), variant, best=0.001)
 
     monkeypatch.setattr(
-        export_experiments, "summarize_case", must_not_optimize
+        export_experiments, "summarize_case", fake_summarize_case
+    )
+    monkeypatch.setattr(
+        export_experiments, "export_case", fake_export_case
     )
     monkeypatch.setattr(sys, "argv", [
         "export_experiments", "--output", str(root),
@@ -126,9 +138,11 @@ def test_full_export_writes_the_consolidated_summary(tmp_path, monkeypatch):
 
     export_experiments.main()
 
+    assert len(executed_cases) == 45
     rows = _read(root / build_summary.SUMMARY_NAME)
     assert len(rows) == 45
     assert set(rows[0]) == SUMMARY_COLUMNS
+    assert all(float(row["best_variance"]) == pytest.approx(0.001) for row in rows)
 
     # =====================================================================
     # END AI-ASSISTED SECTION

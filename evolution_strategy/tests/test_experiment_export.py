@@ -84,8 +84,13 @@ def test_export_rejects_incorrect_budget(tmp_path, sample_summary):
     assert not (folder / "complete.json").exists()
 
 
-def test_completed_cases_are_skipped(tmp_path, monkeypatch, caplog):
-    """A repeated run should not recompute completed cases."""
+# =============================================================================
+# BEGIN AI-ASSISTED SECTION
+# Purpose: Verify that preexisting completed cases are always rerun rather
+#          than skipped.
+# =============================================================================
+def test_completed_cases_are_always_rerun(tmp_path, monkeypatch, caplog):
+    """A repeated run should recompute every case even if outputs exist."""
     for variant in export_experiments.VARIANTS:
         name = f"port1_alpha050_{variant}_e83_r2"
         folder = tmp_path / "full" / name
@@ -102,14 +107,25 @@ def test_completed_cases_are_skipped(tmp_path, monkeypatch, caplog):
             "run_histories.csv",
         ):
             (folder / filename).write_text(
-                "test data", encoding="utf-8"
+                "stale data", encoding="utf-8"
             )
 
-    def should_not_run(**kwargs):
-        pytest.fail("Completed case was unexpectedly recomputed")
+    ran_variants = []
+
+    def fake_summarize_case(**kwargs):
+        ran_variants.append(kwargs["variant"])
+        return object()
+
+    exported = []
+
+    def fake_export_case(summary, folder, budget):
+        exported.append(folder.name)
 
     monkeypatch.setattr(
-        export_experiments, "summarize_case", should_not_run
+        export_experiments, "summarize_case", fake_summarize_case
+    )
+    monkeypatch.setattr(
+        export_experiments, "export_case", fake_export_case
     )
     monkeypatch.setattr(
         export_experiments, "build_summary", lambda *args: 3
@@ -124,7 +140,12 @@ def test_completed_cases_are_skipped(tmp_path, monkeypatch, caplog):
             budget=83,
         )
 
-    assert caplog.text.count("SKIP:") == 3
+    assert ran_variants == list(export_experiments.VARIANTS.keys())
+    assert len(exported) == 3
+    assert "SKIP:" not in caplog.text
+# =============================================================================
+# END AI-ASSISTED SECTION
+# =============================================================================
 
 
 def test_default_results_dir_is_in_repo_with_complete_full_grid():

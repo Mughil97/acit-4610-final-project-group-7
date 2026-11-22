@@ -129,6 +129,11 @@ def export_case(summary, folder, budget):
     os.replace(temporary, marker)
 
 
+# =============================================================================
+# BEGIN AI-ASSISTED SECTION
+# Purpose: Always execute all ES experiment cases and regenerate summaries
+#          without skipping preexisting completed case directories.
+# =============================================================================
 def optimise_es(
     output_dir: Path | str = DEFAULT_RESULTS_DIR,
     portfolios=PORTFOLIOS,
@@ -136,7 +141,7 @@ def optimise_es(
     num_runs: int = 10,
     budget: int = 30000,
 ) -> Path:
-    """Run ES experiments and export CSVs, skipping completed cases."""
+    """Run all ES experiments, export CSVs, and rebuild the consolidated summary."""
     output_base = Path(output_dir)
     output_root = output_base / "full"
 
@@ -154,21 +159,6 @@ def optimise_es(
                     f"_{variant}_e{budget}_r{num_runs}"
                 )
                 folder = output_root / case_name
-
-                required_files = (
-                    "summary.csv",
-                    "runs.csv",
-                    "convergence.csv",
-                    "run_histories.csv",
-                    "complete.json",
-                )
-
-                if all(
-                    (folder / filename).is_file()
-                    for filename in required_files
-                ):
-                    logger.info(f"SKIP: {case_name}")
-                    continue
 
                 logger.info(f"RUN: {case_name}")
 
@@ -195,6 +185,9 @@ def optimise_es(
     logger.info(f"SUMMARY: {count} cases -> {output_csv}")
 
     return output_root
+# =============================================================================
+# END AI-ASSISTED SECTION
+# =============================================================================
 
 
 def main():
