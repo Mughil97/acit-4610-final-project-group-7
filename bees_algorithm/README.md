@@ -1,176 +1,137 @@
-# Problem 1 (Optimisation using Bees Algorithm)
+# Problem 1 — Optimisation Using the Bees Algorithm
 
-The problem 1 is optimisation problem using Bees Algorithm. The problem is made up of two parts Part A Symmetric Travelling Salesman Problem (TSP) and Part B Continuous Function Optimisation.
+Problem 1 applies the **Bees Algorithm (BA)** [1] to two optimisation tasks: **Part A** (Symmetric Travelling Salesman Problem) and **Part B** (Continuous Function Optimisation).
 
 ## Bees Algorithm
-The bees algorithm is a population-based optimization algorithm. It maintains a whole population simultaneously instead of tracking one point. A population is a collection of bees and each bee represents one possible solution to the problem. 
 
-A scout is a bee in the population. The bee consists of a fitness and a site. The site is a solution that can be explored further and we want to find better solutions around this site. We do this by creating new neighbouring solutions (exploitation).  The best bee is the bee with the lowest fitness and it becomes a part of the elite sites. We also select other, potentially good sites. The sites are selected based on the bee’s fitness: the lower the better. The unselected sites are replaced by new bees. 
+The Bees Algorithm is a population-based metaheuristic inspired by honeybee foraging. It maintains a population of `ns` scout bees, where each bee represents a candidate solution and carries a local neighbourhood size (`patch_size`) and stagnation counter.
 
-
-> TODO: Explain the algorithm and its parameters with pseudo code/flow chart
-
-## Part A - Symmetric Travelling Salesman Problem (TSP)
-
-The travelling salesman problem involves visiting a number of cities exactly once and then returning to the start city. The objective is to find the route which minimizes the total distance travelled when doing a round trip. 
-
-The routes are represented as permutations where the first element is the starting city. A bee is a route and its fitness is the total distance travelled when travelling this route. We calculate the distances using rounded Euclidean distances, and we include the return edge. 
-
-The scouts are initialized randomly and the neighbours are initialized by swapping two cities (their positions) or by reversing a segment between two cities. The first city is the starting city and will always be fixed. 
-
-**Rounded Euclidean distance**: 
-$d_{ij} = \text{floor}\left\(\sqrt{(a_i-a_j)^2 + (b_i-b_j)^2} + 0.5\right)$
-
-## Part B - Continuous Function Optimisation
-
-The optimisation algorithms like the Bees Algorithm are evaluated using common functions. This helps to understand if the algorithm can escape local minima and reach global minima. \
-For this project the Bees Algorithm will be evaluated against the following functions,
-
-**Sphere** [1]:
-$f(x) = \sum_{i=1}^D x_i^2$ \
-Bounds: $x_i \in [-5.12, 5.12]$. Global minimum: $f(0) = 0$. This is a convex, unimodal function.
-
-**Rosenbrock** [2]:
-$f(x) = \sum_{i=1}^{D-1}[100(x_{i+1}-x_i^2)^2+(1-x_1)^2]$ \
-Bounds: $x_1 \in [-5,10]$. Global minimum: $f(1) = 0$. Its narrow-curved valley makes progress toward the
-optimum difficult.
-
-**Rastrigin** [3]:
-$f(x) = 10D + \sum_{i=1}^D [x_i^2 -10\cos(2 \pi x_i)]$ \
-Bounds: $x_i \in [-5.12, 5.12]$. Global minimum: $f(𝟎) = 0$. It has many local minima.
-
-**Ackley** [4]
-$f(x) = -20 \cdot \exp( -0.2 \sqrt{\frac{1}{D} \sum_{i=1}^D x_i^2}) - \exp(\frac{1}{D} \sum_{i=1}^D \cos(2 \pi x_i)) + 20 + \exp(1)$ \
-Bounds: $x_i \in [-32.768, 32.768]$. Global minimum: $f(𝟎) = 0$. It has many local minima and a relatively
-flat outer region.
-
-These functions are from the Surjanovic and Bingham's Simon Fraser
-University [collection](https://www.sfu.ca/~ssurjano/optimization.html).
-
-> TODO: Flow chart, the initialisation strategy
-
-[1]: https://www.sfu.ca/~ssurjano/spheref.html
-[2]: https://www.sfu.ca/~ssurjano/rosen.html
-[3]: https://www.sfu.ca/~ssurjano/rastr.html
-[4]: https://www.sfu.ca/~ssurjano/ackley.html
-
----
-
-## File Structure
-
-```text
-acit-4610-final-project-group-7/
-├── main.py                                   # Entry point: runs Part A, Part B, summaries, and plots
-├── logger.py                                 # Console + file logging (writes to run.log)
-├── requirements.txt                          # Python dependencies
-└── bees_algorithm/
-    ├── configs.py                            # BA parameters, seeds, function configs, TSPLIB configs & optima
-    ├── functions.py                          # Sphere, Rosenbrock, Rastrigin, Ackley definitions
-    ├── interface.py                          # Abstract OptimisationProblem base class
-    ├── optimise.py                           # Experiment runners: optimise_tsp() and optimise_functions()
-    ├── core/
-    │   ├── bee.py                            # Bee candidate representation
-    │   └── solver.py                         # BeesAlgorithmSolver (initialise, rank, exploit, abandon, replenish)
-    ├── problem/
-    │   ├── tsp.py                            # SymmetricTSP problem (SWAP / REVERSE neighbourhoods)
-    │   └── continuous.py                     # ContinuousFunctionOptimisation problem
-    ├── data/                                 # Official TSPLIB instances (eil51, berlin52, st70, eil76, kroA100, ch150)
-    ├── tests/
-    │   ├── test_functions.py                 # Benchmark function verification tests
-    │   └── test_reporting.py                 # Tests for validators, writer, summarizer, and plotting
-    ├── utils/
-    │   ├── exceptions.py                     # DataError, BudgetExhausted
-    │   ├── load_data.py                      # TSPLIB file parser
-    │   ├── tracked.py                        # TrackedProblem & ProblemTracker (30,000-eval budget + best-so-far history)
-    │   ├── validators.py                     # Post-run TSP tour & continuous bounds validators
-    │   ├── writer.py                         # ExperimentWriter (raw CSVs, JSON solutions, per-eval histories, metadata)
-    │   ├── summarizer.py                     # Aggregates raw runs into CSV and Markdown summary tables
-    │   └── plotting.py                       # Generates convergence, berlin52 route, and D=30 boxplot figures
-    └── results/
-        ├── metadata.json                     # Recorded parameters, seed list, and package versions
-        ├── part_a_tsp/
-        │   ├── raw/                          # runs.csv (120 runs) and solutions.json
-        │   ├── histories/                    # <instance>_<neighbourhood>.csv (30,000 evals × 10 seeds)
-        │   ├── tables/                       # summary_tsp.csv and summary_tsp.md
-        │   └── figures/                      # convergence_berlin52.png, convergence_ch150.png, best_route_berlin52.png
-        └── part_b_continuous/
-            ├── raw/                          # runs.csv (80 runs) and solutions.json
-            ├── histories/                    # <function>_D<dim>.csv (30,000 evals × 10 seeds)
-            ├── tables/                       # summary_continuous.csv and summary_continuous.md
-            └── figures/                      # convergence_rastrigin_D10.png, boxplots_D30.png
+```mermaid
+flowchart TD
+    A([Start: Initialize population of ns scout bees])
+    A --> B[Evaluate fitness of ns initial sites]
+    B --> C{Termination criterion met?}
+    C -- Yes --> D([Return the best solution found])
+    C -- No --> E[Select nb best sites for neighbourhood search]
+    E --> F[Select ne from nb as elite sites and nb-ne as other sites]
+    F --> G[Recruit nre bees to ne elite sites with current patch size]
+    G --> H[Recruit nrb bees to nb-ne other sites with current patch size]
+    H --> I[Evaluate fitness of recruited bees and select best bee per site]
+    I --> J{Improved fitness found at site?}
+    J -- Yes --> K[Reset stagnation counter = 0 keep improved patch]
+    J -- No --> L[Increment stagnation counter += 1]
+    L --> M{Stagnation counter >= stlim stagnation limit?}
+    M -- Yes --> N[Site Abandonment: Discard stagnant site]
+    M -- No --> O[Site shrinking: Reduce neighbourhood size by shrink_factor]
+    O --> P["Generate (ns - nb) + abandoned new scouts"]
+    N --> P
+    K --> P
+    P --> Q[Evaluate fitness of new random scout sites]
+    Q --> R[Form new population elites + other + new scouts]
+    R --> C
 ```
 
-## Setup & Dependencies
+Each run has a strict budget of **30,000 objective evaluations**, counting initial scouts, all recruited neighbours, and all fresh global scouts (including rejected candidates). Execution stops immediately when the budget is reached, allowing an incomplete final iteration.
 
-Tested with **Python 3.14.6** and:
-- `numpy==2.5.4`
-- `matplotlib==3.11.2`
-- `pytest==9.2.0`
+After evaluating the $ns$ initial scouts, the number of evaluations performed in cycle $t$ is:
 
-Install dependencies into a virtual environment from the repository root:
+$E_t = ne \cdot nre + (nb - ne) \cdot nrb + (ns - nb) + a_t$
+
+where $a_t \in [0, nb]$ is the number of stagnated sites abandoned in cycle $t$. Letting $E_{\text{base}} = ne \cdot nre + (nb - ne) \cdot nrb + (ns - nb)$ and $A = \sum_t a_t$ be the total abandoned sites over the run, the number of cycles required to exhaust a budget $B$ is:
+
+$$K \approx \left\lceil \frac{B - ns - A}{E_{\text{base}}} \right\rceil$$
+
+## Part A — Symmetric Travelling Salesman Problem (TSP)
+
+The symmetric TSP requires visiting every city exactly once and returning to the starting city with minimum total round-trip distance.
+
+A solution is represented as a permutation $\pi = (\pi_1, \dots, \pi_n)$ with city `1` fixed at the first position ($\pi_1 = 1$). The tour length sums all consecutive edges plus the return edge:
+
+$$L(\pi) = \sum_{i=1}^{n-1} d_{\pi_i, \pi_{i+1}} + d_{\pi_n, \pi_1}$$
+
+Edge distances follow the TSPLIB `EUC_2D` rounded Euclidean distance rule [4], rounded per edge before summing:
+
+$$d_{ij} = \text{floor}\left(\sqrt{(a_i - a_j)^2 + (b_i - b_j)^2} + 0.5\right)$$
+
+Solution quality against the published optimal tour length $L^*$ [3] is measured by percentage gap:
+
+$$\text{Gap}(\%) = 100 \cdot \frac{L_{BA} - L^*}{L^*}$$
+
+- **Data:** Six TSPLIB instances (`eil51`, `berlin52`, `st70`, `eil76`, `kroA100`, `ch150`) stored in `bees_algorithm/data/`. See [`data/README.md`](data/README.md) for the instance table, optimal tour lengths, official download URLs, file format, and validation rules.
+- **Initialisation:** Uniform random shuffle of cities `2..n` with city `1` fixed at index `0`.
+- **Neighbourhoods:** Two single-move versions are compared under the same settings and seeds, both choosing two movable indices $1 \le i < j \le n - 1$ (keeping city `1` fixed) with index span $j - i \le \lceil (n - 2) \cdot \text{patch\_size} \rceil$:
+  - **`SWAP`:** Exchanges the two cities at positions $i$ and $j$.
+  - **`REVERSE`:** Reverses the segment from $i$ through $j$ inclusive.
+- **Validation:** Every final tour must contain each city `1..n` once, start at city `1`, and match its recomputed rounded Euclidean round-trip distance.
+
+## Part B — Continuous Function Optimisation
+
+Each candidate solution is a real-valued vector $\mathbf{x} \in \mathbb{R}^D$, evaluated at dimensions **$D = 10$** and **$D = 30$** on four unshifted, noiseless benchmark functions from Surjanovic and Bingham's Simon Fraser University collection [5–8] (where $\mathbf{0}$ and $\mathbf{1}$ denote the all-zero and all-one vectors):
+
+- **Sphere** [5]:
+  $$f(\mathbf{x}) = \sum_{i=1}^D x_i^2$$
+  Bounds: $x_i \in [-5.12, 5.12]$. Global minimum: $f(\mathbf{0}) = 0$. Convex, unimodal.
+
+- **Rosenbrock** [6]:
+  $$f(\mathbf{x}) = \sum_{i=1}^{D-1} \left[100(x_{i+1} - x_i^2)^2 + (1 - x_i)^2\right]$$
+  Bounds: $x_i \in [-5, 10]$. Global minimum: $f(\mathbf{1}) = 0$. Narrow curved valley.
+
+- **Rastrigin** [7]:
+  $$f(\mathbf{x}) = 10D + \sum_{i=1}^D \left[x_i^2 - 10\cos(2\pi x_i)\right]$$
+  Bounds: $x_i \in [-5.12, 5.12]$. Global minimum: $f(\mathbf{0}) = 0$. Highly multimodal.
+
+- **Ackley** [8]:
+  $$f(\mathbf{x}) = -20\exp\left(-0.2\sqrt{\frac{1}{D}\sum_{i=1}^D x_i^2}\right) - \exp\left(\frac{1}{D}\sum_{i=1}^D \cos(2\pi x_i)\right) + 20 + \exp(1)$$
+  Bounds: $x_i \in [-32.768, 32.768]$. Global minimum: $f(\mathbf{0}) = 0$. Multimodal with a flat outer region.
+
+- **Initialisation:** Each coordinate is sampled uniformly within its lower and upper bounds $[l, u]$.
+- **Neighbourhood & bounds handling:** Each coordinate is independently perturbed by a uniform step in $[-(u - l)\cdot\text{patch\_size},\ +(u - l)\cdot\text{patch\_size}]$ (starting at `ngh = 0.1`, i.e. ±10% of the allowed range, and shrinking by `shrink_factor` on stagnation) and clipped to $[l, u]$.
+
+## Experimental Settings
+
+| Parameter | Description | Part A (TSP) | Part B (Continuous) |
+| :--- | :--- | ---: | ---: |
+| `max_evaluations` | Objective evaluations per run | `30000` | `30000` |
+| `ns` | Scout population size | `10` | `25` |
+| `ne` | Elite sites | `1` | `3` |
+| `nb` | Total selected sites (includes elites) | `3` | `10` |
+| `nre` | Recruited bees per elite site | `120` | `15` |
+| `nrb` | Recruited bees per non-elite selected site | `10` | `5` |
+| `stlim` | Stagnation limit before abandonment | `45` | `18` |
+| `ngh` | Initial patch size ratio | `1.0` | `0.1` |
+| `shrink_factor` | Patch multiplier on stagnation | `0.98` | `0.8` |
+
+- **Seeds:** 10 independent runs per case using seeds `45, 46, 47, 48, 49, 50, 51, 52, 53, 54`.
+- **Total runs:** **120** TSP runs (6 instances × 2 neighbourhoods × 10 seeds) and **80** continuous runs (4 functions × 2 dimensions × 10 seeds).
+- **Required outputs:** Per-run metrics and best-so-far histories; summary tables (best, mean, std, mean runtime, plus mean gap for TSP); convergence plots for `berlin52`, `ch150`, and `Rastrigin` ($D=10$); best `berlin52` route plot; and four-panel $D=30$ boxplots. Saved outputs are stored under `bees_algorithm/results/` (see [`results/README.md`](results/README.md)).
+
+## Setup & Reproducing Results
+
+- **Environment:** Python `3.14.6` (requires 3.10+), `numpy 2.5.4`, `matplotlib 3.11.2`, `pytest 9.2.0`.
+- **Data location:** `bees_algorithm/data/`
+
+Run from the repository root:
 
 ```bash
-python -m venv env
-source env/bin/activate
-pip install -r requirements.txt
-```
+# Install dependencies and verify tests
+python -m pip install -r requirements.txt
+python -m pytest bees_algorithm/tests -v
 
-## BA Parameters & Seeds
-
-Configured in `bees_algorithm/configs.py`:
-- **Evaluation budget (`max_evaluations`):** `30000`
-- **Scout population (`ns`):** `30`
-- **Elite sites (`ne`):** `3`
-- **Selected sites (`nb`):** `10`
-- **Elite recruits (`nre`):** `15`
-- **Selected recruits (`nrb`):** `5`
-- **Stagnation limit (`stlim`):** `100`
-- **Shrink factor (`shrink_factor`):** `0.2`
-- **Seeds (`10` independent runs, `SEED = 45`):** `[45, 46, 47, 48, 49, 50, 51, 52, 53, 54]`
-- **Part A instances & optima:** `eil51` (`426`), `berlin52` (`7542`), `st70` (`675`), `eil76` (`538`), `kroA100` (`21282`), `ch150` (`6528`) with `SWAP` and `REVERSE`
-- **Part B functions & dimensions:** `sphere`, `rosenbrock`, `rastrigin`, `ackley` at `D = 10` and `D = 30`
-
-## How to Run the Experiments
-
-Run all commands from the repository root (`acit-4610-final-project-group-7/`).
-
-### 1. Run the full suite (Part A + Part B + summaries + plots)
-```bash
+# Run the full experiment suite (Problem 1 & Problem 2)
 python main.py
+
+# Regenerate summary tables and plots from saved results
+python -m bees_algorithm.utils.summarizer
+python -m bees_algorithm.utils.plotting
 ```
 
-### 2. Run only Part A (TSP) or only Part B (Continuous)
-```bash
-python -c "from bees_algorithm.optimise import optimise_tsp; optimise_tsp()"
-python -c "from bees_algorithm.optimise import optimise_functions; optimise_functions()"
-```
+## References
 
-### 3. Run a single experiment (example)
-```bash
-python -c "
-from bees_algorithm.configs import FunctionOptimisationConfig as foc, BERLIN52_CONFIG, SWAP
-from bees_algorithm.core.solver import BeesAlgorithmSolver
-from bees_algorithm.problem.tsp import SymmetricTSP
-from bees_algorithm.utils.exceptions import BudgetExhausted
-from bees_algorithm.utils.tracked import TrackedProblem
-
-tsp = SymmetricTSP(seed=45, path_data=BERLIN52_CONFIG.path, strategy=SWAP)
-tracked = TrackedProblem(tsp, foc.ns, foc.max_evaluations)
-try:
-    BeesAlgorithmSolver(tracked, foc).run()
-except BudgetExhausted:
-    pass
-print('Final best:', tracked.tracker.best_solution.fitness, 'Evals:', tracked.tracker.evaluations)
-"
-```
-
-### 4. Regenerate summary tables and plots from saved results
-```bash
-python bees_algorithm/utils/summarizer.py
-python bees_algorithm/utils/plotting.py
-```
-
-### 5. Run tests
-```bash
-pytest bees_algorithm/tests
-```
+1. Pham, D. T., Ghanbarzadeh, A., Koç, E., Otri, S., Rahim, S., & Zaidi, M. **The Bees Algorithm — A Novel Tool for Complex Optimisation Problems**. *Intelligent Production Machines and Systems*, 2006, pp. 454–459. [Publisher record](https://www.sciencedirect.com/science/article/abs/pii/B978008045157250081X).
+2. Reinelt, G. **TSPLIB**. Heidelberg University. [Library home page](https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/).
+3. Reinelt, G. **Optimal solutions for symmetric TSPs**. [Reference tour lengths](https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/TSP-BEST.html).
+4. Reinelt, G. **TSPLIB 95 documentation**, Sections 1 and 2.1. [Documentation PDF](https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/tsp95.pdf).
+5. Surjanovic, S., & Bingham, D. **Sphere Function**. Simon Fraser University. [Function and implementation](https://www.sfu.ca/~ssurjano/spheref.html).
+6. Surjanovic, S., & Bingham, D. **Rosenbrock Function**. Simon Fraser University. [Function and implementation](https://www.sfu.ca/~ssurjano/rosen.html).
+7. Surjanovic, S., & Bingham, D. **Rastrigin Function**. Simon Fraser University. [Function and implementation](https://www.sfu.ca/~ssurjano/rastr.html).
+8. Surjanovic, S., & Bingham, D. **Ackley Function**. Simon Fraser University. [Function and implementation](https://www.sfu.ca/~ssurjano/ackley.html).
