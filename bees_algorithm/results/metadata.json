@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-11-20T14:45:35.643112+00:00",
+  "generated_at_utc": "2026-11-22T11:19:51.873036+00:00",
   "python_version": "3.14.6",
   "packages": {
     "numpy": "2.5.4",
@@ -20,23 +20,23 @@
   ],
   "tsp_config": {
     "max_evaluations": 30000,
-    "ns": 30,
-    "ne": 3,
-    "nb": 10,
-    "nre": 10,
-    "nrb": 5,
-    "stlim": 15,
-    "ngh": 0.1,
-    "shrink_factor": 0.8
+    "ns": 10,
+    "ne": 1,
+    "nb": 3,
+    "nre": 120,
+    "nrb": 10,
+    "stlim": 45,
+    "ngh": 1.0,
+    "shrink_factor": 0.98
   },
   "function_config": {
     "max_evaluations": 30000,
-    "ns": 30,
+    "ns": 25,
     "ne": 3,
     "nb": 10,
-    "nre": 10,
+    "nre": 15,
     "nrb": 5,
-    "stlim": 15,
+    "stlim": 18,
     "ngh": 0.1,
     "shrink_factor": 0.8
   },
