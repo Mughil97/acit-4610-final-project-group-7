@@ -15,30 +15,24 @@ class SymmetricTSP(OptimisationProblem):
         self.rand = random.Random(seed)
         self.city_coordinates = load_data(
             path_data
-        )  # dictionary: key = ID, x and y coordinates in a list
+        )  # dictionary: key = city id, x and y coordinates in a list
         self.strategy = strategy
 
         # distance matrix: one row and one column for every city
+        # The distance to the self city will be 0 i.e city 1 to city 1 will be 0
+        #      1  2  3  4
+        # 1 | 00 10 20 30 |
+        # 2 | 10 00 15 25 |
+        # 3 | 20 15 00 35 |
+        # 4 | 30 25 35 00 |
         self.distance_matrix = []
 
         # find the distances for every city by having one list (row) for every city, first row is for city 1
-
-        for i in range(
-            1, len(self.city_coordinates) + 1
-        ):  # so that we have last city as well
-            liste = (
-                []
-            )  # distances from relevant city , index = 0 is distance to itself for first city
-            city1_coordinates = self.city_coordinates[i]
-
-            for j in range(
-                1, len(self.city_coordinates) + 1
-            ):  # city 1 to itself is 0, so i include anyways 1 in the loop
-                city2_coord = self.city_coordinates[j]
-                distance = self.euclidean_dist(city1_coordinates, city2_coord)
-                liste.append(distance)
-
-            self.distance_matrix.append(liste)
+        for i, city1 in self.city_coordinates.items():  # Row
+            row = []
+            for j, city2 in self.city_coordinates.items():  # Column
+                row.append(self.euclidean_dist(city1, city2))
+            self.distance_matrix.append(row)
 
     @property
     def problem_type(self):
@@ -54,7 +48,7 @@ class SymmetricTSP(OptimisationProblem):
 
         euclid = math.sqrt(
             ((x1 - x2) ** 2 + (y1 - y2) ** 2)
-        )  # always get a pos. number here
+        )  # always get a positive number here
 
         # add 0.5 then round down:
         distance = math.floor(euclid + 0.5)
@@ -78,7 +72,7 @@ class SymmetricTSP(OptimisationProblem):
         total_dist = 0
 
         for index in range(len(route)):
-            city_ID = route[index]  # from 1 to...
+            city1_id = route[index]  # from 1 to...
 
             # city_ID starts at 1, but it would be 0 in the matrix
 
@@ -86,11 +80,11 @@ class SymmetricTSP(OptimisationProblem):
             # second index = the distance from the relevant city to the neighbour
 
             if index == len(route) - 1:  # last city
-                total_dist += self.distance_matrix[city_ID - 1][0]  # back to city 1
+                total_dist += self.distance_matrix[city1_id - 1][0]  # back to city 1
                 break
 
-            city_ID_2 = route[index + 1]  # neighbour
-            total_dist += self.distance_matrix[city_ID - 1][city_ID_2 - 1]
+            city2_id = route[index + 1]  # neighbour
+            total_dist += self.distance_matrix[city1_id - 1][city2_id - 1]
 
         return total_dist
 
@@ -103,7 +97,24 @@ class SymmetricTSP(OptimisationProblem):
         route = bee.site
 
         # Pick two distinct indices with 1 <= i < j <= n - 1 (city 1 at index 0 stays fixed)
-        i, j = sorted(self.rand.sample(range(1, len(route)), 2))
+
+        # The list index starts from 0 to n-1. Since city 1 is always at 0'th position
+        # we need to do n-2 so we can perform operations from 1 to n-1
+        max_possible_span = len(route) - 2
+
+        patch_ratio = (
+            bee.patch_size if bee.patch_size > 0 else 1.0
+        )  # Safety check to make sure patch_size is not None
+
+        # Restrict the maximum index distance |j - i| using the bee's current patch_size
+        max_span = max(
+            1, min(max_possible_span, math.ceil(max_possible_span * patch_ratio))
+        )
+
+        span = self.rand.randint(1, max_span)  # From 1 to max span
+
+        i = self.rand.randint(1, len(route) - 1 - span)
+        j = i + span
 
         if self.strategy == SWAP:
             route[i], route[j] = route[j], route[i]
