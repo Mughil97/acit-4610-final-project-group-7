@@ -8,14 +8,14 @@ from bees_algorithm.functions import ackley, rastrigin, rosenbrock, sphere
 @dataclass(frozen=True)
 class FunctionOptimisationConfig:
     max_evaluations: int = 30000
-    ns: int = 30  # Scouts (total nr of bees)
+    ns: int = 25  # Scouts (total nr of bees)
     ne: int = 3  # Elites (elite sites)
     nb: int = 10  # Selected sites (Top selected sites includes elites)
-    nre: int = 10  # Elite recruits (bees)
+    nre: int = 15  # Elite recruits (bees)
     nrb: int = 5  # Selected recruits (bees)
-    stlim: int = 15  # Stagnation count
+    stlim: int = 18  # Stagnation count
     ngh: float = 0.1  # Initial patch size; 10% of allowed range
-    shrink_factor: float = 0.8  # 80% reduction in patch size
+    shrink_factor: float = 0.8  # Retains 80% of patch size (20% reduction)
 
 
 @dataclass(frozen=True)
@@ -55,14 +55,14 @@ SEED = 45
 @dataclass(frozen=True)
 class TSPConfig:
     max_evaluations: int = 30000
-    ns: int = 30  # Scouts (total nr of bees)
-    ne: int = 3  # Elites (elite sites)
-    nb: int = 10  # Selected sites (Top selected sites includes elites)
-    nre: int = 10  # Elite recruits (bees)
-    nrb: int = 5  # Selected recruits (bees)
-    stlim: int = 15  # Stagnation count
-    ngh: float = 0.1  # Initial patch size; 10% of allowed range
-    shrink_factor: float = 0.8  # 80% reduction in patch size
+    ns: int = 10  # Scouts (total nr of bees)
+    ne: int = 1  # Elites (elite sites)
+    nb: int = 3  # Selected sites (Top selected sites includes elites)
+    nre: int = 120  # Elite recruits (bees)
+    nrb: int = 10  # Selected recruits (bees)
+    stlim: int = 45  # Stagnation count
+    ngh: float = 1.0  # Initial patch size; 100% of movable tour span
+    shrink_factor: float = 0.98  # Retains 98% of patch size (2% reduction)
 
 
 @dataclass(frozen=True)
