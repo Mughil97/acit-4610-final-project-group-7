@@ -21,6 +21,9 @@ from evolution_strategy.evaluation import (
     get_target_return,
 )
 from evolution_strategy.results import DEFAULT_RESULTS_DIR, PORTFOLIOS
+from logger import get_logger
+
+logger = get_logger(__name__)
 
 VARIANTS = ("one_plus_one", "ten_plus_seventy", "ten_comma_seventy")
 OR_LIBRARY_COUNTS = {"port1": 31, "port2": 85, "port3": 89, "port4": 98, "port5": 225}
@@ -181,7 +184,7 @@ def inspect_case(folder, dataset, alpha, variant, budget, num_runs):
 def inspect_consolidated(path, case_summaries, budget, num_runs):
     """If the checked-in 45-row summary exists, ensure it matches raw exports."""
     if not path.is_file():
-        print(f"NOTICE: consolidated summary not found at {path}; comparison skipped", flush=True)
+        logger.warning(f"Consolidated summary not found at {path}; comparison skipped")
         return False
     rows = read_csv(path)
     require(len(rows) == len(case_summaries),
@@ -245,7 +248,7 @@ def main():
         summary = inspect_case(args.results_dir / name, dataset, alpha, variant,
                                args.budget, args.num_runs)
         checked[(dataset, alpha, variant)] = summary
-        print(f"PASS {i:02d}/{len(expected)}  {name}", flush=True)
+        logger.info(f"PASS {i:02d}/{len(expected)}  {name}")
 
     consolidated_checked = inspect_consolidated(args.summary, checked, args.budget,
                                                 args.num_runs)
@@ -261,9 +264,11 @@ def main():
     }
     args.report_out.parent.mkdir(parents=True, exist_ok=True)
     args.report_out.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
-    print("\nAUDIT PASSED:", report["cases"], "cases,", report["runs"], "runs,",
-          f"{report['total_objective_evaluations']:,}", "evaluations", flush=True)
-    print("Saved audit report:", args.report_out, flush=True)
+    logger.info(
+        f"\nAUDIT PASSED: {report['cases']} cases, {report['runs']} runs, "
+        f"{report['total_objective_evaluations']:,} evaluations"
+    )
+    logger.info(f"Saved audit report: {args.report_out}")
 
 
 if __name__ == "__main__":

@@ -23,6 +23,9 @@ from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 
 from evolution_strategy.results import DEFAULT_RESULTS_DIR
+from logger import get_logger
+
+logger = get_logger(__name__)
 
 
 DATASETS = ("port1", "port2", "port3", "port4", "port5")
@@ -97,7 +100,7 @@ def _save(fig, figures_dir: Path, filename: str) -> None:
     for extension, kwargs in (("png", {"dpi": 300}), ("pdf", {})):
         path = figures_dir / f"{filename}.{extension}"
         fig.savefig(path, bbox_inches="tight", **kwargs)
-        print(f"Saved {path}")
+        logger.info(f"Saved ES comparison plot: {path}")
     plt.close(fig)
 
 
@@ -285,7 +288,7 @@ def main() -> None:
     plot_runtime(summary, figures_dir)
     if not args.summary_only:
         plot_boxplot(summary, args.results_dir, figures_dir, args.dataset, args.alpha)
-    print("Done. No optimization runs were executed.")
+    logger.info("Done. No optimization runs were executed.")
 
 
 if __name__ == "__main__":

@@ -22,7 +22,7 @@ LOGGING_CONFIG = {
         },
         "file": {
             "class": "logging.FileHandler",
-            "level": "DEBUG",
+            "level": "INFO",
             "formatter": "file_formatter",
             "mode": "w",
             "filename": "run.log",
@@ -30,7 +30,7 @@ LOGGING_CONFIG = {
         },
     },
     "root": {
-        "level": "DEBUG",
+        "level": "INFO",
         "handlers": ["console", "file"],
     },
 }

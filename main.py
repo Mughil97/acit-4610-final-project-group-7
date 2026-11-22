@@ -9,12 +9,18 @@ from logger import get_logger
 
 if __name__ == "__main__":
     logger = get_logger("main")
+    logger.info("************************ Problem 1 ************************")
     writer = ExperimentWriter()
     optimise_tsp(writer=writer)
     optimise_functions(writer=writer)
     summarize_all_bees()
     generate_all_plots_bees()
+    logger.info("***********************************************************")
 
+    logger.info("\n\n")
+
+    logger.info("************************ Problem 2 ************************")
     optimise_es()
     summarize_all_es()
     generate_all_plots_es()
+    logger.info("************************ Experiment Ended *****************")

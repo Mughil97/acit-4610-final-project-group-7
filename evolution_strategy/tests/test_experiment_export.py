@@ -2,6 +2,7 @@
 
 import csv
 import json
+import logging
 import sys
 
 import pytest
@@ -82,7 +83,8 @@ def test_export_rejects_incorrect_budget(tmp_path, sample_summary):
 
     assert not (folder / "complete.json").exists()
 
-def test_completed_cases_are_skipped(tmp_path, monkeypatch, capsys):
+
+def test_completed_cases_are_skipped(tmp_path, monkeypatch, caplog):
     """A repeated run should not recompute completed cases."""
     for variant in export_experiments.VARIANTS:
         name = f"port1_alpha050_{variant}_e83_r2"
@@ -113,16 +115,16 @@ def test_completed_cases_are_skipped(tmp_path, monkeypatch, capsys):
         export_experiments, "build_summary", lambda *args: 3
     )
 
-    export_experiments.optimise_es(
-        output_dir=tmp_path,
-        portfolios={"port1": PORTFOLIOS["port1"]},
-        alphas=(0.50,),
-        num_runs=2,
-        budget=83,
-    )
+    with caplog.at_level(logging.INFO):
+        export_experiments.optimise_es(
+            output_dir=tmp_path,
+            portfolios={"port1": PORTFOLIOS["port1"]},
+            alphas=(0.50,),
+            num_runs=2,
+            budget=83,
+        )
 
-    captured = capsys.readouterr()
-    assert captured.out.count("SKIP:") == 3
+    assert caplog.text.count("SKIP:") == 3
 
 
 def test_default_results_dir_is_in_repo_with_complete_full_grid():

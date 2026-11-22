@@ -10,6 +10,9 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 from evolution_strategy.results import ALPHAS, DEFAULT_RESULTS_DIR, PORTFOLIOS
+from logger import get_logger
+
+logger = get_logger(__name__)
 
 
 VARIANT_LABELS = {
@@ -55,7 +58,6 @@ def plot_convergence(dataset, alpha, results_root, budget=30000, num_runs=10):
             for row in rows
         ]
 
-
         ax.plot(
             evaluations,
             mean_variance,
@@ -91,16 +93,17 @@ def plot_convergence(dataset, alpha, results_root, budget=30000, num_runs=10):
     output.mkdir(parents=True, exist_ok=True)
 
     filename = f"convergence_{case}_full"
+    out_path = output / f"{filename}.png"
 
     fig.savefig(
-        output / f"{filename}.png",
+        out_path,
         dpi=300,
         bbox_inches="tight",
     )
 
     plt.close(fig)
 
-    print(f"Saved PNG: {output / (filename + '.png')}")
+    logger.info(f"Saved ES convergence plot: {out_path}")
 
 
 def generate_all_plots_es(

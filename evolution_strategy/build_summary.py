@@ -18,6 +18,9 @@ from pathlib import Path
 
 from evolution_strategy.plot_comparisons import SUMMARY_COLUMNS
 from evolution_strategy.results import DEFAULT_RESULTS_DIR
+from logger import get_logger
+
+logger = get_logger(__name__)
 
 SUMMARY_NAME = "es_summary_45_cases.csv"
 
@@ -125,7 +128,7 @@ def summarize_all_es(
     cases_dir = base_dir / "full"
     out_path = base_dir / SUMMARY_NAME
     count = build_summary(cases_dir, out_path)
-    print(f"Saved {count} ES case rows to {out_path}")
+    logger.info(f"Saved {count} ES case rows to {out_path}")
     return count
 
 
@@ -151,7 +154,7 @@ def main() -> None:
             f"Expected 45 completed cases; found {completed_count}"
         )
     count = build_summary(cases_dir, out_path)
-    print(f"Saved {count} ES case rows to {out_path}")
+    logger.info(f"Saved {count} ES case rows to {out_path}")
 
 
 if __name__ == "__main__":

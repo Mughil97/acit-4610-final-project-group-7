@@ -15,6 +15,9 @@ from evolution_strategy.portfolio import (
     portfolio4,
     portfolio5,
 )
+from logger import get_logger
+
+logger = get_logger(__name__)
 
 DEFAULT_RESULTS_DIR = Path("evolution_strategy/results")
 
@@ -59,12 +62,17 @@ def summarize_case(
     runs: list[ESResult] = []
 
     for seed in range(num_runs):
+        logger.info(f"Run: {seed + 1} | Seed: {seed}")
         result = run_es(
             portfolio=portfolio,
             alpha=alpha,
             variant=variant,
             max_iterations=max_iterations,
             seed=seed,
+        )
+        initial_best = result.history[0] if result.history else result.cost
+        logger.info(
+            f"Initial Best: {initial_best} | Final Best: {result.cost} | Evaluations: {len(result.history)} | Runtime: {result.runtime_seconds}"
         )
         runs.append(result)
 
@@ -121,9 +129,15 @@ def run_all_experiments(
 ) -> list[CaseSummary]:
     all_summaries: list[CaseSummary] = []
 
+    logger.info(
+        "==========  Evolution Strategies — Portfolio Optimisation (Problem 2) =========="
+    )
     for dataset_name, portfolio in portfolios.items():
+        logger.info(f"Dataset: {dataset_name}")
         for alpha in alphas:
+            logger.info(f"Alpha: {alpha:.2f}")
             for variant in variants:
+                logger.info(f"Variant: {variant}")
                 summary = summarize_case(
                     dataset_name=dataset_name,
                     portfolio=portfolio,
@@ -133,12 +147,16 @@ def run_all_experiments(
                     max_iterations=max_iterations,
                 )
                 all_summaries.append(summary)
-                print(
+                logger.info(
                     f"{summary.case_name:14s} | {summary.variant:17s} | "
                     f"n={summary.num_assets:3d} | R*={summary.target_return:.6f} | "
                     f"best={summary.best_cost:.6f} | mean={summary.mean_cost:.6f} | "
                     f"std={summary.std_cost:.6f} | valid={summary.feasible_rate:5.1f}% | "
                     f"time={summary.mean_runtime:.3f}s"
                 )
+            logger.info("\n")
+        logger.info(
+            "------------------------------------------------------------------------------------\n"
+        )
 
     return all_summaries

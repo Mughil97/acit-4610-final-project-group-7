@@ -6,14 +6,17 @@ import json
 import os
 from pathlib import Path
 
+from evolution_strategy.build_summary import SUMMARY_NAME, build_summary
+from evolution_strategy.evolution_strategies import VARIANTS
 from evolution_strategy.results import (
     ALPHAS,
     DEFAULT_RESULTS_DIR,
     PORTFOLIOS,
     summarize_case,
 )
-from evolution_strategy.evolution_strategies import VARIANTS
-from evolution_strategy.build_summary import SUMMARY_NAME, build_summary
+from logger import get_logger
+
+logger = get_logger(__name__)
 
 
 def save_csv(path, columns, rows):
@@ -137,9 +140,15 @@ def optimise_es(
     output_base = Path(output_dir)
     output_root = output_base / "full"
 
+    logger.info(
+        "==========  Evolution Strategies — Portfolio Optimisation (Problem 2) =========="
+    )
     for dataset_name, portfolio in portfolios.items():
+        logger.info(f"Dataset: {dataset_name}")
         for alpha in alphas:
+            logger.info(f"Alpha: {alpha:.2f}")
             for variant in VARIANTS:
+                logger.info(f"Variant: {variant}")
                 case_name = (
                     f"{dataset_name}_alpha{int(alpha * 100):03d}"
                     f"_{variant}_e{budget}_r{num_runs}"
@@ -158,10 +167,10 @@ def optimise_es(
                     (folder / filename).is_file()
                     for filename in required_files
                 ):
-                    print(f"SKIP: {case_name}", flush=True)
+                    logger.info(f"SKIP: {case_name}")
                     continue
 
-                print(f"RUN: {case_name}", flush=True)
+                logger.info(f"RUN: {case_name}")
 
                 summary = summarize_case(
                     dataset_name=dataset_name,
@@ -173,11 +182,17 @@ def optimise_es(
                 )
 
                 export_case(summary, folder, budget)
-                print(f"SAVED: {case_name}", flush=True)
+                logger.info(f"SAVED: {case_name}")
+
+            logger.info("\n")
+
+        logger.info(
+            "------------------------------------------------------------------------------------\n"
+        )
 
     output_csv = output_base / SUMMARY_NAME
     count = build_summary(output_root, output_csv)
-    print(f"SUMMARY: {count} cases -> {output_csv}", flush=True)
+    logger.info(f"SUMMARY: {count} cases -> {output_csv}")
 
     return output_root
 

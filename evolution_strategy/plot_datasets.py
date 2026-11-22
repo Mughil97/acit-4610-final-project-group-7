@@ -26,6 +26,9 @@ import matplotlib.pyplot as plt
 
 from evolution_strategy.portfolio import Portfolio
 from evolution_strategy.results import PORTFOLIOS
+from logger import get_logger
+
+logger = get_logger(__name__)
 
 DATASETS = ("port1", "port2", "port3", "port4", "port5")
 
@@ -129,6 +132,7 @@ def plot_dataset_correlations(
     out_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out_path, dpi=300, bbox_inches="tight")
     plt.close(fig)
+    logger.info(f"Saved dataset correlation plot: {out_path}")
     return out_path
 
 
@@ -141,10 +145,9 @@ def main(argv: list[str] | None = None) -> None:
                         help="Dataset shown in panel (a)")
     args = parser.parse_args(argv)
 
-    path = plot_dataset_correlations(PORTFOLIOS, args.out_dir / FIGURE_NAME,
-                                     args.heatmap_dataset)
-    print(f"Saved {path}")
-    print("Done. Only the OR-Library data files were read; no optimization was run.")
+    plot_dataset_correlations(PORTFOLIOS, args.out_dir / FIGURE_NAME,
+                              args.heatmap_dataset)
+    logger.info("Done. Only the OR-Library data files were read; no optimization was run.")
 
 
 if __name__ == "__main__":
