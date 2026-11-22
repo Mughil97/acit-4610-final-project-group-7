@@ -2,6 +2,8 @@ from dataclasses import dataclass, field
 import math
 from pathlib import Path
 
+import numpy as np
+
 from evolution_strategy.evolution_strategies import (
     ESResult,
     VARIANTS,
@@ -96,11 +98,14 @@ def summarize_case(
     feasible_rate = 100.0 * len(valid_runs) / len(runs)
     mean_runtime = sum(run.runtime_seconds for run in runs) / len(runs)
 
-    # Average convergence curve across all runs
-    mean_history = [
-        sum(run.history[step] for run in runs) / len(runs)
-        for step in range(max_iterations)
-    ]
+    # =========================================================================
+    # BEGIN AI-ASSISTED SECTION
+    # Purpose: Vectorize cross-seed convergence curve averaging with NumPy.
+    # =========================================================================
+    mean_history = np.mean([run.history for run in runs], axis=0).tolist()
+    # =========================================================================
+    # END AI-ASSISTED SECTION
+    # =========================================================================
 
     return CaseSummary(
         case_name=case_name,

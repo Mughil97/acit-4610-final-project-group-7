@@ -1,4 +1,3 @@
-
 """Regression tests for Portfolio 2026 Problem 2, simplex projection.
 
 Run from the repository root: python -m pytest -q evolution_strategy/tests/test_repair_projection.py
@@ -6,11 +5,24 @@ Run from the repository root: python -m pytest -q evolution_strategy/tests/test_
 import math
 import random
 
+import numpy as np
 import pytest
 
-from evolution_strategy.evaluation import evaluate_profit, get_target_return
+from evolution_strategy.evaluation import (
+    evaluate_batch_cost,
+    evaluate_cost,
+    evaluate_profit,
+    get_covariance_matrix,
+    get_profit_data,
+    get_target_return,
+)
 from evolution_strategy.portfolio import Portfolio, datafiles, read_portfolio_data
-from evolution_strategy.repair import project_simplex, repair
+from evolution_strategy.repair import (
+    project_simplex,
+    project_simplex_batch,
+    repair,
+    repair_batch,
+)
 
 
 def test_projection_differs_from_clipping_and_normalizing():
@@ -91,3 +103,35 @@ def test_nonfinite_projection_rejected():
 def test_empty_projection_rejected():
     with pytest.raises(ValueError):
         project_simplex([])
+
+
+# =============================================================================
+# BEGIN AI-ASSISTED SECTION
+# Purpose: Verify batch simplex projection, batch return repair, and batch
+#          variance evaluation match their scalar counterparts to 1e-12.
+# =============================================================================
+def test_batch_repair_and_cost_match_scalar():
+    p = read_portfolio_data(datafiles["port1"])
+    target = get_target_return(p, 0.50)
+    rng = np.random.default_rng(123)
+    raw = rng.uniform(-1.0, 1.0, size=(12, len(p)))
+
+    proj_batch = project_simplex_batch(raw)
+    rep_batch, prof_batch = repair_batch(raw, get_profit_data(p), target)
+    cost_batch = evaluate_batch_cost(get_covariance_matrix(p), rep_batch)
+
+    for i in range(raw.shape[0]):
+        assert proj_batch[i].tolist() == pytest.approx(
+            project_simplex(raw[i].tolist()), abs=1e-12
+        )
+        rep_scalar = repair(p, raw[i].tolist(), target)
+        assert rep_batch[i].tolist() == pytest.approx(rep_scalar, abs=1e-12)
+        assert float(prof_batch[i]) == pytest.approx(
+            evaluate_profit(p, rep_scalar), abs=1e-12
+        )
+        assert float(cost_batch[i]) == pytest.approx(
+            evaluate_cost(p, rep_scalar), abs=1e-12
+        )
+# =============================================================================
+# END AI-ASSISTED SECTION
+# =============================================================================

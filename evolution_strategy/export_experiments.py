@@ -1,6 +1,7 @@
 """Save ES experiment results case by case for reproducibility."""
 
 import argparse
+from concurrent.futures import ProcessPoolExecutor, as_completed
 import csv
 import json
 import os
@@ -131,63 +132,122 @@ def export_case(summary, folder, budget):
 
 # =============================================================================
 # BEGIN AI-ASSISTED SECTION
-# Purpose: Always execute all ES experiment cases and regenerate summaries
-#          without skipping preexisting completed case directories.
+# Purpose: Parallelize ES case execution across CPU cores with ProcessPoolExecutor
+#          (largest datasets scheduled first, single-threaded BLAS per worker),
+#          always running all cases without skipping.
 # =============================================================================
+_DEFAULT_SUMMARIZE_CASE = summarize_case
+_DEFAULT_EXPORT_CASE = export_case
+
+
+def _init_worker() -> None:
+    """Pin BLAS/OpenMP to 1 thread per worker to avoid thread oversubscription."""
+    for env_var in (
+        "OMP_NUM_THREADS",
+        "OPENBLAS_NUM_THREADS",
+        "MKL_NUM_THREADS",
+        "VECLIB_MAXIMUM_THREADS",
+    ):
+        os.environ[env_var] = "1"
+
+
+def _run_and_export_case(
+    dataset_name: str,
+    alpha: float,
+    variant: str,
+    folder: Path,
+    num_runs: int,
+    budget: int,
+) -> str:
+    portfolio = PORTFOLIOS[dataset_name]
+    summary = _DEFAULT_SUMMARIZE_CASE(
+        dataset_name=dataset_name,
+        portfolio=portfolio,
+        alpha=alpha,
+        variant=variant,
+        num_runs=num_runs,
+        max_iterations=budget,
+    )
+    _DEFAULT_EXPORT_CASE(summary, folder, budget)
+    return folder.name
+
+
 def optimise_es(
     output_dir: Path | str = DEFAULT_RESULTS_DIR,
     portfolios=PORTFOLIOS,
     alphas=ALPHAS,
     num_runs: int = 10,
     budget: int = 30000,
+    max_workers: int | None = None,
 ) -> Path:
-    """Run all ES experiments, export CSVs, and rebuild the consolidated summary."""
+    """Run all ES experiments in parallel, export CSVs, and rebuild the summary."""
     output_base = Path(output_dir)
     output_root = output_base / "full"
 
     logger.info(
         "==========  Evolution Strategies — Portfolio Optimisation (Problem 2) =========="
     )
+
+    jobs: list[tuple[int, str, float, str, Path]] = []
     for dataset_name, portfolio in portfolios.items():
-        logger.info(f"Dataset: {dataset_name}")
         for alpha in alphas:
-            logger.info(f"Alpha: {alpha:.2f}")
             for variant in VARIANTS:
-                logger.info(f"Variant: {variant}")
                 case_name = (
                     f"{dataset_name}_alpha{int(alpha * 100):03d}"
                     f"_{variant}_e{budget}_r{num_runs}"
                 )
                 folder = output_root / case_name
+                jobs.append((len(portfolio), dataset_name, alpha, variant, folder))
 
-                logger.info(f"RUN: {case_name}")
+    workers = max_workers if max_workers is not None else min(len(jobs), os.cpu_count() or 1)
+    can_parallelize = (
+        workers > 1
+        and len(jobs) > 1
+        and portfolios is PORTFOLIOS
+        and summarize_case is _DEFAULT_SUMMARIZE_CASE
+        and export_case is _DEFAULT_EXPORT_CASE
+    )
 
-                summary = summarize_case(
-                    dataset_name=dataset_name,
-                    portfolio=portfolio,
-                    alpha=alpha,
-                    variant=variant,
-                    num_runs=num_runs,
-                    max_iterations=budget,
-                )
-
-                export_case(summary, folder, budget)
-                logger.info(f"SAVED: {case_name}")
-
-            logger.info("\n")
-
-        logger.info(
-            "------------------------------------------------------------------------------------\n"
-        )
+    if not can_parallelize:
+        for _, dataset_name, alpha, variant, folder in jobs:
+            logger.info(f"RUN: {folder.name}")
+            summary = summarize_case(
+                dataset_name=dataset_name,
+                portfolio=portfolios[dataset_name],
+                alpha=alpha,
+                variant=variant,
+                num_runs=num_runs,
+                max_iterations=budget,
+            )
+            export_case(summary, folder, budget)
+            logger.info(f"SAVED: {folder.name}")
+    else:
+        # Schedule largest portfolios first (port5 -> port1) for better load balance
+        jobs.sort(key=lambda item: item[0], reverse=True)
+        logger.info(f"Running {len(jobs)} ES cases across {workers} worker processes")
+        with ProcessPoolExecutor(
+            max_workers=workers, initializer=_init_worker
+        ) as pool:
+            futures = {
+                pool.submit(
+                    _run_and_export_case,
+                    dataset_name,
+                    alpha,
+                    variant,
+                    folder,
+                    num_runs,
+                    budget,
+                ): folder.name
+                for _, dataset_name, alpha, variant, folder in jobs
+            }
+            for future in as_completed(futures):
+                logger.info(f"SAVED: {future.result()}")
 
     output_csv = output_base / SUMMARY_NAME
     count = build_summary(output_root, output_csv)
     logger.info(f"SUMMARY: {count} cases -> {output_csv}")
 
     return output_root
-# =============================================================================
-# END AI-ASSISTED SECTION
-# =============================================================================
 
 
 def main():
@@ -195,8 +255,14 @@ def main():
     parser.add_argument(
         "--output", default=str(DEFAULT_RESULTS_DIR)
     )
+    parser.add_argument(
+        "--workers", type=int, default=None
+    )
     args = parser.parse_args()
-    optimise_es(output_dir=args.output)
+    optimise_es(output_dir=args.output, max_workers=args.workers)
+# =============================================================================
+# END AI-ASSISTED SECTION
+# =============================================================================
 
 
 if __name__ == "__main__":

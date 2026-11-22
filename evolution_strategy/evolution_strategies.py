@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
-import random
 from time import perf_counter
+
+import numpy as np
 
 from evolution_strategy.algorithms import (
     run_one_plus_one,
@@ -8,13 +9,11 @@ from evolution_strategy.algorithms import (
     run_ten_plus_seventy,
 )
 from evolution_strategy.evaluation import (
-
     get_target_return,
 )
 from evolution_strategy.portfolio import (
     Portfolio,
 )
-from evolution_strategy.repair import repair
 
 VARIANTS = {
     "one_plus_one": run_one_plus_one,
@@ -49,6 +48,10 @@ def is_feasible(
     )
 
 
+# =============================================================================
+# BEGIN AI-ASSISTED SECTION
+# Purpose: Pass a seeded np.random.Generator into vectorized ES variants.
+# =============================================================================
 def run_es(
         portfolio: list[Portfolio],
         alpha: float = 0.5,
@@ -56,14 +59,13 @@ def run_es(
         max_iterations: int = 30000,
         seed: int | None = None,
 ) -> ESResult:
-    if seed is not None:
-        random.seed(seed)
+    rng = np.random.default_rng(seed)
 
     target_return = get_target_return(portfolio, alpha)
     start_time = perf_counter()
 
     weights, profit, cost, history = VARIANTS[variant](
-        portfolio, target_return, max_iterations
+        portfolio, target_return, max_iterations, rng=rng
     )
 
     runtime_seconds = perf_counter() - start_time
@@ -80,3 +82,6 @@ def run_es(
         history=history,
         seed=seed,
     )
+# =============================================================================
+# END AI-ASSISTED SECTION
+# =============================================================================

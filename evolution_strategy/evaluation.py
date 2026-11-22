@@ -1,28 +1,80 @@
+# =============================================================================
+# BEGIN AI-ASSISTED SECTION
+# Purpose: Precompute and cache per-portfolio profit metadata and symmetric
+#          covariance matrices, providing scalar and batch NumPy evaluators.
+# =============================================================================
+from dataclasses import dataclass
+import numpy as np
 
 from evolution_strategy.portfolio import Portfolio
 
 
+@dataclass(frozen=True)
+class ProfitData:
+    profits: np.ndarray
+    best_idx: int
+    max_profit: float
+
+
+_PROFIT_CACHE: dict[int, tuple[list[Portfolio], ProfitData]] = {}
+_COV_CACHE: dict[int, tuple[list[Portfolio], np.ndarray]] = {}
+
+
+def get_profit_data(portfolio: list[Portfolio]) -> ProfitData:
+    key = id(portfolio)
+    cached = _PROFIT_CACHE.get(key)
+    if cached is not None and cached[0] is portfolio:
+        return cached[1]
+
+    profits = np.array([asset.profit for asset in portfolio], dtype=np.float64)
+    best_idx = int(np.argmax(profits))
+    data = ProfitData(
+        profits=profits,
+        best_idx=best_idx,
+        max_profit=float(profits[best_idx]),
+    )
+    if len(_PROFIT_CACHE) >= 32:
+        _PROFIT_CACHE.clear()
+    _PROFIT_CACHE[key] = (portfolio, data)
+    return data
+
+
+def get_covariance_matrix(portfolio: list[Portfolio]) -> np.ndarray:
+    key = id(portfolio)
+    cached = _COV_CACHE.get(key)
+    if cached is not None and cached[0] is portfolio:
+        return cached[1]
+
+    risks = np.array([asset.risk for asset in portfolio], dtype=np.float64)
+    corr = np.array([asset.correlations for asset in portfolio], dtype=np.float64)
+    cov = np.ascontiguousarray(corr * np.outer(risks, risks), dtype=np.float64)
+    np.fill_diagonal(cov, risks ** 2)
+
+    if len(_COV_CACHE) >= 32:
+        _COV_CACHE.clear()
+    _COV_CACHE[key] = (portfolio, cov)
+    return cov
+
+
 def evaluate_profit(portfolio: list[Portfolio], weights: list[float]) -> float:
-    total_profit = 0.0
-    for i in range(len(portfolio)):
-        total_profit += weights[i] * portfolio[i].profit
-    return total_profit
+    return float(np.dot(weights, get_profit_data(portfolio).profits))
 
 
 def evaluate_cost(portfolio: list[Portfolio], weights: list[float]) -> float:
-    total_risk = 0.0
-    n = len(portfolio)
+    w = np.asarray(weights, dtype=np.float64)
+    cov = get_covariance_matrix(portfolio)
+    return float(w @ (cov @ w))
 
-    for i in range(n):
-        total_risk += weights[i] ** 2 * portfolio[i].risk ** 2
-        for j in range(i + 1, n):
-            total_risk += 2 * weights[i] * weights[j] * portfolio[i].risk * portfolio[j].risk * portfolio[i].correlations[j]
 
-    return total_risk
+def evaluate_batch_cost(cov: np.ndarray, weights_batch: np.ndarray) -> np.ndarray:
+    """Compute portfolio variances for a (batch_size, n) matrix via BLAS DGEMM."""
+    return np.einsum("ij,ij->i", weights_batch @ cov, weights_batch)
 
 
 def get_target_return(portfolio: list[Portfolio], alpha: float) -> float:
-    profits = [c.profit for c in portfolio]
-    r_eq = sum(profits) / len(profits)
-    return (1.0 - alpha) * r_eq + alpha * max(profits)
-
+    data = get_profit_data(portfolio)
+    r_eq = float(np.mean(data.profits))
+    return (1.0 - alpha) * r_eq + alpha * data.max_profit
+# =============================================================================
+# END AI-ASSISTED SECTION
+# =============================================================================
