@@ -1,3 +1,8 @@
+"""Execute and summarize portfolio ES experiments.
+
+Runs seeded experiments and calculates solution quality,
+feasibility, runtime, and convergence statistics.
+"""
 from dataclasses import dataclass, field
 import math
 from pathlib import Path
@@ -34,6 +39,11 @@ ALPHAS: tuple[float, ...] = (0.25, 0.50, 0.75)
 
 @dataclass
 class CaseSummary:
+    """Store aggregated results for one experimental case.
+
+    Each case represents one dataset, return target,
+    and ES variant evaluated across multiple seeds.
+    """
     case_name: str
     dataset_name: str
     alpha: float
@@ -58,9 +68,15 @@ def summarize_case(
         num_runs: int = 10,
         max_iterations: int = 30000,
 ) -> CaseSummary:
+    """Execute repeated ES runs for one experimental case.
+
+    Calculate variance statistics from feasible runs,
+    runtime across all runs, and mean convergence history.
+    """
     case_name = f"{dataset_name}_alpha{int(alpha * 100):03d}"
     runs: list[ESResult] = []
 
+    # Use matching seeds for consistent algorithm comparisons.
     for seed in range(num_runs):
         logger.info(f"Run: {seed + 1} | Seed: {seed}")
         result = run_es(
@@ -76,6 +92,7 @@ def summarize_case(
         )
         runs.append(result)
 
+    # Calculate solution-quality statistics from feasible runs.
     valid_runs = [run for run in runs if run.is_valid]
     valid_costs = [run.cost for run in valid_runs]
 
@@ -84,6 +101,8 @@ def summarize_case(
         best_cost = best_run.cost
         best_weights = best_run.weights
         mean_cost = sum(valid_costs) / len(valid_costs)
+
+        # Population standard deviation of final variances.
         std_cost = math.sqrt(
             sum((cost - mean_cost) ** 2 for cost in valid_costs) / len(valid_costs)
         )
@@ -93,6 +112,7 @@ def summarize_case(
         mean_cost = float("inf")
         std_cost = 0.0
 
+    # Calculate feasibility rate and mean runtime across all runs.
     feasible_rate = 100.0 * len(valid_runs) / len(runs)
     mean_runtime = sum(run.runtime_seconds for run in runs) / len(runs)
 
@@ -127,6 +147,11 @@ def run_all_experiments(
         num_runs: int = 10,
         max_iterations: int = 30000,
 ) -> list[CaseSummary]:
+    """Execute the complete ES experimental design.
+
+    Five datasets, three return targets, three ES variants,
+    and ten seeds produce 45 cases and 450 runs by default.
+    """
     all_summaries: list[CaseSummary] = []
 
     logger.info(
