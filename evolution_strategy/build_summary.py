@@ -1,11 +1,13 @@
 # This file was generated with AI assistance; Group 7 must review it.
 """Build the consolidated ES summary from completed case exports.
 
-Run from the repository root::
+Combines saved experimental statistics into a 12-column CSV.
+The complete experimental design contains 45 cases.
 
+Run from the repository root:
     python -m evolution_strategy.build_summary
 
-This tool reads saved CSV files only; it does not run optimization.
+This tool reads saved results without rerunning optimization.
 """
 
 from __future__ import annotations
@@ -34,7 +36,7 @@ assert set(COLUMNS) == SUMMARY_COLUMNS
 
 
 def _first_row(path: Path) -> dict[str, str]:
-    """Read exactly one representative row, rejecting missing or empty CSVs."""
+    """Read the first data row, rejecting missing or empty CSVs."""
     if not path.is_file():
         raise FileNotFoundError(f"Missing required ES export: {path}")
     with path.open(newline="", encoding="utf-8-sig") as handle:
@@ -46,7 +48,11 @@ def _first_row(path: Path) -> dict[str, str]:
 
 
 def _case_row(folder: Path) -> dict[str, str | int]:
-    """Convert one completed case's raw exports to the summary schema."""
+    """Extract experimental statistics from one completed case.
+
+    Read summary.csv and the first run to obtain the
+    statistics, number of assets, and target return.
+    """
     case = _first_row(folder / "summary.csv")
     first_run = _first_row(folder / "runs.csv")
     try:
@@ -67,7 +73,7 @@ def _case_row(folder: Path) -> dict[str, str | int]:
             "feasible_rate_percent": case["feasible_rate_percent"],
             "mean_runtime_seconds": case["mean_runtime_seconds"],
         }
-        # Validate fields used as sort keys and reject malformed exports.
+        # Check that numeric summary fields can be converted correctly.
         float(row["alpha"])
         int(row["num_runs"])
         int(row["evaluations_per_run"])
@@ -93,6 +99,7 @@ def build_summary(cases_dir: Path, out_path: Path) -> int:
     if not cases_dir.is_dir():
         raise FileNotFoundError(f"Missing ES cases directory: {cases_dir}")
 
+    # Include case folders that have a completion marker.
     folders = sorted(
         folder for folder in cases_dir.iterdir()
         if folder.is_dir() and (folder / "complete.json").is_file()
@@ -100,12 +107,14 @@ def build_summary(cases_dir: Path, out_path: Path) -> int:
     if not folders:
         raise FileNotFoundError(f"No completed ES cases in: {cases_dir}")
 
+    # Extract one summary row per completed experimental case.
     rows = [_case_row(folder) for folder in folders]
     keys = [(row["dataset"], float(row["alpha"]), row["variant"]) for row in rows]
     if len(set(keys)) != len(keys):
         raise ValueError("Duplicate dataset/alpha/variant keys in completed ES cases")
     rows.sort(key=lambda row: (row["dataset"], float(row["alpha"]), row["variant"]))
 
+    # Write atomically to avoid leaving a partially written summary.
     out_path.parent.mkdir(parents=True, exist_ok=True)
     temporary = out_path.with_name(out_path.name + ".tmp")
     try:
@@ -133,6 +142,7 @@ def summarize_all_es(
 
 
 def main() -> None:
+    """Generate the summary for the complete 45-case experiment."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--results-dir", type=Path, default=DEFAULT_RESULTS_DIR,
@@ -145,6 +155,8 @@ def main() -> None:
     args = parser.parse_args()
     cases_dir = args.results_dir / "full"
     out_path = args.out or (args.results_dir / SUMMARY_NAME)
+
+    # Require all 45 marked cases for the full experimental summary.
     completed_count = sum(
         folder.is_dir() and (folder / "complete.json").is_file()
         for folder in cases_dir.iterdir()
