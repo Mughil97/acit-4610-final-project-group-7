@@ -101,8 +101,11 @@ def run_one_plus_one(
 ):
     """Run (1+1)-ES, counting initialization as one evaluation.
 
-    In accordance with Portfolio 2026, Problem 2, p. 10, accept only strictly
-    lower-variance offspring and update sigma after EACH evaluated child.
+    Accept only strictly lower-variance offspring and update sigma
+    after each evaluated child using the 1/5 success rule.
+
+    Maintain a separate best-so-far record, including the initial
+    repaired portfolio, as required by Portfolio 2026, Problem 2.
     """
     n = len(portfolio)
     if sigma is None:
@@ -113,7 +116,13 @@ def run_one_plus_one(
     current_profit, current_cost, current_weights = evaluate_one_plus_one(
         portfolio, current_weights, target_return
     )
-    history = [current_cost]
+    # correction: separate best-so-far archive.
+    # Include the initial repaired portfolio.
+    best_weights = current_weights.copy()
+    best_profit = current_profit
+    best_cost = current_cost
+
+    history = [best_cost]
 
     for _ in range(1, max_iterations):
         # Gaussian mutation:
@@ -127,19 +136,26 @@ def run_one_plus_one(
         )
 
         improved = new_cost < current_cost  # strict improvement only
+
         if improved:
             current_weights = repaired_weights
             current_profit = new_profit
             current_cost = new_cost
 
-        history.append(current_cost)
+        # AI-assisted correction: update the separate archive.
+        if new_cost < best_cost:
+            best_weights = repaired_weights.copy()
+            best_profit = new_profit
+            best_cost = new_cost
+
+        history.append(best_cost)
 
         # Adapt the mutation step size after every trial.
         # Successful mutation increases sigma, while an
         # unsuccessful mutation decreases sigma.
         sigma = update_one_plus_one_sigma(sigma, improved)
 
-    return current_weights, current_profit, current_cost, history
+    return best_weights, best_profit, best_cost, history
 
 # (10+70)-ES Algorithm
 def run_ten_plus_seventy(
