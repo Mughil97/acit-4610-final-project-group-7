@@ -1,10 +1,31 @@
+"""Evolution Strategy algorithms for portfolio optimization.
+
+Implements the three variants required by Portfolio 2026,
+Problem 2, pages 10-11:
+
+1. (1+1)-ES:
+   One parent and one offspring, using a scalar mutation
+   step size adapted through the 1/5 success rule.
+
+2. (10+70)-ES:
+   Population-based elitist Evolution Strategy.
+   Parents and offspring compete for survival.
+
+3. (10,70)-ES:
+   Population-based non-elitist Evolution Strategy.
+   Only offspring compete for survival.
+
+All variants minimize portfolio variance, repair candidate
+weights before evaluation, and record the best solution found
+within the objective evaluation budget.
+"""
 from dataclasses import dataclass
 import math
 import random
 
 from evolution_strategy.repair import repair
 from evolution_strategy.evaluation import (
-    evaluate_cost, 
+    evaluate_cost,
     evaluate_profit
 )
 from evolution_strategy.portfolio import Portfolio
@@ -12,17 +33,52 @@ from evolution_strategy.portfolio import Portfolio
 
 @dataclass
 class Individual:
+    """Represent one candidate portfolio in population-based ES.
+
+    Attributes:
+        weights:
+            Portfolio decision variables. Each weight represents
+            the fraction of capital allocated to an asset.
+
+        sigmas:
+            Mutation step sizes associated with individual
+            decision variables. These evolve together with
+            the portfolio weights.
+
+        profit:
+            Expected portfolio return.
+
+        cost:
+            Portfolio variance. Lower values are preferred.
+
+    The weights represent the solution, while sigmas are
+    strategy parameters controlling the mutation process.
+    """
     weights: list[float]
     sigmas: list[float]
     profit: float
     cost: float
 
-
 def evaluate_one_plus_one(
+
         portfolio: list[Portfolio],
         weights: list[float],
         target_return: float
 ):
+
+    """Repair and evaluate a candidate portfolio.
+
+    Despite its name, this helper is shared by all three
+    Evolution Strategy variants.
+
+    Evaluation sequence:
+        1. Repair the candidate weights.
+        2. Calculate the expected portfolio return.
+        3. Calculate the portfolio variance.
+        4. Return the evaluation results and repaired weights.
+
+    Each call represents one candidate objective evaluation.
+    """
     repaired_weights = repair(portfolio, weights, target_return)
     profit = evaluate_profit(portfolio, repaired_weights)
     cost = evaluate_cost(portfolio, repaired_weights)
@@ -60,6 +116,11 @@ def run_one_plus_one(
     history = [current_cost]
 
     for _ in range(1, max_iterations):
+        # Gaussian mutation:
+        # w'_i = w_i + sigma * N_i(0, 1)
+        #
+        # Each coordinate receives independent Gaussian noise,
+        # but all coordinates share the same scalar sigma.
         new_weights = [weight + random.gauss(0, sigma) for weight in current_weights]
         new_profit, new_cost, repaired_weights = evaluate_one_plus_one(
             portfolio, new_weights, target_return
@@ -72,6 +133,10 @@ def run_one_plus_one(
             current_cost = new_cost
 
         history.append(current_cost)
+
+        # Adapt the mutation step size after every trial.
+        # Successful mutation increases sigma, while an
+        # unsuccessful mutation decreases sigma.
         sigma = update_one_plus_one_sigma(sigma, improved)
 
     return current_weights, current_profit, current_cost, history
@@ -84,8 +149,22 @@ def run_ten_plus_seventy(
         mu: int = 10,
         lambda_: int = 70,
 ):
+    """Run the elitist (mu + lambda) Evolution Strategy.
+
+    Assignment configuration:
+        mu = 10 parents
+        lambda = 70 offspring
+
+    The plus strategy is elitist because existing parents
+    can survive into the next generation.
+
+    A separate best-so-far record preserves the best
+    evaluated solution throughout the search.
+    """
     n = len(portfolio)
+    # Initial mutation step size for each coordinate.
     init_sigma = 0.1 / math.sqrt(n)
+    # Global and coordinate-specific learning rates.
     tau_prime = 1.0 / math.sqrt(2.0 * n)
     tau = 1.0 / math.sqrt(2.0 * math.sqrt(n))
 
@@ -108,6 +187,7 @@ def run_ten_plus_seventy(
     evaluations = mu
 
     while evaluations < max_iterations:
+        # Prevent exceeding the objective evaluation budget.
         batch_size = min(lambda_, max_iterations - evaluations)
         offspring: list[Individual] = []
 
@@ -115,11 +195,14 @@ def run_ten_plus_seventy(
             # 1. Select 2 parents at random
             parent1, parent2 = random.sample(population, 2)
 
-            # 2. Recombine weights and sigmas
+            # 2. Arithmetic recombination of weights and
+            # geometric recombination of mutation step sizes.
             child_weights = [(parent1.weights[i] + parent2.weights[i]) / 2.0 for i in range(n)]
             child_sigmas = [math.sqrt(parent1.sigmas[i] * parent2.sigmas[i]) for i in range(n)]
 
-            # 3. Mutate sigmas (self-adaptation) and weights
+            # 3. Log-normal self-adaptation of sigmas,
+            # followed by Gaussian mutation of weights.
+            # z0 is shared across all coordinates.
             z0 = random.gauss(0, 1)
             for i in range(n):
                 child_sigmas[i] *= math.exp(tau_prime * z0 + tau * random.gauss(0, 1))
@@ -152,9 +235,44 @@ def run_ten_comma_seventy(
         mu: int = 10,
         lambda_: int = 70,
 ):
+    """Run the non-elitist (mu, lambda) Evolution Strategy.
+
+    Assignment configuration:
+        mu = 10 parents
+        lambda = 70 offspring
+
+    Initialization, recombination, mutation and repair are
+    shared in principle with the plus strategy.
+
+    The main difference is survivor selection:
+
+        Only the offspring population is eligible for
+        selection into the next parent population.
+
+    The previous parents are discarded after a complete
+    offspring batch, even when they have lower variance.
+
+    This can promote exploration but may also lose previously
+    discovered high-quality solutions.
+
+    A separate best-so-far record preserves the best solution
+    for reporting. It does not participate in parent selection
+    or survivor selection.
+
+    An incomplete final offspring batch is still evaluated
+    and included in the best-so-far record.
+    """
     n = len(portfolio)
+    # Initial mutation step size for each coordinate:
+    # sigma_0 = 0.1 / sqrt(n)
     init_sigma = 0.1 / math.sqrt(n)
+
+    # tau_prime: global learning rate controlling a shared
+    # adjustment across all coordinates.
     tau_prime = 1.0 / math.sqrt(2.0 * n)
+
+    # tau: coordinate-specific learning rate controlling
+    # independent adjustments to individual step sizes.
     tau = 1.0 / math.sqrt(2.0 * math.sqrt(n))
 
     # Initialize population of mu individuals: (weights, sigmas, profit, cost)
@@ -176,6 +294,9 @@ def run_ten_comma_seventy(
     evaluations = mu
 
     while evaluations < max_iterations:
+        # Limit offspring production to the remaining evaluation
+        # budget. The final generation may therefore be incomplete.
+        # This prevents exceeding 30,000 objective evaluations.
         batch_size = min(lambda_, max_iterations - evaluations)
         offspring: list[Individual] = []
 
@@ -183,11 +304,21 @@ def run_ten_comma_seventy(
             # 1. Select 2 parents at random
             parent1, parent2 = random.sample(population, 2)
 
-            # 2. Recombine weights and sigmas
+            # 2. Arithmetic recombination of weights and
+            # geometric recombination of mutation step sizes.
             child_weights = [(parent1.weights[i] + parent2.weights[i]) / 2.0 for i in range(n)]
             child_sigmas = [math.sqrt(parent1.sigmas[i] * parent2.sigmas[i]) for i in range(n)]
 
             # 3. Mutate sigmas (self-adaptation) and weights
+            # Log-normal self-adaptation:
+            #
+            # sigma'_i = sigma_i * exp(tau_prime * z0 + tau * zi)
+            #
+            # z0 is shared across the child's coordinates.
+            # zi is independently sampled for each coordinate.
+            #
+            # Update sigma first, then use the updated sigma
+            # to mutate the corresponding portfolio weight.
             z0 = random.gauss(0, 1)
             for i in range(n):
                 child_sigmas[i] *= math.exp(tau_prime * z0 + tau * random.gauss(0, 1))
