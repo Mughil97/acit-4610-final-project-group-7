@@ -1,4 +1,9 @@
-"""Save ES experiment results case by case for reproducibility."""
+"""Execute and export ES experiments for reproducibility.
+
+Saves individual runs, summary statistics, and convergence
+histories. Supports resuming interrupted experiments by
+skipping previously completed cases.
+"""
 
 import argparse
 import csv
@@ -32,9 +37,18 @@ def save_csv(path, columns, rows):
 
 
 def export_case(summary, folder, budget):
-    """Export statistics, individual runs, and convergence history."""
+    """Export one completed experimental case.
+
+    Files:
+        summary.csv: Aggregated experimental statistics.
+        runs.csv: Individual seeded run results.
+        convergence.csv: Mean best-so-far convergence.
+        run_histories.csv: Complete history of each seed.
+        complete.json: Successful export marker.
+    """
     folder.mkdir(parents=True, exist_ok=True)
 
+    # Verify that every run respects the objective evaluation budget.
     if len(summary.mean_history) != budget:
         raise ValueError("Incorrect convergence-history length")
 
@@ -136,7 +150,14 @@ def optimise_es(
     num_runs: int = 10,
     budget: int = 30000,
 ) -> Path:
-    """Run ES experiments and export CSVs, skipping completed cases."""
+    """Execute ES experiments and export completed cases.
+
+    The default configuration produces 45 experimental cases
+    and 450 runs across all datasets, targets, and variants.
+
+    Existing completed cases are skipped. Use a separate
+    output directory when evaluating a modified implementation.
+    """
     output_base = Path(output_dir)
     output_root = output_base / "full"
 
@@ -163,6 +184,9 @@ def optimise_es(
                     "complete.json",
                 )
 
+                # Resume interrupted experiments by skipping
+                # cases with all required export files.
+                # File existence does not verify algorithm version.
                 if all(
                     (folder / filename).is_file()
                     for filename in required_files
@@ -190,6 +214,7 @@ def optimise_es(
             "------------------------------------------------------------------------------------\n"
         )
 
+    # Consolidate completed cases into one experimental summary.
     output_csv = output_base / SUMMARY_NAME
     count = build_summary(output_root, output_csv)
     logger.info(f"SUMMARY: {count} cases -> {output_csv}")
@@ -204,7 +229,6 @@ def main():
     )
     args = parser.parse_args()
     optimise_es(output_dir=args.output)
-
 
 if __name__ == "__main__":
     main()
