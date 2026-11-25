@@ -293,6 +293,27 @@ a complete rerun of all 450 experiments.
 
 ## Summary of results and caveats
 
-Across the 45 cases in `results/es_summary_45_cases.csv`, all 450 runs are 100% feasible. Both population strategies reach lower mean final variance than `(1+1)-ES` in all 15 dataset/alpha combinations: `(10+70)-ES` is lowest in 8 of 15 cases and `(10,70)-ES` in 7 of 15. `(1+1)-ES` finishes fastest in all 15 cases, taking about 1.4 s per run on `port1` and 48 to 50 s on `port5`, compared with 1.8 to 1.9 s and 51 to 55 s for the population variants.
+Across the 45 cases in `results/es_summary_45_cases.csv`,
+all 450 runs are feasible. Both population strategies
+reach lower mean final variance than `(1+1)-ES` in all
+15 dataset/alpha combinations.
 
-Because asset sets and return targets change across datasets and $\alpha$ levels, compare variance only within the same `(dataset, alpha)` case. Runtimes depend on hardware and load, and the 8 vs. 7 split between `(10+70)-ES` and `(10,70)-ES` is descriptive only, with no formal significance test attached.
+`(10+70)-ES` achieves the lowest mean variance in 7 of
+15 cases, while `(10,70)-ES` achieves the lowest mean
+variance in 8 of 15 cases.
+
+`(1+1)-ES` is the fastest variant in all 15 cases.
+Its recorded mean runtime ranges from approximately
+0.98–1.01 seconds on port1 to 36.12–36.40 seconds on port5.
+The population variants require approximately
+1.28–1.32 seconds on port1 and 38.16–38.88 seconds on port5.
+
+These runtimes describe the historical recorded experiments,
+not a new controlled runtime benchmark of the updated
+covariance implementation.
+
+Because asset sets and return targets change across datasets
+and alpha levels, variance comparisons should focus on the
+same dataset and return target. Runtimes depend on hardware
+and system load. The 7-versus-8 split between the population
+variants is descriptive, with no formal significance test.
