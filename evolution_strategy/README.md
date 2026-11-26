@@ -133,9 +133,13 @@ CSV export, summary building, and plotting.
 
 Latest validation:
 
-- ES regression suite: 87 passed.
+- ES regression suite: 92 passed.
 - Covariance regression suite: 33 passed.
-- Overall project regression suite: 124 passed.
+- Archive regression suite: 5 passed.
+- Overall project regression suite: 129 passed.
+- Archive numerical equivalence: 150/150 comparisons passed.
+- Experimental results audit: 45/45 configurations,
+  450 runs, and 13,500,000 objective evaluations validated.
 
 ### Full pipeline via `main.py`
 
@@ -179,6 +183,23 @@ Use a new, unused output directory when reproducing
 experiments with a modified implementation. Existing
 completion markers do not verify the source-code
 revision that generated the results.
+
+### Reproducing report tables
+
+Generate all seven ES LaTeX report tables from the
+existing consolidated experimental results without
+rerunning optimization:
+
+```bash
+python evolution_strategy/report_tables/sync_es_tables.py evolution_strategy/results/es_summary_45_cases.csv evolution_strategy/report_tables
+```
+
+The generated LaTeX tables are stored in
+`evolution_strategy/report_tables/tables/`.
+
+The script also generates a source CSV copy for traceability.
+This duplicate is excluded from version control.
+
 
 Generating figures without rerunning optimization:
 
@@ -257,25 +278,27 @@ evolution_strategy/
 | `plot_results.py` | Convergence plots and unified plot entry point (`generate_all_plots_es`) |
 | `plot_comparisons.py` | Mean-variance, runtime, and per-seed boxplot comparisons |
 | `plot_datasets.py` | Dataset correlation matrix and pairwise-correlation boxplot |
+| `report_tables/sync_es_tables.py` | Reproduce all seven ES LaTeX report tables from the consolidated experimental CSV |
 
 ## Experimental results provenance
 
 The existing 450-run experimental dataset was committed
 in revision `8768729`, before the covariance precomputation
-improvement in revision `173116b`.
-
-The Git revision identifies when the results were committed,
-but the exact original execution environment and generating
-source revision have not been independently established.
+update in revision `173116b` and the explicit separate
+(1+1)-ES archive correction in revision `8c92b9f`.
 
 Subsequent implementation validation included:
 
 - 500 numerical objective comparisons.
 - 45 seeded comparisons at 1,000 evaluations.
 - Nine representative runs at 30,000 evaluations.
+- One complete ten-seed case reproduction.
 - 33 permanent covariance regression tests.
-- 87 passing ES regression tests.
-- Independent auditing of all 450 stored experimental runs.
+- Five permanent archive regression tests.
+- 150 paired archive equivalence comparisons across
+  five datasets, three return targets, and ten seeds.
+- 92 passing ES regression tests.
+- 129 passing overall project regression tests.
 
 The nine full-budget checks covered port1, port3, and port5
 at alpha = 0.50, seed 0, using all three ES variants.
@@ -283,13 +306,27 @@ All nine reproduced the recorded final variance within
 numerical tolerance, satisfied feasibility constraints,
 and completed exactly 30,000 evaluations.
 
-The stored runtime measurements belong to the historical
-experiments. They must not be interpreted as new runtime
-measurements of the updated covariance implementation.
+All 150 archive equivalence comparisons produced identical
+final weights, returns, variances, and convergence histories
+at a budget of 1,000 evaluations.
+
+The final results audit validated all 45 experimental
+configurations, 450 independent runs, and 13,500,000
+objective evaluations.
+
+The report tables and figures are reproduced from the
+existing audited experimental results.
+
+The recorded runtime measurements describe the original
+experimental campaign, not the computational performance
+of the subsequently corrected implementation.
 
 The targeted reproducibility checks do not constitute
-a complete rerun of all 450 experiments.
-
+a complete rerun of all 450 experiments. Revision
+`8768729` identifies the commit containing the original
+results. The exact original execution environment and
+generating source revision have not been independently
+established.
 
 ## Summary of results and caveats
 
