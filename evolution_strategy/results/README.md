@@ -1,13 +1,13 @@
 # Evolution Strategies Experiment Results
 
-This directory stores all raw per-run outputs, evaluation-by-evaluation convergence logs, the consolidated 45-case summary table, and the audit report for **Problem 2 (Evolution Strategies)**.
+This directory stores all raw per-run outputs, evaluation-by-evaluation convergence logs, figures, and the consolidated 45-case summary table for **Problem 2 (Evolution Strategies)**.
 
 ## Directory Layout
 
 ```text
 results/
 ├── es_summary_45_cases.csv     # Consolidated 45-case statistics (5 datasets × 3 alphas × 3 variants)
-├── validation_report.json      # Automated audit report covering all 450 runs / 13.5M evaluations
+├── figures/                    # 15 convergence PNGs + 3 comparison plots (PNG + PDF)
 └── full/                       # 45 completed case directories (450 seeded runs)
     └── <dataset>_alpha<alpha>_<variant>_e30000_r10/
         ├── summary.csv         # Case-level variance/feasibility/runtime summary & best weight vector

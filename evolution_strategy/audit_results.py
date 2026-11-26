@@ -219,7 +219,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--results-dir", type=Path, default=DEFAULT_RESULTS_DIR / "full")
     parser.add_argument("--summary", type=Path,
-                        default=Path("evolution_strategy/report_data/es_summary_45_cases.csv"))
+                        default=DEFAULT_RESULTS_DIR / "es_summary_45_cases.csv")
     parser.add_argument("--report-out", type=Path,
                         default=DEFAULT_RESULTS_DIR / "validation_report.json")
     parser.add_argument("--budget", type=int, default=30000)

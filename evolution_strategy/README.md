@@ -45,7 +45,7 @@ The five OR-Library benchmark files in `evolution_strategy/data/` contain weekly
 
 In `port1`, the single safest company (Stock #29) has variance `0.001285`, whereas splitting capital evenly across all 31 stocks lowers variance to `0.001131`. That equal split still misses higher return targets because its return is only `0.350%`. Across markets, `port2`, `port3`, and `port4` have much lower average pairwise correlations (`0.163` to `0.248`) than `port1` (`0.527`) and `port5` (`0.476`), so combining stocks cancels more variance there. `port5` also behaves differently on returns: 177 of its 225 stocks have negative weekly mean returns, pulling $R_{\mathrm{eq}}$ to `-0.151%` and leaving the $\alpha = 0.25$ target slightly negative (`-0.014%`).
 
-On `port1` at $\alpha = 0.50$ ($R^* = 0.7185\%$), putting 100% into the highest-return asset (Stock #5) is feasible with variance `0.004776`, and a 50/50 blend of equal-weight and Stock #5 lowers variance to `0.002066`. Running the population ES variants for 30,000 evaluations brings mean variance down to `0.001171` at the same return target.
+On `port1` at $\alpha = 0.50$ ($R^* = 0.7185\%$), putting 100% into the highest-return asset (Stock #5) is feasible with variance `0.004776`, and a 50/50 blend of equal-weight and Stock #5 lowers variance to `0.002066`. Running the population ES variants for 30,000 evaluations brings mean variance down to `0.001166` for `(10,70)-ES` and `0.001171` for `(10+70)-ES` at the same return target.
 
 ## Algorithms and constraint repair
 
@@ -65,7 +65,9 @@ Before any initial or mutated candidate is evaluated, `repair.py` restores feasi
 
 ## Running the code
 
-Requires Python 3.10+. From the repository root:
+- **Environment:** Requires Python `3.10+` (verified on Python `3.12.15`), with pinned dependencies in [`requirements.txt`](../requirements.txt): `numpy==2.5.4`, `matplotlib==3.11.2`, `pytest==9.2.0`. The ES core algorithms, exporter, summary builder, and audit script use only the Python standard library; `matplotlib` is required for plotting and `pytest` for tests.
+
+From the repository root:
 
 ```bash
 python -m pip install -r requirements.txt
@@ -138,13 +140,11 @@ Raw outputs and report artifacts are stored inside the repository:
 ```text
 evolution_strategy/
 ├── data/                         # OR-Library benchmark files (port1.txt .. port5.txt)
-├── figures/                      # Report figures (19 PNGs)
-├── report_data/
-│   ├── es_summary_45_cases.csv   # Consolidated 45-case summary table
-│   └── validation_report.json    # Automated audit report
+├── figures/
+│   └── dataset_correlations.png  # Dataset correlation heatmap and pairwise-correlation boxplot
 ├── results/
-│   ├── es_summary_45_cases.csv
-│   ├── validation_report.json
+│   ├── es_summary_45_cases.csv   # Consolidated 45-case summary table
+│   ├── figures/                  # 15 convergence PNGs + 3 comparison plots (PNG + PDF)
 │   └── full/
 │       └── <dataset>_alpha<alpha>_<variant>_e30000_r10/
 │           ├── summary.csv       # Case statistics and best weight vector
@@ -174,6 +174,6 @@ evolution_strategy/
 
 ## Summary of results and caveats
 
-Across the 45 cases in `report_data/es_summary_45_cases.csv`, all 450 runs are 100% feasible. Both population strategies reach lower mean final variance than `(1+1)-ES` in all 15 dataset/alpha combinations: `(10+70)-ES` is lowest in 8 of 15 cases and `(10,70)-ES` in 7 of 15. `(1+1)-ES` finishes fastest in all 15 cases, taking about 1.4 s per run on `port1` and 48 to 50 s on `port5`, compared with 1.8 to 1.9 s and 51 to 55 s for the population variants.
+Across the 45 cases in `evolution_strategy/results/es_summary_45_cases.csv`, all 450 runs are 100% feasible. Both population strategies reach lower mean final variance than `(1+1)-ES` in all 15 dataset/alpha combinations: `(10,70)-ES` is lowest in 8 of 15 cases and `(10+70)-ES` in 7 of 15. `(1+1)-ES` finishes fastest in all 15 cases, taking `0.98` to `1.01` s per run on `port1` and `36.1` to `36.4` s on `port5`, compared with `1.28` to `1.32` s and `38.2` to `38.9` s for the population variants.
 
-Because asset sets and return targets change across datasets and $\alpha$ levels, compare variance only within the same `(dataset, alpha)` case. Runtimes depend on hardware and load, and the 8 vs. 7 split between `(10+70)-ES` and `(10,70)-ES` is descriptive only, with no formal significance test attached.
+Because asset sets and return targets change across datasets and $\alpha$ levels, compare variance only within the same `(dataset, alpha)` case. Runtimes depend on hardware and load, and the 8 vs. 7 split between `(10,70)-ES` and `(10+70)-ES` is descriptive only, with no formal significance test attached.
