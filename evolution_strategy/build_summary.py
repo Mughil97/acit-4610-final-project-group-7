@@ -1,4 +1,4 @@
-# This file was generated with AI assistance; Group 7 must review it.
+# This file was generated with AI assistance.
 """Build the consolidated ES summary from completed case exports.
 
 Combines saved experimental statistics into a consolidated CSV.

@@ -1,4 +1,4 @@
-# AI-generated regression tests; Group 7 must review and validate them.
+# This file was generated with AI assistance.
 """Regression tests for the portfolio formulation in Problem 2.
 
 Validate covariance construction, objective calculations,
