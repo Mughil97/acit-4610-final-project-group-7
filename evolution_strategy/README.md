@@ -47,6 +47,25 @@ The five OR-Library portfolio benchmark files (`port1.txt`–`port5.txt`) are in
 
 ## Algorithms and constraint repair
 
+```mermaid
+flowchart TD
+    A(["Start: Initialize parent(s) and step sizes"])
+    A --> B["Repair candidate(s) (simplex projection + return repair)"]
+    B --> C["Evaluate portfolio variance and update best-so-far archive"]
+    C --> D{"Evaluation budget reached?"}
+    D -- Yes --> E(["Return best-so-far archived portfolio"])
+    D -- No --> F["Generate offspring (recombine parents, adapt step sizes, mutate weights)"]
+    F --> G["Repair offspring (simplex projection + return repair)"]
+    G --> H["Evaluate offspring variance and update best-so-far archive"]
+    H --> I{"Selection strategy"}
+    I -- "(1+1)-ES" --> J["Keep child if variance improves; update step size (1/5 rule)"]
+    I -- "(10+70)-ES" --> K["Select best 10 from parents + offspring"]
+    I -- "(10,70)-ES" --> L["Select best 10 from offspring only"]
+    J --> D
+    K --> D
+    L --> D
+```
+
 All three ES variants are implemented in `algorithms.py` and exposed through `run_es()` in `evolution_strategies.py`:
 
 | Variant | Algorithm | Survivor selection |
