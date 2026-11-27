@@ -1,8 +1,7 @@
 """Execute and export ES experiments for reproducibility.
 
 Saves individual runs, summary statistics, and convergence
-histories. Supports resuming interrupted experiments by
-skipping previously completed cases.
+histories for every configured experimental case.
 """
 
 import argparse
@@ -12,7 +11,8 @@ import os
 from pathlib import Path
 
 from evolution_strategy.build_summary import SUMMARY_NAME, build_summary
-from evolution_strategy.evolution_strategies import VARIANTS
+from evolution_strategy.evolution_strategies import VARIANTS, run_es
+from evolution_strategy.plot_results import generate_all_plots_es
 from evolution_strategy.results import (
     ALPHAS,
     DEFAULT_RESULTS_DIR,
@@ -150,16 +150,13 @@ def optimise_es(
     num_runs: int = 10,
     budget: int = 30000,
 ) -> Path:
-    """Execute ES experiments and export completed cases.
+    """Execute ES experiments and export all cases.
 
     The default configuration produces 45 experimental cases
     and 450 runs across all datasets, targets, and variants.
-
-    Existing completed cases are skipped. Use a separate
-    output directory when evaluating a modified implementation.
+    Every invocation recomputes and overwrites all configured cases.
     """
-    output_base = Path(output_dir)
-    output_root = output_base / "full"
+    output_root = Path(output_dir)
 
     logger.info(
         "==========  Evolution Strategies — Portfolio Optimisation (Problem 2) =========="
@@ -175,24 +172,6 @@ def optimise_es(
                     f"_{variant}_e{budget}_r{num_runs}"
                 )
                 folder = output_root / case_name
-
-                required_files = (
-                    "summary.csv",
-                    "runs.csv",
-                    "convergence.csv",
-                    "run_histories.csv",
-                    "complete.json",
-                )
-
-                # Resume interrupted experiments by skipping
-                # cases with all required export files.
-                # File existence does not verify algorithm version.
-                if all(
-                    (folder / filename).is_file()
-                    for filename in required_files
-                ):
-                    logger.info(f"SKIP: {case_name}")
-                    continue
 
                 logger.info(f"RUN: {case_name}")
 
@@ -215,20 +194,92 @@ def optimise_es(
         )
 
     # Consolidate completed cases into one experimental summary.
-    output_csv = output_base / SUMMARY_NAME
+    output_csv = output_root / SUMMARY_NAME
     count = build_summary(output_root, output_csv)
     logger.info(f"SUMMARY: {count} cases -> {output_csv}")
 
     return output_root
 
 
-def main():
-    parser = argparse.ArgumentParser()
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Run Problem 2 (Evolution Strategies): full 45-case set, one test case, or one seeded run."
+    )
     parser.add_argument(
-        "--output", default=str(DEFAULT_RESULTS_DIR)
+        "--dataset",
+        choices=tuple(PORTFOLIOS.keys()),
+        default=None,
+        help="Run a single dataset (e.g., port1).",
+    )
+    parser.add_argument(
+        "--alpha",
+        type=float,
+        choices=ALPHAS,
+        default=None,
+        help="Return-target level alpha in {0.25, 0.50, 0.75}.",
+    )
+    parser.add_argument(
+        "--variant",
+        choices=tuple(VARIANTS.keys()),
+        default=None,
+        help="Single ES variant (defaults to all 3 variants for a test case).",
+    )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=None,
+        help="Run a single seed (requires --dataset, --alpha, and --variant).",
     )
     args = parser.parse_args()
-    optimise_es(output_dir=args.output)
+
+    if args.seed is not None:
+        if not (args.dataset and args.alpha is not None and args.variant):
+            parser.error("--seed requires --dataset, --alpha, and --variant.")
+        result = run_es(
+            portfolio=PORTFOLIOS[args.dataset],
+            alpha=args.alpha,
+            variant=args.variant,
+            max_iterations=30000,
+            seed=args.seed,
+        )
+        logger.info(
+            f"ES Single Run | case={args.dataset}_alpha{int(args.alpha * 100):03d} | "
+            f"variant={args.variant} | seed={args.seed} | feasible={result.is_valid} | "
+            f"return={result.profit:.6f} (target={result.target_return:.6f}) | "
+            f"variance={result.cost:.9g} | evaluations={len(result.history)} | "
+            f"runtime={result.runtime_seconds:.3f}s"
+        )
+        return
+
+    if args.dataset is not None or args.alpha is not None or args.variant is not None:
+        datasets = (args.dataset,) if args.dataset else tuple(PORTFOLIOS.keys())
+        alphas = (args.alpha,) if args.alpha is not None else ALPHAS
+        variants = (args.variant,) if args.variant else tuple(VARIANTS.keys())
+
+        for dataset_name in datasets:
+            portfolio = PORTFOLIOS[dataset_name]
+            for alpha in alphas:
+                for variant in variants:
+                    summary = summarize_case(
+                        dataset_name=dataset_name,
+                        portfolio=portfolio,
+                        alpha=alpha,
+                        variant=variant,
+                        num_runs=10,
+                        max_iterations=30000,
+                    )
+                    logger.info(
+                        f"{summary.case_name:14s} | {summary.variant:17s} | "
+                        f"n={summary.num_assets:3d} | R*={summary.target_return:.6f} | "
+                        f"best={summary.best_cost:.6g} | mean={summary.mean_cost:.6g} | "
+                        f"std={summary.std_cost:.4g} | valid={summary.feasible_rate:5.1f}% | "
+                        f"time={summary.mean_runtime:.3f}s"
+                    )
+        return
+
+    optimise_es()
+    generate_all_plots_es()
+
 
 if __name__ == "__main__":
     main()
