@@ -10,7 +10,7 @@
     "evaluations": 30000,
     "initial_best": 43.77489354089982,
     "final_best": 7.954090078446484e-29,
-    "runtime_sec": 0.046257209,
+    "runtime_sec": 0.048814458,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -37,7 +37,7 @@
     "evaluations": 30000,
     "initial_best": 56.93551557580537,
     "final_best": 1.2376407981293554e-28,
-    "runtime_sec": 0.046897416,
+    "runtime_sec": 0.051188167,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -64,7 +64,7 @@
     "evaluations": 30000,
     "initial_best": 52.75485315747356,
     "final_best": 4.5811882878219835e-29,
-    "runtime_sec": 0.046869542,
+    "runtime_sec": 0.049272334,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -91,7 +91,7 @@
     "evaluations": 30000,
     "initial_best": 58.04503653849492,
     "final_best": 3.9402415971646024e-28,
-    "runtime_sec": 0.046622333,
+    "runtime_sec": 0.050136166,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -118,7 +118,7 @@
     "evaluations": 30000,
     "initial_best": 32.00675955886143,
     "final_best": 8.921414516296374e-29,
-    "runtime_sec": 0.047930875,
+    "runtime_sec": 0.049242833,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -145,7 +145,7 @@
     "evaluations": 30000,
     "initial_best": 43.2267750157611,
     "final_best": 3.211358181633772e-28,
-    "runtime_sec": 0.048527291,
+    "runtime_sec": 0.049226,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -172,7 +172,7 @@
     "evaluations": 30000,
     "initial_best": 59.7864215664026,
     "final_best": 7.578350898158897e-28,
-    "runtime_sec": 0.048747875,
+    "runtime_sec": 0.050781,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -199,7 +199,7 @@
     "evaluations": 30000,
     "initial_best": 51.69485836897181,
     "final_best": 1.536301388257729e-27,
-    "runtime_sec": 0.048613167,
+    "runtime_sec": 0.055236166,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -226,7 +226,7 @@
     "evaluations": 30000,
     "initial_best": 28.644234069348023,
     "final_best": 3.127316076754138e-28,
-    "runtime_sec": 0.048211291,
+    "runtime_sec": 0.050331042,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -253,7 +253,7 @@
     "evaluations": 30000,
     "initial_best": 44.42062753996006,
     "final_best": 5.465920777414988e-29,
-    "runtime_sec": 0.048383833,
+    "runtime_sec": 0.050029042,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -280,7 +280,7 @@
     "evaluations": 30000,
     "initial_best": 199.99214799609837,
     "final_best": 1.7075970691279393e-14,
-    "runtime_sec": 0.113391791,
+    "runtime_sec": 0.119013083,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -327,7 +327,7 @@
     "evaluations": 30000,
     "initial_best": 167.53789932113742,
     "final_best": 5.894105658141121e-15,
-    "runtime_sec": 0.114810292,
+    "runtime_sec": 0.118089083,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -374,7 +374,7 @@
     "evaluations": 30000,
     "initial_best": 196.592112949759,
     "final_best": 9.186656559381732e-14,
-    "runtime_sec": 0.119098125,
+    "runtime_sec": 0.12078725,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -421,7 +421,7 @@
     "evaluations": 30000,
     "initial_best": 186.11111436591247,
     "final_best": 5.084950804675992e-14,
-    "runtime_sec": 0.118884625,
+    "runtime_sec": 0.120676333,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -468,7 +468,7 @@
     "evaluations": 30000,
     "initial_best": 113.6127052015774,
     "final_best": 4.2312776111576875e-14,
-    "runtime_sec": 0.119900459,
+    "runtime_sec": 0.123112958,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -515,7 +515,7 @@
     "evaluations": 30000,
     "initial_best": 188.7474306017899,
     "final_best": 1.7620266589822275e-14,
-    "runtime_sec": 0.115383375,
+    "runtime_sec": 0.118156834,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -562,7 +562,7 @@
     "evaluations": 30000,
     "initial_best": 217.28254598686024,
     "final_best": 2.3831834682542958e-14,
-    "runtime_sec": 0.115229083,
+    "runtime_sec": 0.118022125,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -609,7 +609,7 @@
     "evaluations": 30000,
     "initial_best": 205.48129386337294,
     "final_best": 1.293121440532981e-14,
-    "runtime_sec": 0.113673291,
+    "runtime_sec": 0.11644475,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -656,7 +656,7 @@
     "evaluations": 30000,
     "initial_best": 121.92552528798787,
     "final_best": 1.0818106328711626e-14,
-    "runtime_sec": 0.114599667,
+    "runtime_sec": 0.116971583,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -703,7 +703,7 @@
     "evaluations": 30000,
     "initial_best": 182.80959289538714,
     "final_best": 3.128972977465875e-15,
-    "runtime_sec": 0.113073916,
+    "runtime_sec": 0.12100375,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -750,7 +750,7 @@
     "evaluations": 30000,
     "initial_best": 145792.19541448858,
     "final_best": 1.4588485200721824,
-    "runtime_sec": 0.071299208,
+    "runtime_sec": 0.0737895,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -777,7 +777,7 @@
     "evaluations": 30000,
     "initial_best": 116796.60765605186,
     "final_best": 0.900436597561554,
-    "runtime_sec": 0.072699709,
+    "runtime_sec": 0.073489584,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -804,7 +804,7 @@
     "evaluations": 30000,
     "initial_best": 107529.7092076188,
     "final_best": 0.6618777667822882,
-    "runtime_sec": 0.070847125,
+    "runtime_sec": 0.078388916,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -831,7 +831,7 @@
     "evaluations": 30000,
     "initial_best": 62737.51735974429,
     "final_best": 0.3191056574747916,
-    "runtime_sec": 0.073537375,
+    "runtime_sec": 0.075244959,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -858,7 +858,7 @@
     "evaluations": 30000,
     "initial_best": 26812.361797885507,
     "final_best": 4.05332733433119,
-    "runtime_sec": 0.074941417,
+    "runtime_sec": 0.075908875,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -885,7 +885,7 @@
     "evaluations": 30000,
     "initial_best": 136565.5053153844,
     "final_best": 3.544251031597171,
-    "runtime_sec": 0.074132083,
+    "runtime_sec": 0.074839584,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -912,7 +912,7 @@
     "evaluations": 30000,
     "initial_best": 220083.38971029548,
     "final_best": 2.1406854190820344,
-    "runtime_sec": 0.074087833,
+    "runtime_sec": 0.07544925,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -939,7 +939,7 @@
     "evaluations": 30000,
     "initial_best": 187559.32553255462,
     "final_best": 3.36655933306657,
-    "runtime_sec": 0.074161375,
+    "runtime_sec": 0.075511792,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -966,7 +966,7 @@
     "evaluations": 30000,
     "initial_best": 110107.37441620287,
     "final_best": 0.03738414541008288,
-    "runtime_sec": 0.072203667,
+    "runtime_sec": 0.073460708,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -993,7 +993,7 @@
     "evaluations": 30000,
     "initial_best": 258004.2012668773,
     "final_best": 3.059521365903417,
-    "runtime_sec": 0.071943875,
+    "runtime_sec": 0.074129875,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1020,7 +1020,7 @@
     "evaluations": 30000,
     "initial_best": 2346750.134148792,
     "final_best": 27.078165611560653,
-    "runtime_sec": 0.191379458,
+    "runtime_sec": 0.193097375,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1067,7 +1067,7 @@
     "evaluations": 30000,
     "initial_best": 1617127.8981618464,
     "final_best": 28.306678149524135,
-    "runtime_sec": 0.1942525,
+    "runtime_sec": 0.197793333,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1114,7 +1114,7 @@
     "evaluations": 30000,
     "initial_best": 2477709.8654964655,
     "final_best": 26.343276245964933,
-    "runtime_sec": 0.194854042,
+    "runtime_sec": 0.1940355,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1161,7 +1161,7 @@
     "evaluations": 30000,
     "initial_best": 1578623.6548146557,
     "final_best": 26.521803933984337,
-    "runtime_sec": 0.186837458,
+    "runtime_sec": 0.191691083,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1208,7 +1208,7 @@
     "evaluations": 30000,
     "initial_best": 606756.104585213,
     "final_best": 26.86106943595643,
-    "runtime_sec": 0.186516084,
+    "runtime_sec": 0.193753416,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1255,7 +1255,7 @@
     "evaluations": 30000,
     "initial_best": 1335010.459471793,
     "final_best": 20.10953791667858,
-    "runtime_sec": 0.187357875,
+    "runtime_sec": 0.192539917,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1302,7 +1302,7 @@
     "evaluations": 30000,
     "initial_best": 1709224.6820966057,
     "final_best": 19.42604213216174,
-    "runtime_sec": 0.187291083,
+    "runtime_sec": 0.192138042,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1349,7 +1349,7 @@
     "evaluations": 30000,
     "initial_best": 1858871.0124206436,
     "final_best": 27.267620805610516,
-    "runtime_sec": 0.1942365,
+    "runtime_sec": 0.191247292,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1396,7 +1396,7 @@
     "evaluations": 30000,
     "initial_best": 796163.45184008,
     "final_best": 25.817365596051463,
-    "runtime_sec": 0.187361541,
+    "runtime_sec": 0.192171042,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1443,7 +1443,7 @@
     "evaluations": 30000,
     "initial_best": 1730182.6556553205,
     "final_best": 25.398058509223095,
-    "runtime_sec": 0.186911333,
+    "runtime_sec": 0.194963333,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1490,7 +1490,7 @@
     "evaluations": 30000,
     "initial_best": 130.3680401364924,
     "final_best": 21.88905890806167,
-    "runtime_sec": 0.060125708,
+    "runtime_sec": 0.06152925,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1517,7 +1517,7 @@
     "evaluations": 30000,
     "initial_best": 142.21479322792342,
     "final_best": 19.899146088877103,
-    "runtime_sec": 0.059033,
+    "runtime_sec": 0.066046959,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1544,7 +1544,7 @@
     "evaluations": 30000,
     "initial_best": 117.84497208570914,
     "final_best": 24.875393426254973,
-    "runtime_sec": 0.061088375,
+    "runtime_sec": 0.0612845,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1571,7 +1571,7 @@
     "evaluations": 30000,
     "initial_best": 127.51433523672776,
     "final_best": 28.85374203536209,
-    "runtime_sec": 0.060852667,
+    "runtime_sec": 0.061388917,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1598,7 +1598,7 @@
     "evaluations": 30000,
     "initial_best": 133.20487802975677,
     "final_best": 20.894099888770384,
-    "runtime_sec": 0.060819542,
+    "runtime_sec": 0.061809208,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1625,7 +1625,7 @@
     "evaluations": 30000,
     "initial_best": 111.53082497395053,
     "final_best": 10.944539560180061,
-    "runtime_sec": 0.060380458,
+    "runtime_sec": 0.061457625,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1652,7 +1652,7 @@
     "evaluations": 30000,
     "initial_best": 141.99487937699973,
     "final_best": 13.92946175160101,
-    "runtime_sec": 0.060515833,
+    "runtime_sec": 0.064448333,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1679,7 +1679,7 @@
     "evaluations": 30000,
     "initial_best": 122.13367351227029,
     "final_best": 12.934696322128303,
-    "runtime_sec": 0.061204917,
+    "runtime_sec": 0.06160275,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1706,7 +1706,7 @@
     "evaluations": 30000,
     "initial_best": 127.62898036043723,
     "final_best": 19.899140793875077,
-    "runtime_sec": 0.05854175,
+    "runtime_sec": 0.0601785,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1733,7 +1733,7 @@
     "evaluations": 30000,
     "initial_best": 125.31296740318484,
     "final_best": 14.9243757819754,
-    "runtime_sec": 0.058555875,
+    "runtime_sec": 0.061103084,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1760,7 +1760,7 @@
     "evaluations": 30000,
     "initial_best": 491.225203822822,
     "final_best": 156.20774229082113,
-    "runtime_sec": 0.150436542,
+    "runtime_sec": 0.155555875,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1807,7 +1807,7 @@
     "evaluations": 30000,
     "initial_best": 490.442198300998,
     "final_best": 146.25819169742545,
-    "runtime_sec": 0.153144792,
+    "runtime_sec": 0.154961375,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1854,7 +1854,7 @@
     "evaluations": 30000,
     "initial_best": 446.6354433885239,
     "final_best": 147.25320182235254,
-    "runtime_sec": 0.1539935,
+    "runtime_sec": 0.154599167,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1901,7 +1901,7 @@
     "evaluations": 30000,
     "initial_best": 423.6079772310767,
     "final_best": 168.14687478495534,
-    "runtime_sec": 0.149146875,
+    "runtime_sec": 0.151405834,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1948,7 +1948,7 @@
     "evaluations": 30000,
     "initial_best": 406.20733335877503,
     "final_best": 98.5004962289772,
-    "runtime_sec": 0.148475792,
+    "runtime_sec": 0.15016025,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1995,7 +1995,7 @@
     "evaluations": 30000,
     "initial_best": 415.0753577524684,
     "final_best": 156.2080317333251,
-    "runtime_sec": 0.148170417,
+    "runtime_sec": 0.1562235,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2042,7 +2042,7 @@
     "evaluations": 30000,
     "initial_best": 419.5687995589345,
     "final_best": 167.15232764022616,
-    "runtime_sec": 0.148234708,
+    "runtime_sec": 0.158232416,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2089,7 +2089,7 @@
     "evaluations": 30000,
     "initial_best": 458.678610325217,
     "final_best": 147.25338991551223,
-    "runtime_sec": 0.147623083,
+    "runtime_sec": 0.156793625,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2136,7 +2136,7 @@
     "evaluations": 30000,
     "initial_best": 429.8299235834663,
     "final_best": 118.39948968891167,
-    "runtime_sec": 0.147607083,
+    "runtime_sec": 0.156100708,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2183,7 +2183,7 @@
     "evaluations": 30000,
     "initial_best": 457.22656747721084,
     "final_best": 103.47527131772813,
-    "runtime_sec": 0.150840041,
+    "runtime_sec": 0.155197334,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2230,7 +2230,7 @@
     "evaluations": 30000,
     "initial_best": 19.860489673949903,
     "final_best": 6.790124018607457e-13,
-    "runtime_sec": 0.0678505,
+    "runtime_sec": 0.07076575,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2257,7 +2257,7 @@
     "evaluations": 30000,
     "initial_best": 20.45564721732185,
     "final_best": 2.6334490144108713e-13,
-    "runtime_sec": 0.067463125,
+    "runtime_sec": 0.069614792,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2284,7 +2284,7 @@
     "evaluations": 30000,
     "initial_best": 20.483606050935872,
     "final_best": 3.7347902548390266e-13,
-    "runtime_sec": 0.069756417,
+    "runtime_sec": 0.072195042,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2311,7 +2311,7 @@
     "evaluations": 30000,
     "initial_best": 20.665937845209072,
     "final_best": 1.1057821325266559e-13,
-    "runtime_sec": 0.069055875,
+    "runtime_sec": 0.072100834,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2338,7 +2338,7 @@
     "evaluations": 30000,
     "initial_best": 19.906391476057706,
     "final_best": 1.0347278589506459e-13,
-    "runtime_sec": 0.076736083,
+    "runtime_sec": 0.072104459,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2365,7 +2365,7 @@
     "evaluations": 30000,
     "initial_best": 20.127696713550964,
     "final_best": 1.2509993041476264e-12,
-    "runtime_sec": 0.085936792,
+    "runtime_sec": 0.07117825,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2392,7 +2392,7 @@
     "evaluations": 30000,
     "initial_best": 20.65707235908566,
     "final_best": 3.5926817076870066e-13,
-    "runtime_sec": 0.070494875,
+    "runtime_sec": 0.070950375,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2419,7 +2419,7 @@
     "evaluations": 30000,
     "initial_best": 20.619721180162905,
     "final_best": 5.901945598907332e-13,
-    "runtime_sec": 0.071893708,
+    "runtime_sec": 0.070832042,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2446,7 +2446,7 @@
     "evaluations": 30000,
     "initial_best": 19.709120966506045,
     "final_best": 1.496580637194711e-13,
-    "runtime_sec": 0.068253667,
+    "runtime_sec": 0.069146833,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2473,7 +2473,7 @@
     "evaluations": 30000,
     "initial_best": 20.218426286202778,
     "final_best": 5.546674231027282e-13,
-    "runtime_sec": 0.06780925,
+    "runtime_sec": 0.069054417,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2500,7 +2500,7 @@
     "evaluations": 30000,
     "initial_best": 20.923268937363122,
     "final_best": 17.391174044711715,
-    "runtime_sec": 0.183842625,
+    "runtime_sec": 0.168092583,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2547,7 +2547,7 @@
     "evaluations": 30000,
     "initial_best": 20.890010670369975,
     "final_best": 2.5799275570313616,
-    "runtime_sec": 0.178671625,
+    "runtime_sec": 0.166214167,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2594,7 +2594,7 @@
     "evaluations": 30000,
     "initial_best": 20.73303534073149,
     "final_best": 2.12005336159972,
-    "runtime_sec": 0.172577583,
+    "runtime_sec": 0.168541083,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2641,7 +2641,7 @@
     "evaluations": 30000,
     "initial_best": 20.633419087378535,
     "final_best": 2.0133152362566986,
-    "runtime_sec": 0.162506875,
+    "runtime_sec": 0.168842792,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2688,7 +2688,7 @@
     "evaluations": 30000,
     "initial_best": 20.127848312192434,
     "final_best": 1.7779969868754937,
-    "runtime_sec": 0.159936458,
+    "runtime_sec": 0.165467041,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2735,7 +2735,7 @@
     "evaluations": 30000,
     "initial_best": 20.742060962581444,
     "final_best": 5.091766913179175,
-    "runtime_sec": 0.159099167,
+    "runtime_sec": 0.164575083,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2782,7 +2782,7 @@
     "evaluations": 30000,
     "initial_best": 20.928425537369765,
     "final_best": 2.958086673363795,
-    "runtime_sec": 0.159909708,
+    "runtime_sec": 0.170723875,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2829,7 +2829,7 @@
     "evaluations": 30000,
     "initial_best": 20.77738750229289,
     "final_best": 15.476446926464403,
-    "runtime_sec": 0.158816958,
+    "runtime_sec": 0.171126667,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2876,7 +2876,7 @@
     "evaluations": 30000,
     "initial_best": 20.290039394848097,
     "final_best": 5.762441337475497,
-    "runtime_sec": 0.163875875,
+    "runtime_sec": 0.170891833,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2923,7 +2923,7 @@
     "evaluations": 30000,
     "initial_best": 20.58990703896375,
     "final_best": 2.814099738698371,
-    "runtime_sec": 0.184250333,
+    "runtime_sec": 0.171198875,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
