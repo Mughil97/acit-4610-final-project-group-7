@@ -33,7 +33,7 @@ w_i \geq 0, \qquad
 R(\mathbf{w}) = \sum_{i=1}^{n} w_i r_i \geq R^*
 $$
 
-Here $r_i$ is the expected return of asset $i$, $s_i$ is its standard deviation, and $\rho_{ij}$ is the correlation between assets $i$ and $j$. Target returns are set for $\alpha \in \{0.25, 0.50, 0.75\}$:
+Here $r_i$ is the expected return of asset $i$, $s_i$ is its standard deviation, and $\rho_{ij}$ is the correlation between assets $i$ and $j$. Target returns are set for $\alpha \in \lbrace 0.25, 0.50, 0.75 \rbrace$:
 
 $$
 R^* = (1 - \alpha) R_{\mathrm{eq}} + \alpha R_{\max}

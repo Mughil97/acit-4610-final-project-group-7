@@ -35,13 +35,17 @@ flowchart TD
 
 Each run has a strict budget of **30,000 objective evaluations**, counting initial scouts, all recruited neighbours, and all fresh global scouts (including rejected candidates). Execution stops immediately when the budget is reached, allowing an incomplete final iteration.
 
-After evaluating the $ns$ initial scouts, the number of evaluations performed in cycle $t$ is:
+After evaluating the $\mathrm{ns}$ initial scouts, the number of evaluations performed in cycle $t$ is:
 
-$E_t = ne \cdot nre + (nb - ne) \cdot nrb + (ns - nb) + a_t$
+$$
+E_t = \mathrm{ne} \cdot \mathrm{nre} + (\mathrm{nb} - \mathrm{ne}) \cdot \mathrm{nrb} + (\mathrm{ns} - \mathrm{nb}) + a_t
+$$
 
-where $a_t \in [0, nb]$ is the number of stagnated sites abandoned in cycle $t$. Letting $E_{\text{base}} = ne \cdot nre + (nb - ne) \cdot nrb + (ns - nb)$ and $A = \sum_t a_t$ be the total abandoned sites over the run, the number of cycles required to exhaust a budget $B$ is:
+where $a_t \in [0, \mathrm{nb}]$ is the number of stagnated sites abandoned in cycle $t$. Letting $E_{\mathrm{base}} = \mathrm{ne} \cdot \mathrm{nre} + (\mathrm{nb} - \mathrm{ne}) \cdot \mathrm{nrb} + (\mathrm{ns} - \mathrm{nb})$ and $A = \sum_t a_t$ be the total abandoned sites over the run, the number of cycles required to exhaust a budget $B$ is:
 
-$$K \approx \left\lceil \frac{B - ns - A}{E_{\text{base}}} \right\rceil$$
+$$
+K \approx \left\lceil \frac{B - \mathrm{ns} - A}{E_{\mathrm{base}}} \right\rceil
+$$
 
 ## Part A — Symmetric Travelling Salesman Problem (TSP)
 
@@ -49,45 +53,67 @@ The symmetric TSP requires visiting every city exactly once and returning to the
 
 A solution is represented as a permutation $\pi = (\pi_1, \dots, \pi_n)$ with city `1` fixed at the first position ($\pi_1 = 1$). The tour length sums all consecutive edges plus the return edge:
 
-$$L(\pi) = \sum_{i=1}^{n-1} d_{\pi_i, \pi_{i+1}} + d_{\pi_n, \pi_1}$$
+$$
+L(\pi) = \sum_{i=1}^{n-1} d_{\pi_i, \pi_{i+1}} + d_{\pi_n, \pi_1}
+$$
 
-Edge distances follow the TSPLIB `EUC_2D` rounded Euclidean distance rule [4], rounded per edge before summing:
+Edge distances follow the TSPLIB [2] `EUC_2D` rounded Euclidean distance rule [3], rounded per edge before summing:
 
-$$d_{ij} = \text{floor}\left(\sqrt{(a_i - a_j)^2 + (b_i - b_j)^2} + 0.5\right)$$
+$$
+d_{ij} = \left\lfloor \sqrt{(a_i - a_j)^2 + (b_i - b_j)^2} + 0.5 \right\rfloor
+$$
 
-Solution quality against the published optimal tour length $L^*$ [3] is measured by percentage gap:
+Solution quality against the published optimal tour length $L^*$ [4] is measured by percentage gap (in %):
 
-$$\text{Gap}(\%) = 100 \cdot \frac{L_{BA} - L^*}{L^*}$$
+$$
+\mathrm{Gap} = 100 \cdot \frac{L_{\mathrm{BA}} - L^*}{L^*}
+$$
 
 - **Data:** Six TSPLIB instances (`eil51`, `berlin52`, `st70`, `eil76`, `kroA100`, `ch150`) stored in `bees_algorithm/data/`. See [`data/README.md`](data/README.md) for the instance table, optimal tour lengths, official download URLs, file format, and validation rules.
 - **Initialisation:** Uniform random shuffle of cities `2..n` with city `1` fixed at index `0`.
-- **Neighbourhoods:** Two single-move versions are compared under the same settings and seeds, both choosing two movable indices $1 \le i < j \le n - 1$ (keeping city `1` fixed) with index span $j - i \le \lceil (n - 2) \cdot \text{patch\_size} \rceil$:
+- **Neighbourhoods:** Two single-move versions are compared under the same settings and seeds, both choosing two movable indices $1 \le i < j \le n - 1$ (keeping city `1` fixed) with index span $j - i \le \lceil (n - 2) \cdot \text{patch size} \rceil$:
   - **`SWAP`:** Exchanges the two cities at positions $i$ and $j$.
   - **`REVERSE`:** Reverses the segment from $i$ through $j$ inclusive.
 - **Validation:** Every final tour must contain each city `1..n` once, start at city `1`, and match its recomputed rounded Euclidean round-trip distance.
 
 ## Part B — Continuous Function Optimisation
 
-Each candidate solution is a real-valued vector $\mathbf{x} \in \mathbb{R}^D$, evaluated at dimensions **$D = 10$** and **$D = 30$** on four unshifted, noiseless benchmark functions from Surjanovic and Bingham's Simon Fraser University collection [5–8] (where $\mathbf{0}$ and $\mathbf{1}$ denote the all-zero and all-one vectors):
+Each candidate solution is a real-valued vector $\mathbf{x} \in \mathbb{R}^D$, evaluated at dimensions $D = 10$ and $D = 30$ on four unshifted, noiseless benchmark functions from Surjanovic and Bingham's Simon Fraser University collection [5–8] (where $\mathbf{0}$ and $\mathbf{1}$ denote the all-zero and all-one vectors):
 
 - **Sphere** [5]:
-  $$f(\mathbf{x}) = \sum_{i=1}^D x_i^2$$
+
+  $$
+  f(\mathbf{x}) = \sum_{i=1}^D x_i^2
+  $$
+
   Bounds: $x_i \in [-5.12, 5.12]$. Global minimum: $f(\mathbf{0}) = 0$. Convex, unimodal.
 
 - **Rosenbrock** [6]:
-  $$f(\mathbf{x}) = \sum_{i=1}^{D-1} \left[100(x_{i+1} - x_i^2)^2 + (1 - x_i)^2\right]$$
+
+  $$
+  f(\mathbf{x}) = \sum_{i=1}^{D-1} \left[100(x_{i+1} - x_i^2)^2 + (1 - x_i)^2\right]
+  $$
+
   Bounds: $x_i \in [-5, 10]$. Global minimum: $f(\mathbf{1}) = 0$. Narrow curved valley.
 
 - **Rastrigin** [7]:
-  $$f(\mathbf{x}) = 10D + \sum_{i=1}^D \left[x_i^2 - 10\cos(2\pi x_i)\right]$$
+
+  $$
+  f(\mathbf{x}) = 10D + \sum_{i=1}^D \left[x_i^2 - 10\cos(2\pi x_i)\right]
+  $$
+
   Bounds: $x_i \in [-5.12, 5.12]$. Global minimum: $f(\mathbf{0}) = 0$. Highly multimodal.
 
 - **Ackley** [8]:
-  $$f(\mathbf{x}) = -20\exp\left(-0.2\sqrt{\frac{1}{D}\sum_{i=1}^D x_i^2}\right) - \exp\left(\frac{1}{D}\sum_{i=1}^D \cos(2\pi x_i)\right) + 20 + \exp(1)$$
+
+  $$
+  f(\mathbf{x}) = -20\exp\left(-0.2\sqrt{\frac{1}{D}\sum_{i=1}^D x_i^2}\right) - \exp\left(\frac{1}{D}\sum_{i=1}^D \cos(2\pi x_i)\right) + 20 + \exp(1)
+  $$
+
   Bounds: $x_i \in [-32.768, 32.768]$. Global minimum: $f(\mathbf{0}) = 0$. Multimodal with a flat outer region.
 
 - **Initialisation:** Each coordinate is sampled uniformly within its lower and upper bounds $[l, u]$.
-- **Neighbourhood & bounds handling:** Each coordinate is independently perturbed by a uniform step in $[-(u - l)\cdot\text{patch\_size},\ +(u - l)\cdot\text{patch\_size}]$ (starting at `ngh = 0.1`, i.e. ±10% of the allowed range, and shrinking by `shrink_factor` on stagnation) and clipped to $[l, u]$.
+- **Neighbourhood & bounds handling:** Each coordinate is independently perturbed by a uniform step in $[-(u - l) \cdot \text{patch size}, +(u - l) \cdot \text{patch size}]$ (starting at `ngh = 0.1`, i.e. ±10% of the allowed range, and shrinking by `shrink_factor` on stagnation) and clipped to $[l, u]$.
 
 ## Experimental Settings
 
@@ -148,8 +174,8 @@ python -m bees_algorithm.utils.plotting
 
 1. Pham, D. T., Ghanbarzadeh, A., Koç, E., Otri, S., Rahim, S., & Zaidi, M. **The Bees Algorithm — A Novel Tool for Complex Optimisation Problems**. *Intelligent Production Machines and Systems*, 2006, pp. 454–459. [Publisher record](https://www.sciencedirect.com/science/article/abs/pii/B978008045157250081X).
 2. Reinelt, G. **TSPLIB**. Heidelberg University. [Library home page](https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/).
-3. Reinelt, G. **Optimal solutions for symmetric TSPs**. [Reference tour lengths](https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/TSP-BEST.html).
-4. Reinelt, G. **TSPLIB 95 documentation**, Sections 1 and 2.1 on file format and Euclidean distances. [Documentation PDF](https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/tsp95.pdf).
+3. Reinelt, G. **TSPLIB 95 documentation**, Sections 1 and 2.1 on file format and Euclidean distances. [Documentation PDF](https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/tsp95.pdf).
+4. Reinelt, G. **Optimal solutions for symmetric TSPs**. [Reference tour lengths](https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/TSP-BEST.html).
 5. Surjanovic, S., & Bingham, D. **Sphere Function**. Simon Fraser University. [Function and implementation](https://www.sfu.ca/~ssurjano/spheref.html).
 6. Surjanovic, S., & Bingham, D. **Rosenbrock Function**. Simon Fraser University. [Function and implementation](https://www.sfu.ca/~ssurjano/rosen.html).
 7. Surjanovic, S., & Bingham, D. **Rastrigin Function**. Simon Fraser University. [Function and implementation](https://www.sfu.ca/~ssurjano/rastr.html).

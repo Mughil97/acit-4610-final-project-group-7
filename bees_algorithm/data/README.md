@@ -31,7 +31,7 @@ EOF
 
 ## Validation Rules
 
-When loading any `.tsp` file via [`bees_algorithm/utils/load_data.py`](../utils/load_data.py) (`load_data`), the parser validates:
+When loading any `.tsp` file (formatted per the TSPLIB 95 specification [3]) via [`bees_algorithm/utils/load_data.py`](../utils/load_data.py) (`load_data`), the parser validates:
 
 1. All required headers (`NAME`, `TYPE`, `DIMENSION`, `EDGE_WEIGHT_TYPE`) and `NODE_COORD_SECTION` are present.
 2. `NAME` matches the filename stem.
