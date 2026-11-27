@@ -106,12 +106,19 @@ Each candidate solution is a real-valued vector $\mathbf{x} \in \mathbb{R}^D$, e
 - **Hyperparameter selection:** Candidate parameter sets for Part A (TSP) and Part B (Continuous) were compared using [`utils/tune_configs.py`](utils/tune_configs.py) (`python -m bees_algorithm.utils.tune_configs`) before fixing the final settings in [`configs.py`](configs.py).
 - **Seeds:** 10 independent runs per case using seeds `45, 46, 47, 48, 49, 50, 51, 52, 53, 54`.
 - **Total runs:** **120** TSP runs (6 instances × 2 neighbourhoods × 10 seeds) and **80** continuous runs (4 functions × 2 dimensions × 10 seeds).
-- **Required outputs:** Per-run metrics and best-so-far histories; summary tables (best, mean, std, mean runtime, plus mean gap for TSP); convergence plots for `berlin52`, `ch150`, and `Rastrigin` ($D=10$); best `berlin52` route plot; and four-panel $D=30$ boxplots. Saved outputs and directory layout are documented in [`results/README.md`](results/README.md).
+
+## Saved Results & Figures
+
+All raw per-run logs, convergence histories, summary tables, run metadata, and generated plots live under [`results/`](results/README.md):
+
+- **Overview & layout:** [`results/README.md`](results/README.md) · [`results/metadata.json`](results/metadata.json)
+- **Part A (TSP) tables & figures:** [`summary_tsp.md`](results/part_a_tsp/tables/summary_tsp.md) · [`summary_tsp.csv`](results/part_a_tsp/tables/summary_tsp.csv) · [`convergence_berlin52.png`](results/part_a_tsp/figures/convergence_berlin52.png) · [`convergence_ch150.png`](results/part_a_tsp/figures/convergence_ch150.png) · [`best_route_berlin52.png`](results/part_a_tsp/figures/best_route_berlin52.png)
+- **Part B (Continuous) tables & figures:** [`summary_continuous.md`](results/part_b_continuous/tables/summary_continuous.md) · [`summary_continuous.csv`](results/part_b_continuous/tables/summary_continuous.csv) · [`convergence_rastrigin_D10.png`](results/part_b_continuous/figures/convergence_rastrigin_D10.png) · [`boxplots_D30.png`](results/part_b_continuous/figures/boxplots_D30.png)
 
 ## Setup & Reproducing Results
 
-- **Environment:** Python `3.14.6` (requires 3.10+), `numpy 2.5.4`, `matplotlib 3.11.2`, `pytest 9.2.0`.
-- **Data location:** `bees_algorithm/data/`
+- **Environment:** Python `3.14.6` (requires `>=3.10`), `numpy 2.5.5` (`>=1.26`), `matplotlib 3.11.2` (`>=3.8`), `pytest 9.2.0` (`>=8.0`).
+- **Data location:** [`bees_algorithm/data/`](data/README.md)
 
 Run from the repository root:
 

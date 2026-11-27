@@ -80,17 +80,7 @@ All three ES variants are implemented in `algorithms.py` and exposed through `ru
 
 Before any initial or mutated candidate is evaluated, `repair.py` restores feasibility in two steps. First it projects the raw vector onto the Euclidean simplex ($w_i \geq 0$, $\sum_i w_i = 1$). Then, if $R(\mathbf{w}) < R^*$, it blends $\mathbf{w}$ with a unit weight on the highest-return asset using the smallest mixing fraction that hits $R^*$. Final feasibility is checked to tolerance `1e-8` on non-negativity, unit sum, and target return.
 
-All initial weight coordinates are independently sampled
-from a uniform distribution in [0, 1] before repair.
-
-The population variants initialize every coordinate's
-step size to `0.1 / sqrt(n)`. Each offspring uses one shared
-standard-normal draw for global step-size adaptation,
-independent coordinate-specific draws, and fresh independent
-Gaussian draws for weight mutation.
-
-In (10,70)-ES, the best-so-far archive is used for reporting
-only and does not participate in parent or survivor selection.
+All initial weight coordinates are independently sampled from a uniform distribution in `[0, 1]` before repair. The population variants initialize every coordinate's step size to `0.1 / sqrt(n)`. Each offspring uses one shared standard-normal draw for global step-size adaptation, independent coordinate-specific draws, and fresh independent Gaussian draws for weight mutation. In `(10,70)-ES`, the best-so-far archive is used for reporting only and does not participate in parent or survivor selection.
 
 ## Running the code
 
@@ -100,7 +90,7 @@ only and does not participate in parent or survivor selection.
 |---|---|---|
 | Operating system | Windows / macOS | — |
 | Python | 3.13.5 / 3.14.6 | `>=3.10` |
-| NumPy | 2.5.4 | `>=1.26` |
+| NumPy | 2.5.5 | `>=1.26` |
 | Matplotlib | 3.11.2 | `>=3.8` |
 | pytest | 9.2.0 | `>=8.0` |
 
@@ -113,19 +103,7 @@ python -m pip install -r requirements.txt
 python -m pytest evolution_strategy/tests -v
 ```
 
-The ES regression tests cover simplex projection,
-target-return repair, (1+1)-ES step-size adaptation,
-evaluation budgets, best-so-far archive tracking,
-covariance construction, assignment reference values,
-and independent variance calculations.
-
-Latest validation:
-
-- ES regression suite: 66 passed.
-- Covariance regression suite: 33 passed.
-- Archive regression suite: 5 passed.
-- Overall project regression suite: 120 passed.
-- Archive numerical equivalence: 150/150 comparisons passed.
+The ES regression suite in [`tests/`](tests/) verifies simplex projection, target-return repair, `(1+1)-ES` step-size adaptation, exact evaluation budgets, best-so-far archive tracking, covariance construction, assignment reference values, and independent variance calculations.
 
 ### Full pipeline via `main.py`
 
@@ -188,15 +166,14 @@ python -m evolution_strategy.plot_comparisons
 | Budget per seed | `30,000` objective evaluations (`max_iterations` counts evaluations, including initialization and rejected offspring) |
 | Totals | 45 cases, 450 runs, 13,500,000 objective evaluations |
 
-`results.py` summarizes each 10-run case using best variance,
-mean variance, population standard deviation (denominator `N`),
-feasible-run percentage, mean runtime, and the mean archive
-convergence curve.
+`results.py` summarizes each 10-run case using best variance, mean variance, population standard deviation (denominator `N`), feasible-run percentage, mean runtime, and the mean archive convergence curve. Variance statistics and mean convergence curves are calculated over valid runs only, while mean runtime is calculated across all ten runs.
 
-Variance statistics are calculated over valid runs only,
-while mean runtime is calculated across all ten runs.
+All raw per-run outputs, convergence logs, consolidated statistics, and figures are committed under [`results/`](results/README.md):
 
-Raw outputs and report artifacts are stored inside the repository:
+- **Overview & directory layout:** [`results/README.md`](results/README.md)
+- **Consolidated 45-case summary table:** [`results/es_summary_45_cases.csv`](results/es_summary_45_cases.csv)
+- **Convergence figure (`port5`, $\alpha = 0.50$):** [`results/figures/convergence_port5_alpha050_full.png`](results/figures/convergence_port5_alpha050_full.png)
+- **Comparison figures:** [`mean_variance_by_dataset_full.png`](results/figures/mean_variance_by_dataset_full.png) · [`runtime_by_dataset_full.png`](results/figures/runtime_by_dataset_full.png) · [`boxplot_port5_alpha050_full.png`](results/figures/boxplot_port5_alpha050_full.png)
 
 ```text
 evolution_strategy/
@@ -209,6 +186,7 @@ evolution_strategy/
 │   ├── dataset_correlations.png
 │   └── README.md
 ├── results/
+│   ├── README.md
 │   ├── es_summary_45_cases.csv
 │   ├── figures/
 │   └── <case_name>/
@@ -234,74 +212,3 @@ evolution_strategy/
 | `build_summary.py` | Consolidated 45-case summary builder (`summarize_all_es`) |
 | `plot_results.py` | `port5_alpha050` convergence plot and unified plot entry point (`generate_all_plots_es`) |
 | `plot_comparisons.py` | Mean-variance, runtime, and per-seed boxplot comparisons |
-
-## Experimental results provenance
-
-The existing 450-run experimental dataset was committed
-in revision `8768729`, before the covariance precomputation
-update in revision `173116b` and the explicit separate
-(1+1)-ES archive correction in revision `8c92b9f`.
-
-Subsequent implementation validation included:
-
-- 500 numerical objective comparisons.
-- 45 seeded comparisons at 1,000 evaluations.
-- Nine representative runs at 30,000 evaluations.
-- One complete ten-seed case reproduction.
-- 33 permanent covariance regression tests.
-- Five permanent archive regression tests.
-- 150 paired archive equivalence comparisons across
-  five datasets, three return targets, and ten seeds.
-- 66 passing ES regression tests.
-- 103 passing overall project regression tests.
-
-The nine full-budget checks covered port1, port3, and port5
-at alpha = 0.50, seed 0, using all three ES variants.
-All nine reproduced the recorded final variance within
-numerical tolerance, satisfied feasibility constraints,
-and completed exactly 30,000 evaluations.
-
-All 150 archive equivalence comparisons produced identical
-final weights, returns, variances, and convergence histories
-at a budget of 1,000 evaluations.
-
-The report tables and figures are reproduced from the
-existing experimental results.
-
-The recorded runtime measurements describe the original
-experimental campaign, not the computational performance
-of the subsequently corrected implementation.
-
-The targeted reproducibility checks do not constitute
-a complete rerun of all 450 experiments. Revision
-`8768729` identifies the commit containing the original
-results. The exact original execution environment and
-generating source revision have not been independently
-established.
-
-## Summary of results and caveats
-
-Across the 45 cases in `results/es_summary_45_cases.csv`,
-all 450 runs are feasible. Both population strategies
-reach lower mean final variance than `(1+1)-ES` in all
-15 dataset/alpha combinations.
-
-`(10+70)-ES` achieves the lowest mean variance in 7 of
-15 cases, while `(10,70)-ES` achieves the lowest mean
-variance in 8 of 15 cases.
-
-`(1+1)-ES` is the fastest variant in all 15 cases.
-Its recorded mean runtime ranges from approximately
-0.98–1.01 seconds on port1 to 36.12–36.40 seconds on port5.
-The population variants require approximately
-1.28–1.32 seconds on port1 and 38.16–38.88 seconds on port5.
-
-These runtimes describe the historical recorded experiments,
-not a new controlled runtime benchmark of the updated
-covariance implementation.
-
-Because asset sets and return targets change across datasets
-and alpha levels, variance comparisons should focus on the
-same dataset and return target. Runtimes depend on hardware
-and system load. The 7-versus-8 split between the population
-variants is descriptive, with no formal significance test.

@@ -4,18 +4,16 @@
 
 This repository contains two independent optimization subprojects for the ACIT4610 final group assignment. Code and documentation are separated so each problem can be reviewed and reproduced independently.
 
-| Problem | Directory | Focus |
-|---|---|---|
-| Problem 1 | [`bees_algorithm/`](bees_algorithm/) | Bees Algorithm for symmetric TSP and continuous benchmark functions |
-| Problem 2 | [`evolution_strategy/`](evolution_strategy/) | Constrained minimum-variance portfolio optimization using Evolution Strategies |
+| Problem | Directory | Focus | Results |
+|---|---|---|---|
+| Problem 1 | [`bees_algorithm/`](bees_algorithm/) | Bees Algorithm for symmetric TSP and continuous benchmark functions | [`bees_algorithm/results/`](bees_algorithm/results/README.md) |
+| Problem 2 | [`evolution_strategy/`](evolution_strategy/) | Constrained minimum-variance portfolio optimization using Evolution Strategies | [`evolution_strategy/results/`](evolution_strategy/results/README.md) |
 
 ## Running the Complete Project
 
-Requires **Python 3.10+** (`requirements.txt` uses compatible lower bounds so evaluators on Python 3.10–3.14 can install without upgrading). Validated on **Python `3.14.6`** with `numpy 2.5.4`, `matplotlib 3.11.2`, and `pytest 9.2.0`.
+Requires **Python 3.10+** (`requirements.txt` uses compatible lower bounds so evaluators on Python 3.10–3.14 can install without upgrading). Validated on **Python `3.14.6`** with `numpy 2.5.5`, `matplotlib 3.11.2`, and `pytest 9.2.0`.
 
-Requires **Python 3.10+** (`requirements.txt` uses compatible lower bounds so evaluators on Python 3.10–3.14 can install without upgrading). Validated on **Python `3.14.6`** with `numpy 2.5.4`, `matplotlib 3.11.2`, and `pytest 9.2.0`.
-
-To run both Problem 1 (Bees Algorithm) and Problem 2 (Evolution Strategies) end-to-end and automatically generate all raw results, summary tables, and figures (typically ~30 seconds for Problem 1 and a few minutes for all 450 Problem 2 runs thanks to NumPy-vectorized covariance evaluation):
+To run both Problem 1 (Bees Algorithm) and Problem 2 (Evolution Strategies) end-to-end and automatically regenerate all raw results, summary tables, and figures:
 
 ```bash
 python -m pip install -r requirements.txt
@@ -25,7 +23,7 @@ python main.py
 
 ## Problem 1: Bees Algorithm
 
-The Bees Algorithm subproject addresses symmetric Travelling Salesman Problem instances and continuous function optimization. See **[`bees_algorithm/README.md`](bees_algorithm/README.md)** for full details and settings.
+The Bees Algorithm subproject addresses symmetric Travelling Salesman Problem instances and continuous function optimization. See **[`bees_algorithm/README.md`](bees_algorithm/README.md)** for full details and settings, and **[`bees_algorithm/results/README.md`](bees_algorithm/results/README.md)** for saved outputs (summary tables, raw runs, histories, and figures).
 
 ```bash
 # One TSP run / one continuous run (30,000 evaluations)
@@ -40,7 +38,7 @@ python -m bees_algorithm.optimise
 
 The portfolio project compares **(1+1)-ES, (10+70)-ES, and (10,70)-ES** on five OR-Library portfolio datasets, each at three required-return targets. Its experimental protocol uses 10 seeds and 30,000 objective evaluations per algorithm/case, producing 45 case summaries and 450 individual runs.
 
-For algorithms, feasibility repair, inputs, parameters, reproducibility, tests, figures, and the CSV schema, see **[`evolution_strategy/README.md`](evolution_strategy/README.md)**.
+For algorithms, feasibility repair, inputs, parameters, reproducibility, tests, and commands, see **[`evolution_strategy/README.md`](evolution_strategy/README.md)**. For saved outputs, summary CSV, and figures, see **[`evolution_strategy/results/README.md`](evolution_strategy/results/README.md)**.
 
 ```bash
 # One single run / one complete test case (all 3 ES variants × 10 seeds)
@@ -55,7 +53,7 @@ python -m evolution_strategy.build_summary
 python -m evolution_strategy.plot_results
 ```
 
-All post-processing commands read the committed raw case outputs and `es_summary_45_cases.csv` from `evolution_strategy/results/` by default (mirroring `bees_algorithm/results/`). Plots and summaries do **not** rerun the optimization. Matplotlib is required for plotting; install with `python -m pip install -r requirements.txt`.
+All post-processing commands read the committed raw case outputs and [`es_summary_45_cases.csv`](evolution_strategy/results/es_summary_45_cases.csv) from `evolution_strategy/results/` by default (mirroring `bees_algorithm/results/`). Plots and summaries do **not** rerun the optimization. Matplotlib is required for plotting; install with `python -m pip install -r requirements.txt`.
 
 ## Generating LaTeX Report Tables (Optional)
 
@@ -80,8 +78,9 @@ Generated `.tex` files are written to `tex_tables/` in the repository root (giti
 └── README.md
 ```
 
-## Experimental files and collaboration
+## Saved Experimental Outputs
 
-Raw ES per-run results (`runs.csv`), evaluation-by-evaluation convergence logs (`convergence.csv`, `run_histories.csv`), and the consolidated summary (`es_summary_45_cases.csv`) are stored inside the repository under `evolution_strategy/results/`.
+All raw per-run outputs, evaluation-by-evaluation convergence logs, summary tables, and figures are committed directly in the repository:
 
-After installing the required dependencies, the summary and plotting scripts can use the committed experimental results without rerunning the optimization.
+- **Problem 1 (BA):** [`bees_algorithm/results/README.md`](bees_algorithm/results/README.md) · [`summary_tsp.md`](bees_algorithm/results/part_a_tsp/tables/summary_tsp.md) · [`summary_continuous.md`](bees_algorithm/results/part_b_continuous/tables/summary_continuous.md)
+- **Problem 2 (ES):** [`evolution_strategy/results/README.md`](evolution_strategy/results/README.md) · [`es_summary_45_cases.csv`](evolution_strategy/results/es_summary_45_cases.csv)
