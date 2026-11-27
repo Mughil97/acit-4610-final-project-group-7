@@ -1,4 +1,5 @@
 import argparse
+import statistics
 import time
 
 from bees_algorithm.configs import (
@@ -29,6 +30,60 @@ from logger import get_logger
 logger = get_logger(__name__)
 
 
+def _sample_std(values: list[float]) -> float:
+    return statistics.stdev(values) if len(values) > 1 else 0.0
+
+
+def _format_tsp_run_log(row: dict, run_idx: int, total_runs: int) -> str:
+    return (
+        f"  Run {run_idx:2d}/{total_runs} (seed {row['seed']}) | "
+        f"length: {row['initial_best']:6.0f} -> {row['final_best']:5.0f} | "
+        f"gap={row['gap_pct']:6.2f}% | valid={str(row['is_valid']):5s} | "
+        f"evals={row['evaluations']} | {row['runtime_sec']:.2f}s"
+    )
+
+
+def _format_tsp_case_summary(
+    instance: str, cities: int, optimum: int, neighbourhood: str, rows: list[dict]
+) -> str:
+    valid_rows = [r for r in rows if r["is_valid"]]
+    metric_rows = valid_rows if valid_rows else rows
+    bests = [float(r["final_best"]) for r in metric_rows]
+    gaps = [float(r["gap_pct"]) for r in metric_rows]
+    runtimes = [float(r["runtime_sec"]) for r in rows]
+    return (
+        f"Summary | {instance:8s} | {neighbourhood:7s} | "
+        f"n={cities:3d} | L*={optimum:5d} | "
+        f"best={min(bests):6.0f} | mean={statistics.mean(bests):8.2f} | "
+        f"std={_sample_std(bests):7.2f} | gap={statistics.mean(gaps):6.2f}% | "
+        f"valid={len(valid_rows)}/{len(rows)} | mean_time={statistics.mean(runtimes):.2f}s"
+    )
+
+
+def _format_continuous_run_log(row: dict, run_idx: int, total_runs: int) -> str:
+    return (
+        f"  Run {run_idx:2d}/{total_runs} (seed {row['seed']}) | "
+        f"f(x): {row['initial_best']:.4e} -> {row['final_best']:.4e} | "
+        f"valid={str(row['is_valid']):5s} | "
+        f"evals={row['evaluations']} | {row['runtime_sec']:.2f}s"
+    )
+
+
+def _format_continuous_case_summary(
+    function_name: str, dimension: int, rows: list[dict]
+) -> str:
+    valid_rows = [r for r in rows if r["is_valid"]]
+    metric_rows = valid_rows if valid_rows else rows
+    bests = [float(r["final_best"]) for r in metric_rows]
+    runtimes = [float(r["runtime_sec"]) for r in rows]
+    return (
+        f"Summary | {function_name:10s} | D={dimension:2d} | "
+        f"best={min(bests):.4e} | mean={statistics.mean(bests):.4e} | "
+        f"std={_sample_std(bests):.2e} | "
+        f"valid={len(valid_rows)}/{len(rows)} | mean_time={statistics.mean(runtimes):.2f}s"
+    )
+
+
 def optimise_functions(writer: ExperimentWriter | None = None):
     if writer is None:
         writer = ExperimentWriter()
@@ -36,19 +91,27 @@ def optimise_functions(writer: ExperimentWriter | None = None):
     writer.write_metadata(tsp_config=tspc, function_config=foc, seeds=seeds)
     writer.reset_part_b()
 
+    total_cases = len(BENCHMARK_FUNCTIONS) * len(DIMENSIONS)
+    case_idx = 0
+
     logger.info(
-        "==========  Continuous Function Optimisation (Problem 1 Part B) =========="
+        f"========== Bees Algorithm — Part B: Continuous Optimisation "
+        f"({total_cases} cases, {EXPERIMENT_RUNS} runs x {foc.max_evaluations} evals) =========="
     )
     for func_config in BENCHMARK_FUNCTIONS:
         func = func_config.function
-        logger.info(f"Function: {func.__name__}")
 
         for dim in DIMENSIONS:
-            logger.info(f"Dimension: {dim}")
+            case_idx += 1
+            logger.info(
+                f"[{case_idx}/{total_cases}] {func.__name__} | D={dim} | "
+                f"bounds=[{func_config.lower:g}, {func_config.upper:g}] | "
+                f"f*={func_config.global_minimum:g}"
+            )
+            case_rows: list[dict] = []
 
             for run in range(EXPERIMENT_RUNS):
                 seed = SEED + run
-                logger.info(f"Run: {run+1} | Seed: {seed}")
 
                 cfo = ContinuousFunctionOptimisation(
                     seed, func_config.lower, func_config.upper, dim, func
@@ -65,8 +128,7 @@ def optimise_functions(writer: ExperimentWriter | None = None):
 
                 run_time = (end - start) / 1e9
 
-                solver.save_experiment(run_time)
-                writer.record_continuous_run(
+                row = writer.record_continuous_run(
                     function_name=func.__name__,
                     dimension=dim,
                     lower=func_config.lower,
@@ -78,13 +140,13 @@ def optimise_functions(writer: ExperimentWriter | None = None):
                     runtime_sec=run_time,
                     problem=cfo,
                 )
+                case_rows.append(row)
+                logger.info(_format_continuous_run_log(row, run + 1, EXPERIMENT_RUNS))
 
-            writer.flush_continuous_history(func.__name__, dim)
-            logger.info("\n")
-
-        logger.info(
-            "------------------------------------------------------------------------------------\n"
-        )
+            hist_path = writer.flush_continuous_history(func.__name__, dim)
+            logger.info(_format_continuous_case_summary(func.__name__, dim, case_rows))
+            if hist_path is not None:
+                logger.info(f"Saved convergence history -> {hist_path}")
 
 
 def optimise_tsp(writer: ExperimentWriter | None = None):
@@ -94,16 +156,24 @@ def optimise_tsp(writer: ExperimentWriter | None = None):
     writer.write_metadata(tsp_config=tspc, function_config=foc, seeds=seeds)
     writer.reset_part_a()
 
-    logger.info("==========  TSP (Problem 1 Part A) ==========")
-    for tsp_cfg in TSP_INSTANCES:
-        logger.info(f"Library: {tsp_cfg.name}")
+    total_cases = len(TSP_INSTANCES) * len(NEIGHBOURHOOD_VERSIONS)
+    case_idx = 0
 
+    logger.info(
+        f"========== Bees Algorithm — Part A: TSP "
+        f"({total_cases} cases, {EXPERIMENT_RUNS} runs x {tspc.max_evaluations} evals) =========="
+    )
+    for tsp_cfg in TSP_INSTANCES:
         for version in NEIGHBOURHOOD_VERSIONS:
-            logger.info(f"Version: {version}")
+            case_idx += 1
+            logger.info(
+                f"[{case_idx}/{total_cases}] {tsp_cfg.name} | {version} | "
+                f"cities={tsp_cfg.cities} | L*={tsp_cfg.optimum}"
+            )
+            case_rows: list[dict] = []
 
             for run in range(EXPERIMENT_RUNS):
                 seed = SEED + run
-                logger.info(f"Run: {run+1} | Seed: {seed}")
 
                 tsp = SymmetricTSP(seed, tsp_cfg.path, version)
                 tracked = TrackedProblem(tsp, tspc.ns, tspc.max_evaluations)
@@ -118,8 +188,7 @@ def optimise_tsp(writer: ExperimentWriter | None = None):
 
                 run_time = (end - start) / 1e9
 
-                solver.save_experiment(run_time)
-                writer.record_tsp_run(
+                row = writer.record_tsp_run(
                     instance=tsp_cfg.name,
                     cities=tsp_cfg.cities,
                     optimum=tsp_cfg.optimum,
@@ -130,13 +199,17 @@ def optimise_tsp(writer: ExperimentWriter | None = None):
                     runtime_sec=run_time,
                     problem=tsp,
                 )
+                case_rows.append(row)
+                logger.info(_format_tsp_run_log(row, run + 1, EXPERIMENT_RUNS))
 
-            writer.flush_tsp_history(tsp_cfg.name, version)
-            logger.info("\n")
-
-        logger.info(
-            "------------------------------------------------------------------------------------\n"
-        )
+            hist_path = writer.flush_tsp_history(tsp_cfg.name, version)
+            logger.info(
+                _format_tsp_case_summary(
+                    tsp_cfg.name, tsp_cfg.cities, tsp_cfg.optimum, version, case_rows
+                )
+            )
+            if hist_path is not None:
+                logger.info(f"Saved convergence history -> {hist_path}")
 
 
 def run_single_tsp(instance_name: str, neighbourhood: str = REVERSE, seed: int = SEED) -> None:
@@ -165,10 +238,11 @@ def run_single_tsp(instance_name: str, neighbourhood: str = REVERSE, seed: int =
         reported_length=final_best,
     )
     logger.info(
-        f"TSP Single Run | instance={tsp_cfg.name} | neighbourhood={neighbourhood} | "
-        f"seed={seed} | initial_best={initial_best:.0f} | final_best={final_best:.0f} | "
-        f"optimum={tsp_cfg.optimum} | gap={gap_pct:.2f}% | valid={is_valid} | "
-        f"evaluations={tracker.evaluations} | runtime={run_time:.3f}s"
+        f"{tsp_cfg.name} | {neighbourhood} | cities={tsp_cfg.cities} | "
+        f"L*={tsp_cfg.optimum} | seed={seed} | "
+        f"length: {initial_best:.0f} -> {final_best:.0f} | "
+        f"gap={gap_pct:.2f}% | valid={is_valid} | "
+        f"evals={tracker.evaluations} | {run_time:.2f}s"
     )
     if errors:
         logger.warning(f"Validation errors: {errors}")
@@ -205,9 +279,11 @@ def run_single_function(function_name: str, dimension: int = 10, seed: int = SEE
         reported_value=final_best,
     )
     logger.info(
-        f"Continuous Single Run | function={function_name} | D={dimension} | "
-        f"seed={seed} | initial_best={initial_best:.6g} | final_best={final_best:.6g} | "
-        f"valid={is_valid} | evaluations={tracker.evaluations} | runtime={run_time:.3f}s"
+        f"{function_name} | D={dimension} | "
+        f"bounds=[{func_config.lower:g}, {func_config.upper:g}] | "
+        f"f*={func_config.global_minimum:g} | seed={seed} | "
+        f"f(x): {initial_best:.4e} -> {final_best:.4e} | "
+        f"valid={is_valid} | evals={tracker.evaluations} | {run_time:.2f}s"
     )
     if errors:
         logger.warning(f"Validation errors: {errors}")
