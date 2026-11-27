@@ -14,7 +14,7 @@ $$
 
 The portfolio variance is then calculated as $V(\mathbf{w}) = \mathbf{w}^{T}\Sigma\mathbf{w}$.
 
-The implementation stores and reuses the symmetric covariance matrix during objective evaluations. Portfolio weights and covariance calculations use Python lists rather than NumPy arrays.
+The implementation stores and reuses the symmetric covariance matrix during objective evaluations, using cached NumPy arrays in `evaluation.py` to vectorize return and variance calculations.
 
 A candidate solution is a vector of asset weights $\mathbf{w} = (w_1, \ldots, w_n)$. We minimize portfolio variance:
 
@@ -41,39 +41,9 @@ $$
 
 where $R_{\mathrm{eq}}$ is the return of an equally weighted portfolio and $R_{\max}$ is the highest individual asset return.
 
-## Datasets and exploratory analysis
+## Datasets
 
-Official dataset source:
-[OR-Library Portfolio Optimization](https://people.brunel.ac.uk/~mastjjb/jeb/orlib/portinfo.html).
-
-The original benchmark files are included in
-`evolution_strategy/data/`.
-
-The five OR-Library benchmark files in `evolution_strategy/data/` contain weekly stock data from five equity indices:
-
-| Dataset | Market index | Assets ($n$) | Correlation records | Negative-return assets | $R_{\mathrm{eq}}$ | $R_{\max}$ | Equal-weight variance | Mean pairwise corr. |
-|---|---|---:|---:|---:|---:|---:|---:|---:|
-| `port1.txt` | Hang Seng (Hong Kong) | 31 | 496 | 0 / 31 | 0.350% | 1.087% | 0.001131 | 0.527 |
-| `port2.txt` | DAX 100 (Germany) | 85 | 3,655 | 20 / 85 | 0.149% | 0.979% | 0.000265 | 0.207 |
-| `port3.txt` | FTSE 100 (UK) | 89 | 4,005 | 4 / 89 | 0.266% | 0.821% | 0.000303 | 0.248 |
-| `port4.txt` | S&P 100 (USA) | 98 | 4,851 | 8 / 98 | 0.287% | 0.919% | 0.000208 | 0.163 |
-| `port5.txt` | Nikkei 225 (Japan) | 225 | 25,425 | 177 / 225 | -0.151% | 0.397% | 0.000942 | 0.476 |
-
-### Assignment parser validation
-
-The `port1.txt` dataset was validated against the reference
-values provided in Portfolio 2026, Problem 2, page 10.
-
-| Validation | Expected | Verified |
-|---|---:|---:|
-| Equal-allocation return | 0.003504064516129 | 0.003504064516129 |
-| Equal-allocation variance | 0.001130937943724 | 0.001130937943724 |
-| Target return (alpha = 0.50) | 0.007184532258065 | 0.007184532258065 |
-
-These checks are included in `tests/test_covariance.py`.
-In `port1`, the single safest company (Stock #29) has variance `0.001285`, whereas splitting capital evenly across all 31 stocks lowers variance to `0.001131`. That equal split still misses higher return targets because its return is only `0.350%`. Across markets, `port2`, `port3`, and `port4` have much lower average pairwise correlations (`0.163` to `0.248`) than `port1` (`0.527`) and `port5` (`0.476`), so combining stocks cancels more variance there. `port5` also behaves differently on returns: 177 of its 225 stocks have negative weekly mean returns, pulling $R_{\mathrm{eq}}$ to `-0.151%` and leaving the $\alpha = 0.25$ target slightly negative (`-0.014%`).
-
-On `port1` at $\alpha = 0.50$ ($R^* = 0.7185\%$), putting 100% into the highest-return asset (Stock #5) is feasible with variance `0.004776`, and a 50/50 blend of equal-weight and Stock #5 lowers variance to `0.002066`. Running the population ES variants for 30,000 evaluations brings mean variance down to `0.001171` at the same return target.
+The five OR-Library portfolio benchmark files (`port1.txt`–`port5.txt`) are included in [`evolution_strategy/data/`](data/). See **[`data/README.md`](data/README.md)** for the file format, summary statistics, exploratory data analysis, and the `port1.txt` parser validation checkpoint.
 
 ## Algorithms and constraint repair
 
@@ -109,14 +79,13 @@ only and does not participate in parent or survivor selection.
 
 | Component | Tested version |
 |---|---|
-| Operating system | Windows |
-| Python | 3.13.5 |
+| Operating system | Windows / macOS |
+| Python | 3.13.5+ |
 | Matplotlib | 3.11.2 |
-| NumPy | 2.5.5 |
+| NumPy | 2.5.4+ |
 | pytest | 9.2.0 |
 
-NumPy is installed as a plotting dependency. The ES
-optimization algorithms use standard Python lists.
+NumPy is used for vectorized objective evaluation (`evaluation.py`) and plotting.
 
 From the repository root:
 
@@ -127,19 +96,17 @@ python -m pytest evolution_strategy/tests -v
 
 The ES regression tests cover simplex projection,
 target-return repair, (1+1)-ES step-size adaptation,
-evaluation budgets, covariance construction, assignment
-reference values, independent variance calculations,
-CSV export, summary building, and plotting.
+evaluation budgets, best-so-far archive tracking,
+covariance construction, assignment reference values,
+and independent variance calculations.
 
 Latest validation:
 
-- ES regression suite: 92 passed.
+- ES regression suite: 66 passed.
 - Covariance regression suite: 33 passed.
 - Archive regression suite: 5 passed.
-- Overall project regression suite: 129 passed.
+- Overall project regression suite: 103 passed.
 - Archive numerical equivalence: 150/150 comparisons passed.
-- Experimental results audit: 45/45 configurations,
-  450 runs, and 13,500,000 objective evaluations validated.
 
 ### Full pipeline via `main.py`
 
@@ -149,75 +116,47 @@ Running the root entry point executes both Problem 1 (Bees Algorithm) and Proble
 python main.py
 ```
 
-For Problem 2, `main.py` calls `optimise_es()`, `summarize_all_es()`, and `generate_all_plots_es()`. Completed folders under `evolution_strategy/results/full/` are skipped automatically, so repeated runs do not recompute finished cases.
+For Problem 2, `main.py` calls `optimise_es()`, `summarize_all_es()`, and `generate_all_plots_es()`. Every run recomputes and overwrites all 45 cases directly under `evolution_strategy/results/`, rebuilds the consolidated summary CSV, and regenerates the required plots.
 
 ### Individual commands
 
-Experiments, summary building, and auditing:
+Experiments and summary building:
 
 ```bash
-# Single seeded run
-python -c "from evolution_strategy.results import PORTFOLIOS; from evolution_strategy.evolution_strategies import run_es; r = run_es(PORTFOLIOS['port1'], alpha=0.50, variant='one_plus_one', max_iterations=30000, seed=0); print('feasible=', r.is_valid, 'evaluations=', len(r.history), 'variance=', r.cost)"
+# Single seeded run (30,000 evaluations)
+python -m evolution_strategy.optimise --dataset port1 --alpha 0.50 --variant one_plus_one --seed 0
 
-# Complete port1_alpha050 case for (1+1)-ES, 10 seeds
-python -c "from evolution_strategy.results import PORTFOLIOS, summarize_case; r = summarize_case('port1', PORTFOLIOS['port1'], 0.50, 'one_plus_one', num_runs=10, max_iterations=30000); print(r.best_cost, r.mean_cost, r.std_cost, r.feasible_rate, r.mean_runtime)"
+# One complete test case (port1_alpha050: all 3 ES variants × 10 seeds × 30,000 evaluations)
+python -m evolution_strategy.optimise --dataset port1 --alpha 0.50
 
-# Full 45-case export (skips completed cases)
-python -u -m evolution_strategy.export_experiments
+# Full Problem 2 experiment set (45 cases, 450 runs, summary CSV, and plots)
+python -u -m evolution_strategy.optimise
 
-# Fresh full experiment using a new, unused output directory
-python -u -m evolution_strategy.export_experiments --output evolution_strategy/results_covariance
-
-# Rebuild the consolidated summary from saved cases
+# Rebuild the consolidated summary CSV from saved cases
 python -m evolution_strategy.build_summary
-
-# Audit the existing 45 cases and 450 runs
-python -m evolution_strategy.audit_results
 ```
 
-The default experiment directory contains the existing
-recorded experiments. Completed cases are skipped when
-all required output files exist.
+Every full invocation of `optimise` (without selective flags) runs all 45 cases, overwrites the outputs in `evolution_strategy/results/`, and regenerates the figures.
 
-Use a new, unused output directory when reproducing
-experiments with a modified implementation. Existing
-completion markers do not verify the source-code
-revision that generated the results.
+### Generating LaTeX report tables (optional)
 
-### Reproducing report tables
-
-Generate all seven ES LaTeX report tables from the
-existing consolidated experimental results without
-rerunning optimization:
+To generate standalone LaTeX report tables for both Problem 1 (BA) and Problem 2 (ES) from the saved summary CSVs without rerunning optimization:
 
 ```bash
-python evolution_strategy/report_tables/sync_es_tables.py evolution_strategy/results/es_summary_45_cases.csv evolution_strategy/report_tables
+python generate_tex_tables.py
 ```
 
-The generated LaTeX tables are stored in
-`evolution_strategy/report_tables/tables/`.
+The generated `.tex` files are written to `tex_tables/` at the repository root (gitignored).
 
-The script also generates a source CSV copy for traceability.
-This duplicate is excluded from version control.
-
-
-Generating figures without rerunning optimization:
+### Generating figures without rerunning optimization
 
 ```bash
-# Single convergence plot (e.g. port5, alpha=0.50)
-python -m evolution_strategy.plot_results --dataset port5 --alpha 0.50
+# Required port5_alpha050 convergence plot and comparison plots
+python -m evolution_strategy.plot_results
 
-# Comparison plots (mean variance, runtime, and port5 alpha=0.50 boxplot; PNG + PDF)
+# Comparison plots only (mean variance, runtime, and port5 alpha=0.50 boxplot; PNG + PDF)
 python -m evolution_strategy.plot_comparisons
-
-# Dataset correlation matrix and pairwise-correlation boxplot (reads data/ only)
-python -m evolution_strategy.plot_datasets
-
-# All convergence, comparison, and dataset plots in one call
-python -c "from evolution_strategy.plot_results import generate_all_plots_es; generate_all_plots_es()"
 ```
-
-`plot_comparisons` also accepts `--summary-only` (generates the first two plots from `es_summary_45_cases.csv` without per-seed `runs.csv` files) and `--results-dir path/to/results`.
 
 ## Experimental protocol and saved outputs
 
@@ -247,18 +186,18 @@ evolution_strategy/
 │   ├── port2.txt
 │   ├── port3.txt
 │   ├── port4.txt
-│   └── port5.txt
-├── figures/
+│   ├── port5.txt
+│   ├── dataset_correlations.png
+│   └── README.md
 ├── results/
 │   ├── es_summary_45_cases.csv
-│   ├── validation_report.json     # Generated by audit
-│   └── full/
-│       └── <case_name>/
-│           ├── summary.csv
-│           ├── runs.csv
-│           ├── convergence.csv
-│           ├── run_histories.csv
-│           └── complete.json
+│   ├── figures/
+│   └── <case_name>/
+│       ├── summary.csv
+│       ├── runs.csv
+│       ├── convergence.csv
+│       ├── run_histories.csv
+│       └── complete.json
 └── tests/                     # Regression tests
 ```
 
@@ -267,18 +206,15 @@ evolution_strategy/
 | Module | Role |
 |---|---|
 | `portfolio.py` | Load OR-Library datasets and construct covariance matrices |
-| `evaluation.py` | Expected return, cached covariance-based variance, and target-return calculations |
+| `evaluation.py` | Expected return, NumPy-cached covariance-based variance, and target-return calculations |
 | `repair.py` | Euclidean simplex projection and target-return mixing |
 | `algorithms.py` | `(1+1)-ES`, `(10+70)-ES`, and `(10,70)-ES` with best-so-far archive |
 | `evolution_strategies.py` | Single-seed runner, runtime tracking, and feasibility check |
 | `results.py` | 10-seed case summarization, mean convergence history, default paths |
-| `export_experiments.py` | Resumable 45-case runner (`optimise_es`) and atomic CSV exporter |
+| `optimise.py` | CLI for single run, single test case, or full 45-case ES pipeline (`optimise_es`) |
 | `build_summary.py` | Consolidated 45-case summary builder (`summarize_all_es`) |
-| `audit_results.py` | Integrity audit over all 45 cases, 450 runs, and 13.5M evaluations |
-| `plot_results.py` | Convergence plots and unified plot entry point (`generate_all_plots_es`) |
+| `plot_results.py` | `port5_alpha050` convergence plot and unified plot entry point (`generate_all_plots_es`) |
 | `plot_comparisons.py` | Mean-variance, runtime, and per-seed boxplot comparisons |
-| `plot_datasets.py` | Dataset correlation matrix and pairwise-correlation boxplot |
-| `report_tables/sync_es_tables.py` | Reproduce all seven ES LaTeX report tables from the consolidated experimental CSV |
 
 ## Experimental results provenance
 
@@ -297,8 +233,8 @@ Subsequent implementation validation included:
 - Five permanent archive regression tests.
 - 150 paired archive equivalence comparisons across
   five datasets, three return targets, and ten seeds.
-- 92 passing ES regression tests.
-- 129 passing overall project regression tests.
+- 66 passing ES regression tests.
+- 103 passing overall project regression tests.
 
 The nine full-budget checks covered port1, port3, and port5
 at alpha = 0.50, seed 0, using all three ES variants.
@@ -310,12 +246,8 @@ All 150 archive equivalence comparisons produced identical
 final weights, returns, variances, and convergence histories
 at a budget of 1,000 evaluations.
 
-The final results audit validated all 45 experimental
-configurations, 450 independent runs, and 13,500,000
-objective evaluations.
-
 The report tables and figures are reproduced from the
-existing audited experimental results.
+existing experimental results.
 
 The recorded runtime measurements describe the original
 experimental campaign, not the computational performance

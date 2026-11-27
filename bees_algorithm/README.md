@@ -103,7 +103,7 @@ Each candidate solution is a real-valued vector $\mathbf{x} \in \mathbb{R}^D$, e
 
 - **Seeds:** 10 independent runs per case using seeds `45, 46, 47, 48, 49, 50, 51, 52, 53, 54`.
 - **Total runs:** **120** TSP runs (6 instances × 2 neighbourhoods × 10 seeds) and **80** continuous runs (4 functions × 2 dimensions × 10 seeds).
-- **Required outputs:** Per-run metrics and best-so-far histories; summary tables (best, mean, std, mean runtime, plus mean gap for TSP); convergence plots for `berlin52`, `ch150`, and `Rastrigin` ($D=10$); best `berlin52` route plot; and four-panel $D=30$ boxplots. Saved outputs are stored under `bees_algorithm/results/` (see [`results/README.md`](results/README.md)).
+- **Required outputs:** Per-run metrics and best-so-far histories; summary tables (best, mean, std, mean runtime, plus mean gap for TSP); convergence plots for `berlin52`, `ch150`, and `Rastrigin` ($D=10$); best `berlin52` route plot; and four-panel $D=30$ boxplots. Saved outputs are stored under `bees_algorithm/results/`.
 
 ## Setup & Reproducing Results
 
@@ -117,7 +117,16 @@ Run from the repository root:
 python -m pip install -r requirements.txt
 python -m pytest bees_algorithm/tests -v
 
-# Run the full experiment suite (Problem 1 & Problem 2)
+# One TSP run (Part A, 30,000 evaluations)
+python -m bees_algorithm.optimise --instance berlin52 --neighbourhood REVERSE --seed 45
+
+# One continuous run (Part B, 30,000 evaluations)
+python -m bees_algorithm.optimise --function rastrigin --dimension 10 --seed 45
+
+# Full Problem 1 experiment set (120 TSP + 80 continuous runs, tables, and plots)
+python -m bees_algorithm.optimise
+
+# Full project pipeline (Problem 1 & Problem 2)
 python main.py
 
 # Regenerate summary tables and plots from saved results
@@ -130,7 +139,7 @@ python -m bees_algorithm.utils.plotting
 1. Pham, D. T., Ghanbarzadeh, A., Koç, E., Otri, S., Rahim, S., & Zaidi, M. **The Bees Algorithm — A Novel Tool for Complex Optimisation Problems**. *Intelligent Production Machines and Systems*, 2006, pp. 454–459. [Publisher record](https://www.sciencedirect.com/science/article/abs/pii/B978008045157250081X).
 2. Reinelt, G. **TSPLIB**. Heidelberg University. [Library home page](https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/).
 3. Reinelt, G. **Optimal solutions for symmetric TSPs**. [Reference tour lengths](https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/TSP-BEST.html).
-4. Reinelt, G. **TSPLIB 95 documentation**, Sections 1 and 2.1. [Documentation PDF](https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/tsp95.pdf).
+4. Reinelt, G. **TSPLIB 95 documentation**, Sections 1 and 2.1 on file format and Euclidean distances. [Documentation PDF](https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/tsp95.pdf).
 5. Surjanovic, S., & Bingham, D. **Sphere Function**. Simon Fraser University. [Function and implementation](https://www.sfu.ca/~ssurjano/spheref.html).
 6. Surjanovic, S., & Bingham, D. **Rosenbrock Function**. Simon Fraser University. [Function and implementation](https://www.sfu.ca/~ssurjano/rosen.html).
 7. Surjanovic, S., & Bingham, D. **Rastrigin Function**. Simon Fraser University. [Function and implementation](https://www.sfu.ca/~ssurjano/rastr.html).
