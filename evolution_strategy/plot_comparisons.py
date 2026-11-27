@@ -1,13 +1,13 @@
-"""Generate report-ready comparisons from saved ES experiment CSVs.
+"""Generate ES comparison figures from saved experimental results.
 
-Run from the repository root::
+Compare mean portfolio variance, computational runtime,
+and individual seeded results across ES variants.
 
+Run from the repository root:
     python -m evolution_strategy.plot_comparisons
 
-The default experiment results folder lives inside the repository at
-evolution_strategy/results. This script does NOT rerun optimization.
+This script does not rerun optimization.
 """
-
 from __future__ import annotations
 
 import argparse
@@ -58,7 +58,11 @@ SUMMARY_COLUMNS = {
 
 
 def load_summary(csv_path: Path) -> dict[tuple[str, float, str], dict]:
-    """Read the complete 45-case summary and validate its experiment grid."""
+    """Load and validate the complete 45-case experimental summary.
+
+    Check the experiment grid, required columns, seed count,
+    evaluation budget, and numeric values used for plotting.
+    """
     if not csv_path.is_file():
         raise FileNotFoundError(
             f"Missing {csv_path}. Create es_summary_45_cases.csv first."
@@ -86,6 +90,8 @@ def load_summary(csv_path: Path) -> dict[tuple[str, float, str], dict]:
         if float(record["mean_variance"]) <= 0:
             raise ValueError(f"Nonpositive mean variance for log-scale plot: {key}")
         indexed[key] = record
+
+    # Verify that every expected experimental combination is present.
     expected = {(ds, a, v) for ds in DATASETS for a in ALPHAS for v in VARIANTS}
     missing = expected - set(indexed)
     if missing:
@@ -96,6 +102,7 @@ def load_summary(csv_path: Path) -> dict[tuple[str, float, str], dict]:
 
 
 def _save(fig, figures_dir: Path, filename: str) -> None:
+    """Save figures as 300-DPI PNG files and PDF files."""
     figures_dir.mkdir(parents=True, exist_ok=True)
     for extension, kwargs in (("png", {"dpi": 300}), ("pdf", {})):
         path = figures_dir / f"{filename}.{extension}"
@@ -105,7 +112,11 @@ def _save(fig, figures_dir: Path, filename: str) -> None:
 
 
 def plot_mean_variance(summary: dict, figures_dir: Path) -> None:
-    """Compare raw mean final variance across datasets, separated by alpha."""
+    """Compare mean final portfolio variance across all datasets.
+
+    Use separate panels for the three return targets and
+    a logarithmic scale to display differences in variance.
+    """
     fig, axes = plt.subplots(1, 3, figsize=(15, 4.8), sharey=True)
     x = list(range(len(DATASETS)))
     for ax, alpha in zip(axes, ALPHAS):
@@ -130,7 +141,11 @@ def plot_mean_variance(summary: dict, figures_dir: Path) -> None:
 
 
 def plot_runtime(summary: dict, figures_dir: Path) -> None:
-    """Average per-run runtime across the three alpha settings for each dataset."""
+    """Compare mean runtime per run across the five datasets.
+
+    Average the recorded runtime across the three return
+    targets for each ES variant.
+    """
     fig, ax = plt.subplots(figsize=(9.2, 5.2))
     x = list(range(len(DATASETS)))
     sizes = [int(summary[(ds, ALPHAS[0], VARIANTS[0])]["num_assets"]) for ds in DATASETS]
@@ -156,7 +171,11 @@ def plot_runtime(summary: dict, figures_dir: Path) -> None:
 def load_seed_variances(
     results_dir: Path, summary: dict, dataset: str, alpha: float
 ) -> dict[str, list[float]]:
-    """Load genuine per-seed final variances; never infer them from summary stats."""
+    """Load and validate actual final variances from each seed.
+
+    Check seed uniqueness, feasibility flags, evaluation budgets,
+    and consistency with the consolidated mean variance.
+    """
     values_by_variant = {}
     for variant in VARIANTS:
         record = summary[(dataset, alpha, variant)]
@@ -192,6 +211,8 @@ def load_seed_variances(
         if set(by_seed) != set(range(runs)):
             raise ValueError(f"Missing expected seeds 0..{runs-1} in {runs_file}")
         final_values = [by_seed[seed] for seed in range(runs)]
+
+        # Verify consistency between individual runs and summary statistics.
         actual_mean = sum(final_values) / runs
         if not math.isclose(actual_mean, float(record["mean_variance"]),
                             rel_tol=1e-8, abs_tol=1e-12):
@@ -202,7 +223,11 @@ def load_seed_variances(
 
 def plot_boxplot(summary: dict, results_dir: Path, figures_dir: Path,
                  dataset: str = "port5", alpha: float = 0.50) -> None:
-    """Plot actual seed-level results with explicit axes and a proper legend."""
+    """Visualize the distribution of final variance across seeds.
+
+    Display quartiles, median, mean, and individual recorded
+    results for each ES variant.
+    """
     values_by_variant = load_seed_variances(results_dir, summary, dataset, alpha)
     fig, ax = plt.subplots(figsize=(9.2, 5.8))
 
@@ -275,6 +300,7 @@ def plot_boxplot(summary: dict, results_dir: Path, figures_dir: Path,
 
 
 def main() -> None:
+    """Generate ES comparison figures from command-line arguments."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--results-dir", type=Path, default=DEFAULT_RESULTS_DIR)
     parser.add_argument("--dataset", choices=DATASETS, default="port5")

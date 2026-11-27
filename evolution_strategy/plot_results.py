@@ -1,4 +1,8 @@
-"""Generate ES convergence plots from saved experiment CSV files."""
+"""Generate ES convergence and comparison plots from saved results.
+
+Reads exported CSV files and creates convergence, summary,
+runtime, boxplot, and dataset-correlation figures.
+"""
 
 import argparse
 import csv
@@ -23,6 +27,11 @@ VARIANT_LABELS = {
 
 
 def plot_convergence(dataset, alpha, results_root, budget=30000, num_runs=10):
+    """Plot mean convergence for one dataset and return target.
+
+    Compare the three ES variants using saved convergence
+    histories and verify the expected number of evaluations.
+    """
     case = f"{dataset}_alpha{int(alpha * 100):03d}"
     results_dir = results_root / "full"
 
@@ -39,6 +48,7 @@ def plot_convergence(dataset, alpha, results_root, budget=30000, num_runs=10):
                 f"Missing convergence data: {csv_path}"
             )
 
+        # Read the saved mean best-so-far convergence history.
         with csv_path.open(
             newline="", encoding="utf-8"
         ) as handle:
@@ -110,7 +120,11 @@ def generate_all_plots_es(
     results_dir: Path | str = DEFAULT_RESULTS_DIR,
     dataset_figures_dir: Path | str | None = None,
 ) -> None:
-    """Generate convergence, comparison, and dataset plots for ES results."""
+    """Generate all ES figures from saved experimental results.
+
+    Creates per-case convergence plots, summary comparison plots,
+    runtime plots, boxplots, and dataset-correlation figures.
+    """
     from evolution_strategy.plot_comparisons import (
         load_summary,
         plot_boxplot,
@@ -148,6 +162,7 @@ def generate_all_plots_es(
 
 
 def main():
+    """Generate one ES convergence plot from command-line arguments."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--dataset", default="port5")
     parser.add_argument("--alpha", type=float, default=0.50)

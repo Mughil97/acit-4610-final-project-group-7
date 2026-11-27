@@ -54,17 +54,21 @@ GRID = "#e6e6e6"
 
 
 def correlation_matrix(portfolio: list[Portfolio]) -> list[list[float]]:
-    """Full n x n correlation matrix C (symmetric, ones on the diagonal)."""
+    """Return the full asset correlation matrix.
+
+    The matrix is symmetric with ones on the diagonal.
+    """
     return [list(company.correlations) for company in portfolio]
 
 
 def pairwise_correlations(portfolio: list[Portfolio]) -> list[float]:
-    """Every off-diagonal correlation C_ij with i < j, each pair once."""
+    """Extract unique pairwise correlations, excluding the diagonal."""
     n = len(portfolio)
     return [portfolio[i].correlations[j] for i in range(n) for j in range(i + 1, n)]
 
 
 def _plot_heatmap(ax, fig, portfolio: list[Portfolio], dataset: str) -> None:
+    """Visualize the asset correlation matrix on a fixed scale from -1 to 1."""
     matrix = correlation_matrix(portfolio)
     n = len(matrix)
     image = ax.imshow(matrix, cmap="coolwarm", vmin=-1.0, vmax=1.0, interpolation="nearest")
@@ -85,6 +89,7 @@ def _plot_heatmap(ax, fig, portfolio: list[Portfolio], dataset: str) -> None:
 
 
 def _plot_boxplots(ax, portfolios: dict[str, list[Portfolio]]) -> None:
+    """Compare pairwise correlation distributions across all five datasets."""
     data = [pairwise_correlations(portfolios[dataset]) for dataset in DATASETS]
     ax.boxplot(
         data,
@@ -117,7 +122,12 @@ def plot_dataset_correlations(
     out_path: Path,
     heatmap_dataset: str = "port1",
 ) -> Path:
-    """Draw both panels and save them as one PNG (300 dpi). Returns the path."""
+    """Generate the two-panel dataset correlation figure.
+
+    Combine a selected dataset's correlation heatmap with
+    pairwise correlation boxplots for all five benchmarks.
+    Save the figure as a 300-DPI PNG and return its path.
+    """
     if heatmap_dataset not in DATASETS:
         raise ValueError(f"Unknown dataset {heatmap_dataset!r}; expected one of {DATASETS}")
 
@@ -137,6 +147,7 @@ def plot_dataset_correlations(
 
 
 def main(argv: list[str] | None = None) -> None:
+    """Generate the dataset correlation figure from command-line arguments."""
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR,

@@ -1,0 +1,258 @@
+# AI-generated regression tests; Group 7 must review and validate them.
+"""Regression tests for the portfolio formulation in Problem 2.
+
+Validate covariance construction, objective calculations,
+benchmark dimensions, and assignment reference values.
+"""
+
+import math
+import random
+
+import pytest
+
+from evolution_strategy.portfolio import (
+    Portfolio,
+    construct_covariance_matrix,
+)
+from evolution_strategy.evaluation import (
+    evaluate_cost,
+    evaluate_profit,
+    get_target_return,
+)
+from evolution_strategy.results import PORTFOLIOS
+
+
+EXPECTED_DIMENSIONS = {
+    "port1": 31,
+    "port2": 85,
+    "port3": 89,
+    "port4": 98,
+    "port5": 225,
+}
+
+ALPHAS = (0.25, 0.50, 0.75)
+
+
+def independent_variance(portfolio, weights):
+    """Calculate variance directly from the original asset statistics."""
+    n = len(portfolio)
+
+    return math.fsum(
+        weights[i]
+        * weights[j]
+        * portfolio[i].risk
+        * portfolio[j].risk
+        * portfolio[i].correlations[j]
+        for i in range(n)
+        for j in range(n)
+    )
+
+
+@pytest.mark.parametrize(
+    "dataset, expected_n",
+    EXPECTED_DIMENSIONS.items(),
+)
+def test_dataset_dimensions(dataset, expected_n):
+    """Verify the five required benchmark dimensions."""
+    portfolio = PORTFOLIOS[dataset]
+
+    assert len(portfolio) == expected_n
+
+    for asset in portfolio:
+        assert len(asset.correlations) == expected_n
+        assert len(asset.covariances) == expected_n
+
+
+@pytest.mark.parametrize("dataset", EXPECTED_DIMENSIONS)
+def test_covariance_matrix(dataset):
+    """Verify covariance symmetry and the required assignment formula."""
+    portfolio = PORTFOLIOS[dataset]
+    covariance = construct_covariance_matrix(portfolio)
+    n = len(portfolio)
+
+    assert len(covariance) == n
+
+    for i in range(n):
+        assert len(covariance[i]) == n
+
+        assert covariance[i][i] == pytest.approx(
+            portfolio[i].risk ** 2,
+            rel=1e-12,
+            abs=1e-15,
+        )
+
+        for j in range(n):
+            expected = (
+                portfolio[i].risk
+                * portfolio[j].risk
+                * portfolio[i].correlations[j]
+            )
+
+            assert covariance[i][j] == pytest.approx(
+                expected,
+                rel=1e-12,
+                abs=1e-15,
+            )
+
+            assert covariance[i][j] == covariance[j][i]
+
+            assert portfolio[i].covariances[j] == covariance[i][j]
+
+
+def test_port1_assignment_checkpoint():
+    """Verify the three reference values in the assignment PDF."""
+    portfolio = PORTFOLIOS["port1"]
+    n = len(portfolio)
+    weights = [1.0 / n] * n
+
+    assert evaluate_profit(
+        portfolio, weights
+    ) == pytest.approx(
+        0.003504064516129,
+        abs=1e-14,
+    )
+
+    assert evaluate_cost(
+        portfolio, weights
+    ) == pytest.approx(
+        0.001130937943724,
+        abs=1e-14,
+    )
+
+    assert get_target_return(
+        portfolio, 0.50
+    ) == pytest.approx(
+        0.007184532258065,
+        abs=1e-14,
+    )
+
+
+@pytest.mark.parametrize("dataset", EXPECTED_DIMENSIONS)
+@pytest.mark.parametrize("alpha", ALPHAS)
+def test_return_target(dataset, alpha):
+    """Verify the required minimum-return calculation."""
+    portfolio = PORTFOLIOS[dataset]
+    returns = [asset.profit for asset in portfolio]
+
+    equal_return = math.fsum(returns) / len(returns)
+    maximum_return = max(returns)
+
+    expected = (
+        (1.0 - alpha) * equal_return
+        + alpha * maximum_return
+    )
+
+    assert get_target_return(
+        portfolio, alpha
+    ) == pytest.approx(
+        expected,
+        rel=1e-12,
+        abs=1e-15,
+    )
+
+
+@pytest.mark.parametrize("dataset", EXPECTED_DIMENSIONS)
+def test_variance_against_independent_formula(dataset):
+    """Compare production variance against an independent double sum."""
+    portfolio = PORTFOLIOS[dataset]
+    n = len(portfolio)
+
+    rng = random.Random(42)
+
+    # Equal allocation.
+    allocations = [[1.0 / n] * n]
+
+    # Investment in one asset only.
+    one_asset = [0.0] * n
+    one_asset[0] = 1.0
+    allocations.append(one_asset)
+
+    # Sparse allocation across two assets.
+    sparse = [0.0] * n
+    sparse[0] = 0.60
+    sparse[-1] = 0.40
+    allocations.append(sparse)
+
+    # Reproducible random allocations.
+    for _ in range(10):
+        raw = [rng.random() for _ in range(n)]
+        total = math.fsum(raw)
+        allocations.append([value / total for value in raw])
+
+    for weights in allocations:
+        expected = independent_variance(portfolio, weights)
+        actual = evaluate_cost(portfolio, weights)
+
+        assert actual == pytest.approx(
+            expected,
+            rel=1e-12,
+            abs=1e-15,
+        )
+
+
+def test_covariance_fallback():
+    """Support manually constructed portfolios without cached covariance."""
+    portfolio = [
+        Portfolio(
+            profit=0.02,
+            risk=0.10,
+            correlations=[1.0, 0.25],
+        ),
+        Portfolio(
+            profit=0.06,
+            risk=0.20,
+            correlations=[0.25, 1.0],
+        ),
+    ]
+
+    weights = [0.60, 0.40]
+
+    assert all(not asset.covariances for asset in portfolio)
+
+    expected = (
+        0.60 ** 2 * 0.10 ** 2
+        + 0.40 ** 2 * 0.20 ** 2
+        + 2 * 0.60 * 0.40 * 0.10 * 0.20 * 0.25
+    )
+
+    assert evaluate_cost(
+        portfolio, weights
+    ) == pytest.approx(
+        expected,
+        rel=1e-12,
+        abs=1e-15,
+    )
+
+
+def test_assignment_numerical_example():
+    """Verify the three-asset example on page 8 of the assignment."""
+    portfolio = [
+        Portfolio(0.02, 0.10, [1.0, 0.0, 0.0]),
+        Portfolio(0.06, 0.20, [0.0, 1.0, 0.0]),
+        Portfolio(0.10, 0.30, [0.0, 0.0, 1.0]),
+    ]
+
+    candidate_a = [0.50, 0.30, 0.20]
+    candidate_b = [0.60, 0.30, 0.10]
+
+    assert evaluate_profit(
+        portfolio, candidate_a
+    ) == pytest.approx(0.048)
+
+    assert evaluate_cost(
+        portfolio, candidate_a
+    ) == pytest.approx(0.0097)
+
+    assert evaluate_profit(
+        portfolio, candidate_b
+    ) == pytest.approx(0.040)
+
+    assert evaluate_cost(
+        portfolio, candidate_b
+    ) == pytest.approx(0.0081)
+
+    assert evaluate_cost(
+        portfolio, candidate_b
+    ) < evaluate_cost(
+        portfolio, candidate_a
+    )

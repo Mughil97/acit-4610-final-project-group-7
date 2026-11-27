@@ -1,0 +1,25 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Complete required ES results for \texttt{port2}; each row summarizes ten runs. Variance and SD are in squared decimal-return units.}
+\label{tab:es-port2}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{llrrrrrrr}
+\toprule
+Case & ES variant & $n$ & $R_{\min}$ & Best variance & Mean variance & SD (pop.) & Feasible (\%) & Mean time (s)\\
+\midrule
+\texttt{port2\_alpha025} & $(1+1)$-ES & 85 & 0.0035668 & \num{0.000179245751} & \num{0.000183254875} & \num{2.29e-06} & 100 & 5.84\\
+\texttt{port2\_alpha025} & $(10+70)$-ES & 85 & 0.0035668 & \num{0.000156181455} & \num{0.000160799237} & \num{2.76e-06} & 100 & 6.69\\
+\texttt{port2\_alpha025} & $(10,70)$-ES & 85 & 0.0035668 & \num{0.000158883314} & \num{0.0001613129} & \num{3.51e-06} & 100 & 6.59\\
+\addlinespace[2pt]
+\texttt{port2\_alpha050} & $(1+1)$-ES & 85 & 0.0056425 & \num{0.000348838377} & \num{0.000374745387} & \num{2.16e-05} & 100 & 5.79\\
+\texttt{port2\_alpha050} & $(10+70)$-ES & 85 & 0.0056425 & \num{0.000253721474} & \num{0.00026146157} & \num{9.32e-06} & 100 & 6.54\\
+\texttt{port2\_alpha050} & $(10,70)$-ES & 85 & 0.0056425 & \num{0.000257017974} & \num{0.000266202359} & \num{8.8e-06} & 100 & 6.67\\
+\addlinespace[2pt]
+\texttt{port2\_alpha075} & $(1+1)$-ES & 85 & 0.0077183 & \num{0.000935833613} & \num{0.00102402032} & \num{5.93e-05} & 100 & 5.89\\
+\texttt{port2\_alpha075} & $(10+70)$-ES & 85 & 0.0077183 & \num{0.000478148099} & \num{0.00055195029} & \num{9.99e-05} & 100 & 6.65\\
+\texttt{port2\_alpha075} & $(10,70)$-ES & 85 & 0.0077183 & \num{0.000476346063} & \num{0.000518796489} & \num{7.75e-05} & 100 & 6.64\\
+\bottomrule
+\end{tabular}% 
+}
+\end{table}

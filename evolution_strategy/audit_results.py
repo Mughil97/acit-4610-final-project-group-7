@@ -1,10 +1,13 @@
-"""Validate saved ES raw experiments against Portfolio 2026 requirements.
+"""Validate saved ES experiments against Portfolio 2026 requirements.
 
 Run from the repository root:
     python -m evolution_strategy.audit_results
 
-This script only reads the existing experiment files; it never launches an ES
-optimization run and it never changes experiment results.
+Independently verifies objective values, portfolio feasibility,
+convergence histories, and summary statistics.
+
+Reads existing experimental results without modifying them
+and writes a separate JSON validation report.
 """
 
 import argparse
@@ -15,11 +18,6 @@ import statistics
 from itertools import zip_longest
 from pathlib import Path
 
-from evolution_strategy.evaluation import (
-    evaluate_cost,
-    evaluate_profit,
-    get_target_return,
-)
 from evolution_strategy.results import DEFAULT_RESULTS_DIR, PORTFOLIOS
 from logger import get_logger
 
@@ -29,13 +27,51 @@ VARIANTS = ("one_plus_one", "ten_plus_seventy", "ten_comma_seventy")
 OR_LIBRARY_COUNTS = {"port1": 31, "port2": 85, "port3": 89, "port4": 98, "port5": 225}
 TOL = 1e-8
 
+# independent numerical validation functions.
+
+def evaluate_profit(portfolio, weights):
+    """Independently calculate expected portfolio return."""
+    return math.fsum(
+        weight * asset.profit
+        for weight, asset in zip(weights, portfolio)
+    )
+
+def evaluate_cost(portfolio, weights):
+    """Independently verify variance using the full double sum.
+
+    Unlike the production evaluator, this calculation does not
+    reuse the precomputed covariance matrix or upper triangle.
+    """
+    n = len(portfolio)
+
+    return math.fsum(
+        weights[i]
+        * weights[j]
+        * portfolio[i].risk
+        * portfolio[j].risk
+        * portfolio[i].correlations[j]
+        for i in range(n)
+        for j in range(n)
+    )
+
+def get_target_return(portfolio, alpha):
+    """Independently calculate the minimum return target."""
+    returns = [asset.profit for asset in portfolio]
+    equal_return = math.fsum(returns) / len(returns)
+    maximum_return = max(returns)
+
+    return (
+        (1.0 - alpha) * equal_return
+        + alpha * maximum_return
+    )
 
 def require(condition, explanation):
+    """Stop the audit immediately if a requirement fails."""
     if not condition:
         raise ValueError(explanation)
 
-
 def close(actual, expected, context, *, abs_tol=1e-10, rel_tol=1e-8):
+    """Compare numerical values within floating-point tolerance."""
     require(
         math.isfinite(actual)
         and math.isfinite(expected)
@@ -43,11 +79,9 @@ def close(actual, expected, context, *, abs_tol=1e-10, rel_tol=1e-8):
         f"{context}: {actual!r} is not consistent with {expected!r}",
     )
 
-
 def read_csv(path):
     with path.open(newline="", encoding="utf-8-sig") as handle:
         return list(csv.DictReader(handle))
-
 
 def inspect_port1_reference():
     """Validate the three explicit port1 benchmarks from assignment page 10."""
@@ -113,6 +147,11 @@ def inspect_histories(folder, runs, budget):
 
 
 def inspect_case(folder, dataset, alpha, variant, budget, num_runs):
+    """Validate one dataset, return target and ES variant.
+
+    Checks saved runs, portfolio constraints, objective values,
+    summary statistics and convergence histories.
+    """
     case = folder.name
     for filename in (
         "summary.csv", "runs.csv", "convergence.csv", "run_histories.csv", "complete.json"
@@ -182,11 +221,16 @@ def inspect_case(folder, dataset, alpha, variant, budget, num_runs):
 
 
 def inspect_consolidated(path, case_summaries, budget, num_runs):
-    """If the checked-in 45-row summary exists, ensure it matches raw exports."""
+    """Verify that the consolidated summary matches the raw exports."""
+
+    # The consolidated summary is required for the final audit.
     if not path.is_file():
-        logger.warning(f"Consolidated summary not found at {path}; comparison skipped")
-        return False
+        raise FileNotFoundError(
+            f"Missing consolidated ES summary: {path}"
+        )
+
     rows = read_csv(path)
+
     require(len(rows) == len(case_summaries),
             f"Consolidated summary has {len(rows)} rows, expected {len(case_summaries)}")
     keys_seen = set()
@@ -218,8 +262,11 @@ def inspect_consolidated(path, case_summaries, budget, num_runs):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--results-dir", type=Path, default=DEFAULT_RESULTS_DIR / "full")
-    parser.add_argument("--summary", type=Path,
-                        default=Path("evolution_strategy/report_data/es_summary_45_cases.csv"))
+    parser.add_argument(
+        "--summary",
+        type=Path,
+        default=DEFAULT_RESULTS_DIR / "es_summary_45_cases.csv",
+    )
     parser.add_argument("--report-out", type=Path,
                         default=DEFAULT_RESULTS_DIR / "validation_report.json")
     parser.add_argument("--budget", type=int, default=30000)
