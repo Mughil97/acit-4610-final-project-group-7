@@ -1,7 +1,7 @@
 # This file was generated with AI assistance; Group 7 must review it.
 """Build the consolidated ES summary from completed case exports.
 
-Combines saved experimental statistics into a 12-column CSV.
+Combines saved experimental statistics into a consolidated CSV.
 The complete experimental design contains 45 cases.
 
 Run from the repository root:
@@ -12,7 +12,6 @@ This tool reads saved results without rerunning optimization.
 
 from __future__ import annotations
 
-import argparse
 import csv
 import json
 import os
@@ -26,9 +25,9 @@ logger = get_logger(__name__)
 
 SUMMARY_NAME = "es_summary_45_cases.csv"
 
-# A stable column order, identical to the report's committed summary schema.
+# A stable column order including the explicit case identifier (e.g. port1_alpha025).
 COLUMNS = (
-    "dataset", "alpha", "variant", "num_assets", "target_return",
+    "case_name", "dataset", "alpha", "variant", "num_assets", "target_return",
     "num_runs", "evaluations_per_run", "best_variance", "mean_variance",
     "std_variance", "feasible_rate_percent", "mean_runtime_seconds",
 )
@@ -59,7 +58,10 @@ def _case_row(folder: Path) -> dict[str, str | int]:
         weight_vector = json.loads(case["best_weights_json"])
         if not isinstance(weight_vector, list) or not weight_vector:
             raise ValueError("best_weights_json must contain a nonempty list")
+        alpha_val = float(case["alpha"])
+        case_name = f"{case['dataset']}_alpha{int(round(alpha_val * 100)):03d}"
         row = {
+            "case_name": case_name,
             "dataset": case["dataset"],
             "alpha": case["alpha"],
             "variant": case["variant"],
@@ -74,7 +76,6 @@ def _case_row(folder: Path) -> dict[str, str | int]:
             "mean_runtime_seconds": case["mean_runtime_seconds"],
         }
         # Check that numeric summary fields can be converted correctly.
-        float(row["alpha"])
         int(row["num_runs"])
         int(row["evaluations_per_run"])
         for key in (
@@ -88,7 +89,7 @@ def _case_row(folder: Path) -> dict[str, str | int]:
 
 
 def build_summary(cases_dir: Path, out_path: Path) -> int:
-    """Write a 12-column summary of all completed case folders.
+    """Write a consolidated summary CSV of all completed case folders.
 
     Incomplete/unmarked case folders are ignored. A marked case with missing or
     malformed exports is an error, not a reason to silently omit a result.
@@ -134,39 +135,23 @@ def summarize_all_es(
 ) -> int:
     """Build the consolidated ES summary CSV from saved case folders."""
     base_dir = Path(results_dir)
-    cases_dir = base_dir / "full"
     out_path = base_dir / SUMMARY_NAME
-    count = build_summary(cases_dir, out_path)
+    count = build_summary(base_dir, out_path)
     logger.info(f"Saved {count} ES case rows to {out_path}")
     return count
 
 
 def main() -> None:
     """Generate the summary for the complete 45-case experiment."""
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--results-dir", type=Path, default=DEFAULT_RESULTS_DIR,
-        help="Parent directory containing full/ case exports",
-    )
-    parser.add_argument(
-        "--out", type=Path, default=None,
-        help="Output CSV path (default: <results-dir>/es_summary_45_cases.csv)",
-    )
-    args = parser.parse_args()
-    cases_dir = args.results_dir / "full"
-    out_path = args.out or (args.results_dir / SUMMARY_NAME)
-
-    # Require all 45 marked cases for the full experimental summary.
     completed_count = sum(
         folder.is_dir() and (folder / "complete.json").is_file()
-        for folder in cases_dir.iterdir()
-    ) if cases_dir.is_dir() else 0
+        for folder in DEFAULT_RESULTS_DIR.iterdir()
+    ) if DEFAULT_RESULTS_DIR.is_dir() else 0
     if completed_count != 45:
-        parser.error(
+        raise ValueError(
             f"Expected 45 completed cases; found {completed_count}"
         )
-    count = build_summary(cases_dir, out_path)
-    logger.info(f"Saved {count} ES case rows to {out_path}")
+    summarize_all_es(DEFAULT_RESULTS_DIR)
 
 
 if __name__ == "__main__":

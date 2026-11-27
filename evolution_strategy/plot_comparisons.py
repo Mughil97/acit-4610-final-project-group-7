@@ -10,7 +10,6 @@ This script does not rerun optimization.
 """
 from __future__ import annotations
 
-import argparse
 import csv
 import math
 from pathlib import Path
@@ -51,7 +50,7 @@ LINESTYLES = {
     "ten_comma_seventy": "--",
 }
 SUMMARY_COLUMNS = {
-    "dataset", "alpha", "variant", "num_assets", "target_return",
+    "case_name", "dataset", "alpha", "variant", "num_assets", "target_return",
     "num_runs", "evaluations_per_run", "best_variance", "mean_variance",
     "std_variance", "feasible_rate_percent", "mean_runtime_seconds",
 }
@@ -181,14 +180,14 @@ def load_seed_variances(
         record = summary[(dataset, alpha, variant)]
         budget = int(record["evaluations_per_run"])
         runs = int(record["num_runs"])
-        folder = results_dir / "full" / (
+        folder = results_dir / (
             f"{dataset}_alpha{int(alpha * 100):03d}_{variant}_e{budget}_r{runs}"
         )
         runs_file = folder / "runs.csv"
         if not runs_file.is_file():
             raise FileNotFoundError(
                 f"Missing actual per-seed results: {runs_file}. "
-                "Copy/run this plotting script on the PC with your full results folder. "
+                "Copy/run this plotting script on the PC with your results folder. "
                 "Do not invent boxplot points from the summary."
             )
         with runs_file.open(newline="", encoding="utf-8-sig") as handle:
@@ -300,20 +299,15 @@ def plot_boxplot(summary: dict, results_dir: Path, figures_dir: Path,
 
 
 def main() -> None:
-    """Generate ES comparison figures from command-line arguments."""
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--results-dir", type=Path, default=DEFAULT_RESULTS_DIR)
-    parser.add_argument("--dataset", choices=DATASETS, default="port5")
-    parser.add_argument("--alpha", type=float, choices=ALPHAS, default=0.50)
-    parser.add_argument("--summary-only", action="store_true",
-                        help="Make the two summary-level plots without loading per-seed runs.csv")
-    args = parser.parse_args()
-    summary = load_summary(args.results_dir / "es_summary_45_cases.csv")
-    figures_dir = args.results_dir / "figures"
+    """Generate all ES comparison figures from saved results."""
+    summary = load_summary(DEFAULT_RESULTS_DIR / "es_summary_45_cases.csv")
+    figures_dir = DEFAULT_RESULTS_DIR / "figures"
+    """Generate all ES comparison figures from saved results."""
+    summary = load_summary(DEFAULT_RESULTS_DIR / "es_summary_45_cases.csv")
+    figures_dir = DEFAULT_RESULTS_DIR / "figures"
     plot_mean_variance(summary, figures_dir)
     plot_runtime(summary, figures_dir)
-    if not args.summary_only:
-        plot_boxplot(summary, args.results_dir, figures_dir, args.dataset, args.alpha)
+    plot_boxplot(summary, DEFAULT_RESULTS_DIRDEFAULT_RESULTS_DIR, figures_dir)
     logger.info("Done. No optimization runs were executed.")
 
 
