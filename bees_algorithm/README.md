@@ -63,15 +63,15 @@ $$
 d_{ij} = \left\lfloor \sqrt{(a_i - a_j)^2 + (b_i - b_j)^2} + 0.5 \right\rfloor
 $$
 
-Solution quality against the published optimal tour length $L^*$ [4] is measured by percentage gap (in %):
+Solution quality against the published optimal tour length $L^\ast$ [4] is measured by percentage gap (in %):
 
 $$
-\mathrm{Gap} = 100 \cdot \frac{L_{\mathrm{BA}} - L^*}{L^*}
+\mathrm{Gap} = 100 \cdot \frac{L_{\mathrm{BA}} - L^\ast}{L^\ast}
 $$
 
 - **Data:** Six TSPLIB instances (`eil51`, `berlin52`, `st70`, `eil76`, `kroA100`, `ch150`) stored in `bees_algorithm/data/`. See [`data/README.md`](data/README.md) for the instance table, optimal tour lengths, official download URLs, file format, and validation rules.
 - **Initialisation:** Uniform random shuffle of cities `2..n` with city `1` fixed at index `0`.
-- **Neighbourhoods:** Two single-move versions are compared under the same settings and seeds, both choosing two movable indices $1 \le i < j \le n - 1$ (keeping city `1` fixed) with index span $j - i \le \lceil (n - 2) \cdot \text{patch size} \rceil$:
+- **Neighbourhoods:** Two single-move versions are compared under the same settings and seeds, both choosing two movable indices $1 \le i \lt j \le n - 1$ (keeping city `1` fixed) with index span $j - i \le \lceil (n - 2) \cdot \text{patch size} \rceil$:
   - **`SWAP`:** Exchanges the two cities at positions $i$ and $j$.
   - **`REVERSE`:** Reverses the segment from $i$ through $j$ inclusive.
 - **Validation:** Every final tour must contain each city `1..n` once, start at city `1`, and match its recomputed rounded Euclidean round-trip distance.
@@ -80,37 +80,29 @@ $$
 
 Each candidate solution is a real-valued vector $\mathbf{x} \in \mathbb{R}^D$, evaluated at dimensions $D = 10$ and $D = 30$ on four unshifted, noiseless benchmark functions from Surjanovic and Bingham's Simon Fraser University collection [5–8] (where $\mathbf{0}$ and $\mathbf{1}$ denote the all-zero and all-one vectors):
 
-- **Sphere** [5]:
+**Sphere** [5] — Convex, unimodal; bounds $x_i \in [-5.12, 5.12]$; global minimum $f(\mathbf{0}) = 0$:
 
-  $$
-  f(\mathbf{x}) = \sum_{i=1}^D x_i^2
-  $$
+$$
+f(\mathbf{x}) = \sum_{i=1}^D x_i^2
+$$
 
-  Bounds: $x_i \in [-5.12, 5.12]$. Global minimum: $f(\mathbf{0}) = 0$. Convex, unimodal.
+**Rosenbrock** [6] — Narrow curved valley; bounds $x_i \in [-5, 10]$; global minimum $f(\mathbf{1}) = 0$:
 
-- **Rosenbrock** [6]:
+$$
+f(\mathbf{x}) = \sum_{i=1}^{D-1} \left[100(x_{i+1} - x_i^2)^2 + (1 - x_i)^2\right]
+$$
 
-  $$
-  f(\mathbf{x}) = \sum_{i=1}^{D-1} \left[100(x_{i+1} - x_i^2)^2 + (1 - x_i)^2\right]
-  $$
+**Rastrigin** [7] — Highly multimodal; bounds $x_i \in [-5.12, 5.12]$; global minimum $f(\mathbf{0}) = 0$:
 
-  Bounds: $x_i \in [-5, 10]$. Global minimum: $f(\mathbf{1}) = 0$. Narrow curved valley.
+$$
+f(\mathbf{x}) = 10D + \sum_{i=1}^D \left[x_i^2 - 10\cos(2\pi x_i)\right]
+$$
 
-- **Rastrigin** [7]:
+**Ackley** [8] — Multimodal with a flat outer region; bounds $x_i \in [-32.768, 32.768]$; global minimum $f(\mathbf{0}) = 0$:
 
-  $$
-  f(\mathbf{x}) = 10D + \sum_{i=1}^D \left[x_i^2 - 10\cos(2\pi x_i)\right]
-  $$
-
-  Bounds: $x_i \in [-5.12, 5.12]$. Global minimum: $f(\mathbf{0}) = 0$. Highly multimodal.
-
-- **Ackley** [8]:
-
-  $$
-  f(\mathbf{x}) = -20\exp\left(-0.2\sqrt{\frac{1}{D}\sum_{i=1}^D x_i^2}\right) - \exp\left(\frac{1}{D}\sum_{i=1}^D \cos(2\pi x_i)\right) + 20 + \exp(1)
-  $$
-
-  Bounds: $x_i \in [-32.768, 32.768]$. Global minimum: $f(\mathbf{0}) = 0$. Multimodal with a flat outer region.
+$$
+f(\mathbf{x}) = -20\exp\left(-0.2\sqrt{\frac{1}{D}\sum_{i=1}^D x_i^2}\right) - \exp\left(\frac{1}{D}\sum_{i=1}^D \cos(2\pi x_i)\right) + 20 + \exp(1)
+$$
 
 - **Initialisation:** Each coordinate is sampled uniformly within its lower and upper bounds $[l, u]$.
 - **Neighbourhood & bounds handling:** Each coordinate is independently perturbed by a uniform step in $[-(u - l) \cdot \text{patch size}, +(u - l) \cdot \text{patch size}]$ (starting at `ngh = 0.1`, i.e. ±10% of the allowed range, and shrinking by `shrink_factor` on stagnation) and clipped to $[l, u]$.

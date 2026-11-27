@@ -19,10 +19,7 @@ The implementation stores and reuses the symmetric covariance matrix during obje
 A candidate solution is a vector of asset weights $\mathbf{w} = (w_1, \ldots, w_n)$. We minimize portfolio variance:
 
 $$
-V(\mathbf{w}) =
-\sum_{i=1}^{n} w_i^2 s_i^2
-+ 2\sum_{i=1}^{n}\sum_{j=i+1}^{n}
-w_i w_j s_i s_j \rho_{ij}
+V(\mathbf{w}) = \sum_{i=1}^{n} w_i^2 s_i^2 + 2\sum_{i=1}^{n}\sum_{j=i+1}^{n} w_i w_j s_i s_j \rho_{ij}
 $$
 
 subject to non-negative weights, full budget allocation, and a minimum expected return:
@@ -30,13 +27,13 @@ subject to non-negative weights, full budget allocation, and a minimum expected 
 $$
 w_i \geq 0, \qquad
 \sum_{i=1}^{n} w_i = 1, \qquad
-R(\mathbf{w}) = \sum_{i=1}^{n} w_i r_i \geq R^*
+R(\mathbf{w}) = \sum_{i=1}^{n} w_i r_i \geq R^\ast
 $$
 
 Here $r_i$ is the expected return of asset $i$, $s_i$ is its standard deviation, and $\rho_{ij}$ is the correlation between assets $i$ and $j$. Target returns are set for $\alpha \in \lbrace 0.25, 0.50, 0.75 \rbrace$:
 
 $$
-R^* = (1 - \alpha) R_{\mathrm{eq}} + \alpha R_{\max}
+R^\ast = (1 - \alpha) R_{\mathrm{eq}} + \alpha R_{\max}
 $$
 
 where $R_{\mathrm{eq}}$ is the return of an equally weighted portfolio and $R_{\max}$ is the highest individual asset return.
@@ -78,7 +75,7 @@ All three ES variants are implemented in `algorithms.py` and exposed through `ru
 
 `(10+70)-ES` and `(10,70)-ES` maintain 10 parents and generate up to 70 offspring per generation, shrinking the final batch if needed to stop at the exact evaluation budget. Each offspring picks two distinct parents at random, averages their weights, and takes the geometric mean of their per-asset step sizes. Step sizes are then mutated log-normally using `tau_prime = 1 / sqrt(2n)` and `tau = 1 / sqrt(2 sqrt(n))` (clamped to `[1e-8, 1.0]`), and weights are perturbed with Gaussian noise. All three variants track a best-so-far archive of feasible repaired portfolios, so recorded convergence curves never rise even for `(10,70)-ES`, where the current parent population can worsen between generations.
 
-Before any initial or mutated candidate is evaluated, `repair.py` restores feasibility in two steps. First it projects the raw vector onto the Euclidean simplex ($w_i \geq 0$, $\sum_i w_i = 1$). Then, if $R(\mathbf{w}) < R^*$, it blends $\mathbf{w}$ with a unit weight on the highest-return asset using the smallest mixing fraction that hits $R^*$. Final feasibility is checked to tolerance `1e-8` on non-negativity, unit sum, and target return.
+Before any initial or mutated candidate is evaluated, `repair.py` restores feasibility in two steps. First it projects the raw vector onto the Euclidean simplex ($w_i \geq 0$, $\sum_i w_i = 1$). Then, if $R(\mathbf{w}) \lt R^\ast$, it blends $\mathbf{w}$ with a unit weight on the highest-return asset using the smallest mixing fraction that hits $R^\ast$. Final feasibility is checked to tolerance `1e-8` on non-negativity, unit sum, and target return.
 
 All initial weight coordinates are independently sampled from a uniform distribution in `[0, 1]` before repair. The population variants initialize every coordinate's step size to `0.1 / sqrt(n)`. Each offspring uses one shared standard-normal draw for global step-size adaptation, independent coordinate-specific draws, and fresh independent Gaussian draws for weight mutation. In `(10,70)-ES`, the best-so-far archive is used for reporting only and does not participate in parent or survivor selection.
 
