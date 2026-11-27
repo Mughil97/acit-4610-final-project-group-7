@@ -11,7 +11,7 @@ import numpy as np
 
 from evolution_strategy.portfolio import Portfolio, construct_covariance_matrix
 
-# AI Assisted Optimisation
+# AI Assisted
 _PROFITS_CACHE: dict[int, tuple[list[Portfolio], np.ndarray]] = {}
 _COV_CACHE: dict[int, tuple[list[Portfolio], np.ndarray]] = {}
 
@@ -60,7 +60,7 @@ def _get_covariance(portfolio: list[Portfolio]) -> np.ndarray:
     return cov_matrix
 
 
-# End AI Assisted Optimisation
+# End AI Assisted
 
 
 def evaluate_profit(portfolio: list[Portfolio], weights: list[float]) -> float:
@@ -75,10 +75,10 @@ def evaluate_profit(portfolio: list[Portfolio], weights: list[float]) -> float:
 
     Returns are expressed as decimals, not percentages.
     """
-    # AI Assisted Optimisation
+    # AI Assisted
     # Compute the dot product r^T w using the cached return vector.
     return float(np.dot(weights, _get_profits(portfolio)))
-    # End AI Assisted Optimisation
+    # End AI Assisted
 
 
 def evaluate_cost(portfolio: list[Portfolio], weights: list[float]) -> float:
@@ -90,7 +90,7 @@ def evaluate_cost(portfolio: list[Portfolio], weights: list[float]) -> float:
     The diagonal represents individual asset variances.
     Off-diagonal values represent covariance between assets.
     """
-    # AI Assisted Optimisation
+    # AI Assisted
     # Evaluate the quadratic form w^T Sigma w using the cached
     # covariance matrix in NumPy instead of nested Python loops.
     w = np.asarray(weights, dtype=np.float64)
@@ -99,7 +99,7 @@ def evaluate_cost(portfolio: list[Portfolio], weights: list[float]) -> float:
     # Return portfolio variance, not standard deviation.
     # Lower variance indicates lower portfolio risk.
     return float(w @ (covariance @ w))
-    # End AI Assisted Optimisation
+    # End AI Assisted
 
 
 def get_target_return(portfolio: list[Portfolio], alpha: float) -> float:

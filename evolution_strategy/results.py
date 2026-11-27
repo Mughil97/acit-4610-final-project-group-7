@@ -64,6 +64,7 @@ class CaseSummary:
     runs: list[ESResult] = field(default_factory=list)
 
 
+# AI Assisted
 def format_run_log(result: ESResult, run_idx: int, total_runs: int) -> str:
     """Format a single ES run log line with variance, return constraint, and timing."""
     initial_var = result.history[0] if result.history else result.cost
@@ -90,6 +91,9 @@ def format_case_summary(summary: CaseSummary) -> str:
         f"feasible={valid_count}/{total_runs} ({summary.feasible_rate:5.1f}%) | "
         f"mean_time={summary.mean_runtime:.2f}s"
     )
+
+
+# End AI Assisted
 
 
 def summarize_case(

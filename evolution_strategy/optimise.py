@@ -215,6 +215,7 @@ def optimise_es(
     return output_root
 
 
+# AI Assisted
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Run Problem 2 (Evolution Strategies): full 45-case set, one test case, or one seeded run."
@@ -305,3 +306,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+# End AI Assisted

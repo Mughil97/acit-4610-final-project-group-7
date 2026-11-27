@@ -30,6 +30,7 @@ from logger import get_logger
 logger = get_logger(__name__)
 
 
+# AI Assisted
 def _sample_std(values: list[float]) -> float:
     return statistics.stdev(values) if len(values) > 1 else 0.0
 
@@ -82,6 +83,9 @@ def _format_continuous_case_summary(
         f"std={_sample_std(bests):.2e} | "
         f"valid={len(valid_rows)}/{len(rows)} | mean_time={statistics.mean(runtimes):.2f}s"
     )
+
+
+# End AI Assisted
 
 
 def optimise_functions(writer: ExperimentWriter | None = None):
@@ -212,6 +216,7 @@ def optimise_tsp(writer: ExperimentWriter | None = None):
                 logger.info(f"Saved convergence history -> {hist_path}")
 
 
+# AI Assisted
 def run_single_tsp(
     instance_name: str, neighbourhood: str = REVERSE, seed: int = SEED
 ) -> None:
@@ -360,3 +365,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+# End AI Assisted

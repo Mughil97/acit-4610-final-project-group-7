@@ -140,11 +140,13 @@ def run_one_plus_one(
             current_profit = new_profit
             current_cost = new_cost
 
-        # AI-assisted correction: update the separate archive.
+        # AI Assisted
+        # Update the separate best-so-far archive.
         if new_cost < best_cost:
             best_weights = repaired_weights.copy()
             best_profit = new_profit
             best_cost = new_cost
+        # End AI Assisted
 
         history.append(best_cost)
 
