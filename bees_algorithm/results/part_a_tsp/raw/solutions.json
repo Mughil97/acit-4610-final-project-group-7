@@ -10,7 +10,7 @@
     "initial_best": 1492.0,
     "final_best": 574.0,
     "gap_pct": 34.74178403755869,
-    "runtime_sec": 0.176522458,
+    "runtime_sec": 0.178930458,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -78,7 +78,7 @@
     "initial_best": 1622.0,
     "final_best": 581.0,
     "gap_pct": 36.3849765258216,
-    "runtime_sec": 0.179293708,
+    "runtime_sec": 0.178010791,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -146,7 +146,7 @@
     "initial_best": 1593.0,
     "final_best": 544.0,
     "gap_pct": 27.699530516431924,
-    "runtime_sec": 0.178395792,
+    "runtime_sec": 0.179225333,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -214,7 +214,7 @@
     "initial_best": 1528.0,
     "final_best": 576.0,
     "gap_pct": 35.2112676056338,
-    "runtime_sec": 0.179146375,
+    "runtime_sec": 0.175977333,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -282,7 +282,7 @@
     "initial_best": 1445.0,
     "final_best": 551.0,
     "gap_pct": 29.342723004694836,
-    "runtime_sec": 0.176854042,
+    "runtime_sec": 0.175998625,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -350,7 +350,7 @@
     "initial_best": 1498.0,
     "final_best": 609.0,
     "gap_pct": 42.95774647887324,
-    "runtime_sec": 0.175187959,
+    "runtime_sec": 0.175749,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -418,7 +418,7 @@
     "initial_best": 1496.0,
     "final_best": 587.0,
     "gap_pct": 37.79342723004695,
-    "runtime_sec": 0.178094875,
+    "runtime_sec": 0.176623166,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -486,7 +486,7 @@
     "initial_best": 1578.0,
     "final_best": 558.0,
     "gap_pct": 30.985915492957748,
-    "runtime_sec": 0.176410417,
+    "runtime_sec": 0.175816584,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -554,7 +554,7 @@
     "initial_best": 1468.0,
     "final_best": 574.0,
     "gap_pct": 34.74178403755869,
-    "runtime_sec": 0.176537417,
+    "runtime_sec": 0.175968334,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -622,7 +622,7 @@
     "initial_best": 1566.0,
     "final_best": 551.0,
     "gap_pct": 29.342723004694836,
-    "runtime_sec": 0.175488875,
+    "runtime_sec": 0.176345,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -690,7 +690,7 @@
     "initial_best": 1492.0,
     "final_best": 461.0,
     "gap_pct": 8.215962441314554,
-    "runtime_sec": 0.180704667,
+    "runtime_sec": 0.178919916,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -758,7 +758,7 @@
     "initial_best": 1622.0,
     "final_best": 466.0,
     "gap_pct": 9.389671361502348,
-    "runtime_sec": 0.179809,
+    "runtime_sec": 0.188686333,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -826,7 +826,7 @@
     "initial_best": 1593.0,
     "final_best": 446.0,
     "gap_pct": 4.694835680751174,
-    "runtime_sec": 0.179518459,
+    "runtime_sec": 0.190203291,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -894,7 +894,7 @@
     "initial_best": 1528.0,
     "final_best": 451.0,
     "gap_pct": 5.868544600938967,
-    "runtime_sec": 0.206408958,
+    "runtime_sec": 0.180572084,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -962,7 +962,7 @@
     "initial_best": 1445.0,
     "final_best": 449.0,
     "gap_pct": 5.39906103286385,
-    "runtime_sec": 0.191881583,
+    "runtime_sec": 0.17900175,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1030,7 +1030,7 @@
     "initial_best": 1498.0,
     "final_best": 478.0,
     "gap_pct": 12.206572769953052,
-    "runtime_sec": 0.180828667,
+    "runtime_sec": 0.17987425,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1098,7 +1098,7 @@
     "initial_best": 1496.0,
     "final_best": 457.0,
     "gap_pct": 7.276995305164319,
-    "runtime_sec": 0.179367875,
+    "runtime_sec": 0.179472834,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1166,7 +1166,7 @@
     "initial_best": 1578.0,
     "final_best": 452.0,
     "gap_pct": 6.103286384976526,
-    "runtime_sec": 0.178346583,
+    "runtime_sec": 0.180686334,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1234,7 +1234,7 @@
     "initial_best": 1468.0,
     "final_best": 453.0,
     "gap_pct": 6.338028169014085,
-    "runtime_sec": 0.185024708,
+    "runtime_sec": 0.179223958,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1302,7 +1302,7 @@
     "initial_best": 1566.0,
     "final_best": 458.0,
     "gap_pct": 7.511737089201878,
-    "runtime_sec": 0.176889875,
+    "runtime_sec": 0.178337333,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1370,7 +1370,7 @@
     "initial_best": 28242.0,
     "final_best": 10815.0,
     "gap_pct": 43.3969769291965,
-    "runtime_sec": 0.188156,
+    "runtime_sec": 0.190295166,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1439,7 +1439,7 @@
     "initial_best": 26660.0,
     "final_best": 9907.0,
     "gap_pct": 31.35773004508088,
-    "runtime_sec": 0.188380083,
+    "runtime_sec": 0.197159542,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1508,7 +1508,7 @@
     "initial_best": 26705.0,
     "final_best": 9780.0,
     "gap_pct": 29.67382657120127,
-    "runtime_sec": 0.186877041,
+    "runtime_sec": 0.200231166,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1577,7 +1577,7 @@
     "initial_best": 28804.0,
     "final_best": 10683.0,
     "gap_pct": 41.646778042959426,
-    "runtime_sec": 0.187199834,
+    "runtime_sec": 0.189181291,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1646,7 +1646,7 @@
     "initial_best": 28576.0,
     "final_best": 10973.0,
     "gap_pct": 45.49191195969239,
-    "runtime_sec": 0.20360875,
+    "runtime_sec": 0.188249792,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1715,7 +1715,7 @@
     "initial_best": 28363.0,
     "final_best": 9963.0,
     "gap_pct": 32.10023866348449,
-    "runtime_sec": 0.197601125,
+    "runtime_sec": 0.187190625,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1784,7 +1784,7 @@
     "initial_best": 27166.0,
     "final_best": 10548.0,
     "gap_pct": 39.856801909307876,
-    "runtime_sec": 0.193049041,
+    "runtime_sec": 0.1878,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1853,7 +1853,7 @@
     "initial_best": 28744.0,
     "final_best": 10657.0,
     "gap_pct": 41.30204189870061,
-    "runtime_sec": 0.191915041,
+    "runtime_sec": 0.186777583,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1922,7 +1922,7 @@
     "initial_best": 27499.0,
     "final_best": 10335.0,
     "gap_pct": 37.032617342879874,
-    "runtime_sec": 0.190740916,
+    "runtime_sec": 0.187944125,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -1991,7 +1991,7 @@
     "initial_best": 26691.0,
     "final_best": 10168.0,
     "gap_pct": 34.818350570140545,
-    "runtime_sec": 0.187267416,
+    "runtime_sec": 0.187087916,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2060,7 +2060,7 @@
     "initial_best": 28242.0,
     "final_best": 8239.0,
     "gap_pct": 9.241580482630601,
-    "runtime_sec": 0.19035575,
+    "runtime_sec": 0.18941875,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2129,7 +2129,7 @@
     "initial_best": 26660.0,
     "final_best": 8577.0,
     "gap_pct": 13.723150357995227,
-    "runtime_sec": 0.193568333,
+    "runtime_sec": 0.199172666,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2198,7 +2198,7 @@
     "initial_best": 26705.0,
     "final_best": 8004.0,
     "gap_pct": 6.125696101829753,
-    "runtime_sec": 0.217327875,
+    "runtime_sec": 0.200429209,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2267,7 +2267,7 @@
     "initial_best": 28804.0,
     "final_best": 8460.0,
     "gap_pct": 12.171837708830548,
-    "runtime_sec": 0.211419542,
+    "runtime_sec": 0.190251709,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2336,7 +2336,7 @@
     "initial_best": 28576.0,
     "final_best": 7745.0,
     "gap_pct": 2.6915937417130733,
-    "runtime_sec": 0.21042225,
+    "runtime_sec": 0.194836167,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2405,7 +2405,7 @@
     "initial_best": 28363.0,
     "final_best": 8194.0,
     "gap_pct": 8.644921771413419,
-    "runtime_sec": 0.190875958,
+    "runtime_sec": 0.188844375,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2474,7 +2474,7 @@
     "initial_best": 27166.0,
     "final_best": 8366.0,
     "gap_pct": 10.92548395651021,
-    "runtime_sec": 0.189263583,
+    "runtime_sec": 0.187812417,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2543,7 +2543,7 @@
     "initial_best": 28744.0,
     "final_best": 8113.0,
     "gap_pct": 7.570936091222487,
-    "runtime_sec": 0.191518917,
+    "runtime_sec": 0.188354,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2612,7 +2612,7 @@
     "initial_best": 27499.0,
     "final_best": 7739.0,
     "gap_pct": 2.6120392468841156,
-    "runtime_sec": 0.187904958,
+    "runtime_sec": 0.187623959,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2681,7 +2681,7 @@
     "initial_best": 26691.0,
     "final_best": 7805.0,
     "gap_pct": 3.4871386900026518,
-    "runtime_sec": 0.193168917,
+    "runtime_sec": 0.187375709,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2750,7 +2750,7 @@
     "initial_best": 3284.0,
     "final_best": 1107.0,
     "gap_pct": 64.0,
-    "runtime_sec": 0.21706525,
+    "runtime_sec": 0.217187208,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2837,7 +2837,7 @@
     "initial_best": 3335.0,
     "final_best": 1115.0,
     "gap_pct": 65.18518518518519,
-    "runtime_sec": 0.223582916,
+    "runtime_sec": 0.228762167,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -2924,7 +2924,7 @@
     "initial_best": 3238.0,
     "final_best": 1228.0,
     "gap_pct": 81.92592592592592,
-    "runtime_sec": 0.222821209,
+    "runtime_sec": 0.22296475,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -3011,7 +3011,7 @@
     "initial_best": 3449.0,
     "final_best": 1108.0,
     "gap_pct": 64.14814814814815,
-    "runtime_sec": 0.219584917,
+    "runtime_sec": 0.215196708,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -3098,7 +3098,7 @@
     "initial_best": 3314.0,
     "final_best": 1086.0,
     "gap_pct": 60.888888888888886,
-    "runtime_sec": 0.217457416,
+    "runtime_sec": 0.215617833,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -3185,7 +3185,7 @@
     "initial_best": 3414.0,
     "final_best": 996.0,
     "gap_pct": 47.55555555555556,
-    "runtime_sec": 0.21495825,
+    "runtime_sec": 0.216690208,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -3272,7 +3272,7 @@
     "initial_best": 3591.0,
     "final_best": 1163.0,
     "gap_pct": 72.29629629629629,
-    "runtime_sec": 0.214939084,
+    "runtime_sec": 0.215461708,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -3359,7 +3359,7 @@
     "initial_best": 3366.0,
     "final_best": 1226.0,
     "gap_pct": 81.62962962962963,
-    "runtime_sec": 0.216378541,
+    "runtime_sec": 0.214898833,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -3446,7 +3446,7 @@
     "initial_best": 3377.0,
     "final_best": 1172.0,
     "gap_pct": 73.62962962962963,
-    "runtime_sec": 0.218415541,
+    "runtime_sec": 0.217198958,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -3533,7 +3533,7 @@
     "initial_best": 3379.0,
     "final_best": 1143.0,
     "gap_pct": 69.33333333333333,
-    "runtime_sec": 0.217746416,
+    "runtime_sec": 0.216362208,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -3620,7 +3620,7 @@
     "initial_best": 3284.0,
     "final_best": 763.0,
     "gap_pct": 13.037037037037036,
-    "runtime_sec": 0.218748666,
+    "runtime_sec": 0.2207225,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -3707,7 +3707,7 @@
     "initial_best": 3335.0,
     "final_best": 723.0,
     "gap_pct": 7.111111111111111,
-    "runtime_sec": 0.218018833,
+    "runtime_sec": 0.233021292,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -3794,7 +3794,7 @@
     "initial_best": 3238.0,
     "final_best": 756.0,
     "gap_pct": 12.0,
-    "runtime_sec": 0.218530958,
+    "runtime_sec": 0.227808,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -3881,7 +3881,7 @@
     "initial_best": 3449.0,
     "final_best": 777.0,
     "gap_pct": 15.11111111111111,
-    "runtime_sec": 0.228114042,
+    "runtime_sec": 0.221406584,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -3968,7 +3968,7 @@
     "initial_best": 3314.0,
     "final_best": 746.0,
     "gap_pct": 10.518518518518519,
-    "runtime_sec": 0.2181425,
+    "runtime_sec": 0.222038958,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -4055,7 +4055,7 @@
     "initial_best": 3414.0,
     "final_best": 743.0,
     "gap_pct": 10.074074074074074,
-    "runtime_sec": 0.217970083,
+    "runtime_sec": 0.221069875,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -4142,7 +4142,7 @@
     "initial_best": 3591.0,
     "final_best": 766.0,
     "gap_pct": 13.481481481481481,
-    "runtime_sec": 0.226642959,
+    "runtime_sec": 0.220433125,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -4229,7 +4229,7 @@
     "initial_best": 3366.0,
     "final_best": 761.0,
     "gap_pct": 12.74074074074074,
-    "runtime_sec": 0.21727125,
+    "runtime_sec": 0.222682584,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -4316,7 +4316,7 @@
     "initial_best": 3377.0,
     "final_best": 747.0,
     "gap_pct": 10.666666666666666,
-    "runtime_sec": 0.216987041,
+    "runtime_sec": 0.218387875,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -4403,7 +4403,7 @@
     "initial_best": 3379.0,
     "final_best": 746.0,
     "gap_pct": 10.518518518518519,
-    "runtime_sec": 0.217420208,
+    "runtime_sec": 0.21880225,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -4490,7 +4490,7 @@
     "initial_best": 2307.0,
     "final_best": 806.0,
     "gap_pct": 49.814126394052046,
-    "runtime_sec": 0.227016416,
+    "runtime_sec": 0.230534542,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -4583,7 +4583,7 @@
     "initial_best": 2325.0,
     "final_best": 856.0,
     "gap_pct": 59.10780669144982,
-    "runtime_sec": 0.227284209,
+    "runtime_sec": 0.242476917,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -4676,7 +4676,7 @@
     "initial_best": 2258.0,
     "final_best": 753.0,
     "gap_pct": 39.962825278810406,
-    "runtime_sec": 0.22719675,
+    "runtime_sec": 0.2376735,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -4769,7 +4769,7 @@
     "initial_best": 2375.0,
     "final_best": 790.0,
     "gap_pct": 46.84014869888476,
-    "runtime_sec": 0.226985667,
+    "runtime_sec": 0.232783458,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -4862,7 +4862,7 @@
     "initial_best": 2376.0,
     "final_best": 805.0,
     "gap_pct": 49.62825278810409,
-    "runtime_sec": 0.227769417,
+    "runtime_sec": 0.229231959,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -4955,7 +4955,7 @@
     "initial_best": 2262.0,
     "final_best": 819.0,
     "gap_pct": 52.23048327137546,
-    "runtime_sec": 0.227170084,
+    "runtime_sec": 0.22902175,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -5048,7 +5048,7 @@
     "initial_best": 2323.0,
     "final_best": 730.0,
     "gap_pct": 35.687732342007436,
-    "runtime_sec": 0.226451667,
+    "runtime_sec": 0.229404042,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -5141,7 +5141,7 @@
     "initial_best": 2254.0,
     "final_best": 835.0,
     "gap_pct": 55.204460966542754,
-    "runtime_sec": 0.226088167,
+    "runtime_sec": 0.229061709,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -5234,7 +5234,7 @@
     "initial_best": 2263.0,
     "final_best": 824.0,
     "gap_pct": 53.15985130111524,
-    "runtime_sec": 0.2272775,
+    "runtime_sec": 0.229495375,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -5327,7 +5327,7 @@
     "initial_best": 2392.0,
     "final_best": 830.0,
     "gap_pct": 54.27509293680298,
-    "runtime_sec": 0.226960125,
+    "runtime_sec": 0.22928625,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -5420,7 +5420,7 @@
     "initial_best": 2307.0,
     "final_best": 588.0,
     "gap_pct": 9.293680297397769,
-    "runtime_sec": 0.234485417,
+    "runtime_sec": 0.235380542,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -5513,7 +5513,7 @@
     "initial_best": 2325.0,
     "final_best": 595.0,
     "gap_pct": 10.594795539033457,
-    "runtime_sec": 0.230394791,
+    "runtime_sec": 0.2463355,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -5606,7 +5606,7 @@
     "initial_best": 2258.0,
     "final_best": 580.0,
     "gap_pct": 7.806691449814126,
-    "runtime_sec": 0.230809,
+    "runtime_sec": 0.245567416,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -5699,7 +5699,7 @@
     "initial_best": 2375.0,
     "final_best": 597.0,
     "gap_pct": 10.966542750929367,
-    "runtime_sec": 0.230091542,
+    "runtime_sec": 0.231257834,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -5792,7 +5792,7 @@
     "initial_best": 2376.0,
     "final_best": 605.0,
     "gap_pct": 12.453531598513012,
-    "runtime_sec": 0.239360709,
+    "runtime_sec": 0.231031917,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -5885,7 +5885,7 @@
     "initial_best": 2262.0,
     "final_best": 585.0,
     "gap_pct": 8.736059479553903,
-    "runtime_sec": 0.231614875,
+    "runtime_sec": 0.231775333,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -5978,7 +5978,7 @@
     "initial_best": 2323.0,
     "final_best": 585.0,
     "gap_pct": 8.736059479553903,
-    "runtime_sec": 0.256574417,
+    "runtime_sec": 0.231582459,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -6071,7 +6071,7 @@
     "initial_best": 2254.0,
     "final_best": 604.0,
     "gap_pct": 12.267657992565056,
-    "runtime_sec": 0.23139175,
+    "runtime_sec": 0.231885667,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -6164,7 +6164,7 @@
     "initial_best": 2263.0,
     "final_best": 585.0,
     "gap_pct": 8.736059479553903,
-    "runtime_sec": 0.231152791,
+    "runtime_sec": 0.23155225,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -6257,7 +6257,7 @@
     "initial_best": 2392.0,
     "final_best": 601.0,
     "gap_pct": 11.71003717472119,
-    "runtime_sec": 0.231869583,
+    "runtime_sec": 0.231011666,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -6350,7 +6350,7 @@
     "initial_best": 161478.0,
     "final_best": 45298.0,
     "gap_pct": 112.84653697960718,
-    "runtime_sec": 0.301348833,
+    "runtime_sec": 0.308805917,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -6467,7 +6467,7 @@
     "initial_best": 162266.0,
     "final_best": 42002.0,
     "gap_pct": 97.35927074523072,
-    "runtime_sec": 0.299829417,
+    "runtime_sec": 0.318829708,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -6584,7 +6584,7 @@
     "initial_best": 156492.0,
     "final_best": 41959.0,
     "gap_pct": 97.15722206559533,
-    "runtime_sec": 0.299493042,
+    "runtime_sec": 0.302854917,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -6701,7 +6701,7 @@
     "initial_best": 157453.0,
     "final_best": 49972.0,
     "gap_pct": 134.80875857532186,
-    "runtime_sec": 0.299250042,
+    "runtime_sec": 0.302212084,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -6818,7 +6818,7 @@
     "initial_best": 153956.0,
     "final_best": 42005.0,
     "gap_pct": 97.37336716474016,
-    "runtime_sec": 0.300347791,
+    "runtime_sec": 0.302734,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -6935,7 +6935,7 @@
     "initial_best": 144487.0,
     "final_best": 41502.0,
     "gap_pct": 95.00986749365661,
-    "runtime_sec": 0.300089084,
+    "runtime_sec": 0.301561792,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -7052,7 +7052,7 @@
     "initial_best": 154879.0,
     "final_best": 43750.0,
     "gap_pct": 105.57278451273376,
-    "runtime_sec": 0.299990916,
+    "runtime_sec": 0.302467209,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -7169,7 +7169,7 @@
     "initial_best": 147926.0,
     "final_best": 39265.0,
     "gap_pct": 84.49863734611408,
-    "runtime_sec": 0.30072125,
+    "runtime_sec": 0.304498833,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -7286,7 +7286,7 @@
     "initial_best": 161795.0,
     "final_best": 44032.0,
     "gap_pct": 106.89784794662155,
-    "runtime_sec": 0.301524209,
+    "runtime_sec": 0.302697166,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -7403,7 +7403,7 @@
     "initial_best": 154221.0,
     "final_best": 44971.0,
     "gap_pct": 111.31002725307772,
-    "runtime_sec": 0.300821,
+    "runtime_sec": 0.302694292,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -7520,7 +7520,7 @@
     "initial_best": 161478.0,
     "final_best": 23200.0,
     "gap_pct": 9.012310873038249,
-    "runtime_sec": 0.307793166,
+    "runtime_sec": 0.318234792,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -7637,7 +7637,7 @@
     "initial_best": 162266.0,
     "final_best": 22921.0,
     "gap_pct": 7.7013438586599,
-    "runtime_sec": 0.307415042,
+    "runtime_sec": 0.32444975,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -7754,7 +7754,7 @@
     "initial_best": 156492.0,
     "final_best": 23147.0,
     "gap_pct": 8.763274128371394,
-    "runtime_sec": 0.3073585,
+    "runtime_sec": 0.309039333,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -7871,7 +7871,7 @@
     "initial_best": 157453.0,
     "final_best": 22804.0,
     "gap_pct": 7.151583497791561,
-    "runtime_sec": 0.316856417,
+    "runtime_sec": 0.308139,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -7988,7 +7988,7 @@
     "initial_best": 153956.0,
     "final_best": 22850.0,
     "gap_pct": 7.367728596936378,
-    "runtime_sec": 0.305257334,
+    "runtime_sec": 0.307199209,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -8105,7 +8105,7 @@
     "initial_best": 144487.0,
     "final_best": 22648.0,
     "gap_pct": 6.418569683300442,
-    "runtime_sec": 0.30628875,
+    "runtime_sec": 0.308815666,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -8222,7 +8222,7 @@
     "initial_best": 154879.0,
     "final_best": 24985.0,
     "gap_pct": 17.399680481157787,
-    "runtime_sec": 0.306643167,
+    "runtime_sec": 0.308838792,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -8339,7 +8339,7 @@
     "initial_best": 147926.0,
     "final_best": 23823.0,
     "gap_pct": 11.939667324499577,
-    "runtime_sec": 0.307317208,
+    "runtime_sec": 0.30852225,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -8456,7 +8456,7 @@
     "initial_best": 161795.0,
     "final_best": 23360.0,
     "gap_pct": 9.764119913541961,
-    "runtime_sec": 0.306284834,
+    "runtime_sec": 0.3082,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -8573,7 +8573,7 @@
     "initial_best": 154221.0,
     "final_best": 23977.0,
     "gap_pct": 12.6632835259844,
-    "runtime_sec": 0.306077667,
+    "runtime_sec": 0.307886042,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -8690,7 +8690,7 @@
     "initial_best": 52475.0,
     "final_best": 14474.0,
     "gap_pct": 121.7218137254902,
-    "runtime_sec": 0.39733925,
+    "runtime_sec": 0.413993334,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -8857,7 +8857,7 @@
     "initial_best": 50550.0,
     "final_best": 15109.0,
     "gap_pct": 131.44914215686273,
-    "runtime_sec": 0.398308834,
+    "runtime_sec": 0.413418583,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -9024,7 +9024,7 @@
     "initial_best": 50701.0,
     "final_best": 16339.0,
     "gap_pct": 150.29105392156862,
-    "runtime_sec": 0.397904958,
+    "runtime_sec": 0.403472041,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -9191,7 +9191,7 @@
     "initial_best": 50807.0,
     "final_best": 15714.0,
     "gap_pct": 140.71691176470588,
-    "runtime_sec": 0.400336667,
+    "runtime_sec": 0.401042625,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -9358,7 +9358,7 @@
     "initial_best": 51327.0,
     "final_best": 14355.0,
     "gap_pct": 119.89889705882354,
-    "runtime_sec": 0.397383209,
+    "runtime_sec": 0.400639958,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -9525,7 +9525,7 @@
     "initial_best": 51837.0,
     "final_best": 13346.0,
     "gap_pct": 104.44240196078431,
-    "runtime_sec": 0.396789666,
+    "runtime_sec": 0.401927375,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -9692,7 +9692,7 @@
     "initial_best": 51350.0,
     "final_best": 14510.0,
     "gap_pct": 122.27328431372548,
-    "runtime_sec": 0.398110542,
+    "runtime_sec": 0.403613167,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -9859,7 +9859,7 @@
     "initial_best": 51369.0,
     "final_best": 14042.0,
     "gap_pct": 115.10416666666667,
-    "runtime_sec": 0.396407083,
+    "runtime_sec": 0.400038708,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -10026,7 +10026,7 @@
     "initial_best": 51776.0,
     "final_best": 15433.0,
     "gap_pct": 136.4123774509804,
-    "runtime_sec": 0.406117875,
+    "runtime_sec": 0.406475959,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -10193,7 +10193,7 @@
     "initial_best": 50239.0,
     "final_best": 15000.0,
     "gap_pct": 129.77941176470588,
-    "runtime_sec": 0.415507167,
+    "runtime_sec": 0.413549208,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -10360,7 +10360,7 @@
     "initial_best": 52475.0,
     "final_best": 7976.0,
     "gap_pct": 22.181372549019606,
-    "runtime_sec": 0.415648917,
+    "runtime_sec": 0.414677584,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -10527,7 +10527,7 @@
     "initial_best": 50550.0,
     "final_best": 8431.0,
     "gap_pct": 29.151348039215687,
-    "runtime_sec": 0.41654,
+    "runtime_sec": 0.410389625,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -10694,7 +10694,7 @@
     "initial_best": 50701.0,
     "final_best": 8243.0,
     "gap_pct": 26.27144607843137,
-    "runtime_sec": 0.406241667,
+    "runtime_sec": 0.40482725,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -10861,7 +10861,7 @@
     "initial_best": 50807.0,
     "final_best": 7748.0,
     "gap_pct": 18.688725490196077,
-    "runtime_sec": 0.406815166,
+    "runtime_sec": 0.401867334,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -11028,7 +11028,7 @@
     "initial_best": 51327.0,
     "final_best": 7961.0,
     "gap_pct": 21.951593137254903,
-    "runtime_sec": 0.401743625,
+    "runtime_sec": 0.401380625,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -11195,7 +11195,7 @@
     "initial_best": 51837.0,
     "final_best": 7754.0,
     "gap_pct": 18.78063725490196,
-    "runtime_sec": 0.402255375,
+    "runtime_sec": 0.401435917,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -11362,7 +11362,7 @@
     "initial_best": 51350.0,
     "final_best": 7947.0,
     "gap_pct": 21.737132352941178,
-    "runtime_sec": 0.399187833,
+    "runtime_sec": 0.404490125,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -11529,7 +11529,7 @@
     "initial_best": 51369.0,
     "final_best": 7968.0,
     "gap_pct": 22.058823529411764,
-    "runtime_sec": 0.408036709,
+    "runtime_sec": 0.404750083,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -11696,7 +11696,7 @@
     "initial_best": 51776.0,
     "final_best": 8004.0,
     "gap_pct": 22.610294117647058,
-    "runtime_sec": 0.40217825,
+    "runtime_sec": 0.402215958,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
@@ -11863,7 +11863,7 @@
     "initial_best": 50239.0,
     "final_best": 8103.0,
     "gap_pct": 24.126838235294116,
-    "runtime_sec": 0.399194667,
+    "runtime_sec": 0.402529791,
     "is_valid": true,
     "validation_errors": [],
     "solution": [
