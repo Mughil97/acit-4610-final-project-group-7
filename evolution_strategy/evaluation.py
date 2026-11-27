@@ -7,10 +7,59 @@ The optimization objective is to minimize portfolio variance
 while satisfying the minimum expected-return requirement.
 """
 
-from evolution_strategy.portfolio import (
-    Portfolio,
-    construct_covariance_matrix,
-)
+import numpy as np
+
+from evolution_strategy.portfolio import Portfolio, construct_covariance_matrix
+
+# AI Assisted Optimisation
+_PROFITS_CACHE: dict[int, tuple[list[Portfolio], np.ndarray]] = {}
+_COV_CACHE: dict[int, tuple[list[Portfolio], np.ndarray]] = {}
+
+
+def _get_profits(portfolio: list[Portfolio]) -> np.ndarray:
+    """Return a cached NumPy vector of asset expected returns."""
+    key = id(portfolio)
+    cached = _PROFITS_CACHE.get(key)
+    if cached is not None and cached[0] is portfolio:
+        return cached[1]
+
+    profits = np.array(
+        [asset.profit for asset in portfolio],
+        dtype=np.float64,
+    )
+
+    # Bound cache size for temporary test portfolios.
+    if len(_PROFITS_CACHE) >= 32:
+        _PROFITS_CACHE.clear()
+    _PROFITS_CACHE[key] = (portfolio, profits)
+    return profits
+
+
+def _get_covariance(portfolio: list[Portfolio]) -> np.ndarray:
+    """Return a cached contiguous NumPy covariance matrix."""
+    key = id(portfolio)
+    cached = _COV_CACHE.get(key)
+    if cached is not None and cached[0] is portfolio:
+        return cached[1]
+
+    n = len(portfolio)
+
+    # Reuse the covariance matrix constructed during data loading.
+    # The fallback supports manually constructed test portfolios.
+    if all(len(asset.covariances) == n for asset in portfolio):
+        covariance = [asset.covariances for asset in portfolio]
+    else:
+        covariance = construct_covariance_matrix(portfolio)
+
+    cov_matrix = np.ascontiguousarray(covariance, dtype=np.float64)
+
+    # Bound cache size for temporary test portfolios.
+    if len(_COV_CACHE) >= 32:
+        _COV_CACHE.clear()
+    _COV_CACHE[key] = (portfolio, cov_matrix)
+    return cov_matrix
+# End AI Assisted Optimisation
+
 
 def evaluate_profit(portfolio: list[Portfolio], weights: list[float]) -> float:
     """Calculate the expected return of a portfolio.
@@ -24,13 +73,10 @@ def evaluate_profit(portfolio: list[Portfolio], weights: list[float]) -> float:
 
     Returns are expressed as decimals, not percentages.
     """
-    total_profit = 0.0
-
-    # Each asset contributes its expected return
-    # multiplied by its allocated portfolio weight.
-    for i in range(len(portfolio)):
-        total_profit += weights[i] * portfolio[i].profit
-    return total_profit
+    # AI Assisted Optimisation
+    # Compute the dot product r^T w using the cached return vector.
+    return float(np.dot(weights, _get_profits(portfolio)))
+    # End AI Assisted Optimisation
 
 
 def evaluate_cost(portfolio: list[Portfolio], weights: list[float]) -> float:
@@ -39,41 +85,19 @@ def evaluate_cost(portfolio: list[Portfolio], weights: list[float]) -> float:
     Assignment formula:
         V(w) = w^T Sigma w
 
-    Expanded formula for a symmetric covariance matrix:
-        V(w) = sum(w_i^2 * Sigma_ii)
-             + 2 * sum(w_i * w_j * Sigma_ij), for i < j
-
     The diagonal represents individual asset variances.
     Off-diagonal values represent covariance between assets.
-
-    The upper triangle is evaluated to avoid calculating
-    symmetric covariance contributions twice.
     """
-
-    total_risk = 0.0
-    n = len(portfolio)
-
-    # Reuse the covariance matrix constructed during data loading.
-    # The fallback supports manually constructed test portfolios.
-    if all(len(asset.covariances) == n for asset in portfolio):
-        covariance = [asset.covariances for asset in portfolio]
-    else:
-        covariance = construct_covariance_matrix(portfolio)
-
-    for i in range(n):
-        # Diagonal contribution:
-        # weight squared multiplied by individual asset variance.
-        total_risk += weights[i] ** 2 * covariance[i][i]
-
-        for j in range(i + 1, n):
-            # Off-diagonal contribution:
-            # multiply by 2 because the covariance matrix
-            # is symmetric: Sigma[i][j] = Sigma[j][i].
-            total_risk += 2 * weights[i] * weights[j] * covariance[i][j]
+    # AI Assisted Optimisation
+    # Evaluate the quadratic form w^T Sigma w using the cached
+    # covariance matrix in NumPy instead of nested Python loops.
+    w = np.asarray(weights, dtype=np.float64)
+    covariance = _get_covariance(portfolio)
 
     # Return portfolio variance, not standard deviation.
     # Lower variance indicates lower portfolio risk.
-    return total_risk
+    return float(w @ (covariance @ w))
+    # End AI Assisted Optimisation
 
 
 def get_target_return(portfolio: list[Portfolio], alpha: float) -> float:
@@ -98,4 +122,3 @@ def get_target_return(portfolio: list[Portfolio], alpha: float) -> float:
     # Interpolate between the equal-weight return and
     # the highest individual asset return.
     return (1.0 - alpha) * r_eq + alpha * max(profits)
-
