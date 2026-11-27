@@ -6,28 +6,30 @@ Problem 1 applies the **Bees Algorithm (BA)** [1] to two optimisation tasks: **P
 
 The Bees Algorithm is a population-based metaheuristic inspired by honeybee foraging. It maintains a population of `ns` scout bees, where each bee represents a candidate solution and carries a local neighbourhood size (`patch_size`) and stagnation counter.
 
+Within each selected site, recruited bees are evaluated **sequentially with greedy replacement**: as soon as a recruited neighbour improves upon the site's current fitness, it immediately replaces the site center (resetting `stagnation_count = 0`), and subsequent recruits in that cycle search around the updated solution. If no recruit improves the site during the cycle, `stagnation_count` is incremented and `patch_size` is multiplied by `shrink_factor`. Any site reaching `stagnation_count >= stlim` is then abandoned and replaced alongside the `ns - nb` non-selected scouts by fresh random global scouts.
+
 ```mermaid
 flowchart TD
-    A([Start: Initialize population of ns scout bees])
-    A --> B[Evaluate fitness of ns initial sites]
-    B --> C{Termination criterion met?}
-    C -- Yes --> D([Return the best solution found])
-    C -- No --> E[Select nb best sites for neighbourhood search]
-    E --> F[Select ne from nb as elite sites and nb-ne as other sites]
-    F --> G[Recruit nre bees to ne elite sites with current patch size]
-    G --> H[Recruit nrb bees to nb-ne other sites with current patch size]
-    H --> I[Evaluate fitness of recruited bees and select best bee per site]
-    I --> J{Improved fitness found at site?}
-    J -- Yes --> K[Reset stagnation counter = 0 keep improved patch]
-    J -- No --> L[Increment stagnation counter += 1]
-    L --> M{Stagnation counter >= stlim stagnation limit?}
-    M -- Yes --> N[Site Abandonment: Discard stagnant site]
-    M -- No --> O[Site shrinking: Reduce neighbourhood size by shrink_factor]
-    O --> P["Generate (ns - nb) + abandoned new scouts"]
+    A(["Start: Initialize population of ns scout bees"])
+    A --> B["Evaluate fitness of ns initial sites"]
+    B --> C{"Evaluation budget reached?"}
+    C -- Yes --> D(["Return best-so-far solution"])
+    C -- No --> E["Rank population and select nb best sites"]
+    E --> F["Split into ne elite sites and nb - ne other sites"]
+    F --> G["Exploit ne elite sites with nre sequential recruits each"]
+    G --> H["Exploit nb - ne other sites with nrb sequential recruits each"]
+    H --> I["Greedy replacement per recruit: update site center if strictly better"]
+    I --> J{"Any recruit improved the site?"}
+    J -- Yes --> K["Keep updated site and reset stagnation counter = 0"]
+    J -- No --> L["Increment stagnation counter += 1 and shrink patch_size *= shrink_factor"]
+    L --> M{"Stagnation counter >= stlim?"}
+    M -- Yes --> N["Site Abandonment: Discard stagnant site"]
+    M -- No --> O["Retain shrunk site"]
+    K --> P["Generate (ns - nb) + abandoned new random scouts"]
     N --> P
-    K --> P
-    P --> Q[Evaluate fitness of new random scout sites]
-    Q --> R[Form new population elites + other + new scouts]
+    O --> P
+    P --> Q["Evaluate fitness of new random scout sites"]
+    Q --> R["Form next population: surviving selected sites + new scouts"]
     R --> C
 ```
 
@@ -101,9 +103,10 @@ Each candidate solution is a real-valued vector $\mathbf{x} \in \mathbb{R}^D$, e
 | `ngh` | Initial patch size ratio | `1.0` | `0.1` |
 | `shrink_factor` | Patch multiplier on stagnation | `0.98` | `0.8` |
 
+- **Hyperparameter selection:** Candidate parameter sets for Part A (TSP) and Part B (Continuous) were compared using [`utils/tune_configs.py`](utils/tune_configs.py) (`python -m bees_algorithm.utils.tune_configs`) before fixing the final settings in [`configs.py`](configs.py).
 - **Seeds:** 10 independent runs per case using seeds `45, 46, 47, 48, 49, 50, 51, 52, 53, 54`.
 - **Total runs:** **120** TSP runs (6 instances × 2 neighbourhoods × 10 seeds) and **80** continuous runs (4 functions × 2 dimensions × 10 seeds).
-- **Required outputs:** Per-run metrics and best-so-far histories; summary tables (best, mean, std, mean runtime, plus mean gap for TSP); convergence plots for `berlin52`, `ch150`, and `Rastrigin` ($D=10$); best `berlin52` route plot; and four-panel $D=30$ boxplots. Saved outputs are stored under `bees_algorithm/results/`.
+- **Required outputs:** Per-run metrics and best-so-far histories; summary tables (best, mean, std, mean runtime, plus mean gap for TSP); convergence plots for `berlin52`, `ch150`, and `Rastrigin` ($D=10$); best `berlin52` route plot; and four-panel $D=30$ boxplots. Saved outputs and directory layout are documented in [`results/README.md`](results/README.md).
 
 ## Setup & Reproducing Results
 
