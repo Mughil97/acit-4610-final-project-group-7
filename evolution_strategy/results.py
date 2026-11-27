@@ -7,6 +7,7 @@ from dataclasses import dataclass, field
 import math
 from pathlib import Path
 
+from evolution_strategy.evaluation import get_target_return
 from evolution_strategy.evolution_strategies import (
     ESResult,
     VARIANTS,
@@ -36,6 +37,12 @@ PORTFOLIOS: dict[str, list[Portfolio]] = {
 
 ALPHAS: tuple[float, ...] = (0.25, 0.50, 0.75)
 
+VARIANT_LABELS: dict[str, str] = {
+    "one_plus_one": "(1+1)-ES",
+    "ten_plus_seventy": "(10+70)-ES",
+    "ten_comma_seventy": "(10,70)-ES",
+}
+
 
 @dataclass
 class CaseSummary:
@@ -60,6 +67,34 @@ class CaseSummary:
     runs: list[ESResult] = field(default_factory=list)
 
 
+def format_run_log(result: ESResult, run_idx: int, total_runs: int) -> str:
+    """Format a single ES run log line with variance, return constraint, and timing."""
+    initial_var = result.history[0] if result.history else result.cost
+    ret_cmp = ">=" if result.profit >= result.target_return - 1e-8 else "<"
+    return (
+        f"  Run {run_idx:2d}/{total_runs} (seed {result.seed}) | "
+        f"var: {initial_var:.4e} -> {result.cost:.4e} | "
+        f"R(w)={result.profit:.6f} {ret_cmp} R*={result.target_return:.6f} | "
+        f"feasible={str(result.is_valid):5s} | "
+        f"evals={len(result.history)} | {result.runtime_seconds:.2f}s"
+    )
+
+
+def format_case_summary(summary: CaseSummary) -> str:
+    """Format aggregated 10-run case metrics matching REQUIREMENTS.md."""
+    label = VARIANT_LABELS.get(summary.variant, summary.variant)
+    valid_count = sum(1 for run in summary.runs if run.is_valid)
+    total_runs = len(summary.runs)
+    return (
+        f"Summary | {summary.case_name} | {label:10s} | "
+        f"n={summary.num_assets:3d} | R*={summary.target_return:.6f} | "
+        f"best={summary.best_cost:.5e} | mean={summary.mean_cost:.5e} | "
+        f"std={summary.std_cost:.2e} | "
+        f"feasible={valid_count}/{total_runs} ({summary.feasible_rate:5.1f}%) | "
+        f"mean_time={summary.mean_runtime:.2f}s"
+    )
+
+
 def summarize_case(
         dataset_name: str,
         portfolio: list[Portfolio],
@@ -78,7 +113,6 @@ def summarize_case(
 
     # Use matching seeds for consistent algorithm comparisons.
     for seed in range(num_runs):
-        logger.info(f"Run: {seed + 1} | Seed: {seed}")
         result = run_es(
             portfolio=portfolio,
             alpha=alpha,
@@ -86,10 +120,13 @@ def summarize_case(
             max_iterations=max_iterations,
             seed=seed,
         )
-        initial_best = result.history[0] if result.history else result.cost
-        logger.info(
-            f"Initial Best: {initial_best} | Final Best: {result.cost} | Evaluations: {len(result.history)} | Runtime: {result.runtime_seconds}"
-        )
+        logger.info(format_run_log(result, seed + 1, num_runs))
+        if not result.is_valid:
+            logger.warning(
+                f"  Infeasible solution on {case_name} ({VARIANT_LABELS.get(variant, variant)}, seed {seed}): "
+                f"sum(w)={sum(result.weights):.8f}, min(w)={min(result.weights):.2e}, "
+                f"R(w)={result.profit:.6f} < R*={result.target_return:.6f}"
+            )
         runs.append(result)
 
     # Calculate solution-quality statistics from feasible runs.
@@ -153,16 +190,22 @@ def run_all_experiments(
     and ten seeds produce 45 cases and 450 runs by default.
     """
     all_summaries: list[CaseSummary] = []
+    total_cases = len(portfolios) * len(alphas) * len(variants)
+    case_idx = 0
 
     logger.info(
-        "==========  Evolution Strategies — Portfolio Optimisation (Problem 2) =========="
+        f"========== Evolution Strategies — Portfolio Optimisation ({total_cases} cases, {num_runs} runs x {max_iterations} evals) =========="
     )
     for dataset_name, portfolio in portfolios.items():
-        logger.info(f"Dataset: {dataset_name}")
         for alpha in alphas:
-            logger.info(f"Alpha: {alpha:.2f}")
+            target = get_target_return(portfolio, alpha)
             for variant in variants:
-                logger.info(f"Variant: {variant}")
+                case_idx += 1
+                label = VARIANT_LABELS.get(variant, variant)
+                logger.info(
+                    f"[{case_idx}/{total_cases}] {dataset_name}_alpha{int(alpha * 100):03d} | "
+                    f"{label} | n={len(portfolio)} | alpha={alpha:.2f} | R*={target:.6f}"
+                )
                 summary = summarize_case(
                     dataset_name=dataset_name,
                     portfolio=portfolio,
@@ -172,16 +215,6 @@ def run_all_experiments(
                     max_iterations=max_iterations,
                 )
                 all_summaries.append(summary)
-                logger.info(
-                    f"{summary.case_name:14s} | {summary.variant:17s} | "
-                    f"n={summary.num_assets:3d} | R*={summary.target_return:.6f} | "
-                    f"best={summary.best_cost:.6f} | mean={summary.mean_cost:.6f} | "
-                    f"std={summary.std_cost:.6f} | valid={summary.feasible_rate:5.1f}% | "
-                    f"time={summary.mean_runtime:.3f}s"
-                )
-            logger.info("\n")
-        logger.info(
-            "------------------------------------------------------------------------------------\n"
-        )
+                logger.info(format_case_summary(summary))
 
     return all_summaries

@@ -11,12 +11,15 @@ import os
 from pathlib import Path
 
 from evolution_strategy.build_summary import SUMMARY_NAME, build_summary
+from evolution_strategy.evaluation import get_target_return
 from evolution_strategy.evolution_strategies import VARIANTS, run_es
 from evolution_strategy.plot_results import generate_all_plots_es
 from evolution_strategy.results import (
     ALPHAS,
     DEFAULT_RESULTS_DIR,
     PORTFOLIOS,
+    VARIANT_LABELS,
+    format_case_summary,
     summarize_case,
 )
 from logger import get_logger
@@ -157,23 +160,26 @@ def optimise_es(
     Every invocation recomputes and overwrites all configured cases.
     """
     output_root = Path(output_dir)
+    total_cases = len(portfolios) * len(alphas) * len(VARIANTS)
+    case_idx = 0
 
     logger.info(
-        "==========  Evolution Strategies — Portfolio Optimisation (Problem 2) =========="
+        f"========== Evolution Strategies — Portfolio Optimisation ({total_cases} cases, {num_runs} runs x {budget} evals) =========="
     )
     for dataset_name, portfolio in portfolios.items():
-        logger.info(f"Dataset: {dataset_name}")
         for alpha in alphas:
-            logger.info(f"Alpha: {alpha:.2f}")
+            target = get_target_return(portfolio, alpha)
             for variant in VARIANTS:
-                logger.info(f"Variant: {variant}")
-                case_name = (
-                    f"{dataset_name}_alpha{int(alpha * 100):03d}"
-                    f"_{variant}_e{budget}_r{num_runs}"
-                )
-                folder = output_root / case_name
+                case_idx += 1
+                case_id = f"{dataset_name}_alpha{int(alpha * 100):03d}"
+                folder_name = f"{case_id}_{variant}_e{budget}_r{num_runs}"
+                folder = output_root / folder_name
+                label = VARIANT_LABELS.get(variant, variant)
 
-                logger.info(f"RUN: {case_name}")
+                logger.info(
+                    f"[{case_idx}/{total_cases}] {case_id} | {label} | "
+                    f"n={len(portfolio)} | alpha={alpha:.2f} | R*={target:.6f}"
+                )
 
                 summary = summarize_case(
                     dataset_name=dataset_name,
@@ -185,18 +191,13 @@ def optimise_es(
                 )
 
                 export_case(summary, folder, budget)
-                logger.info(f"SAVED: {case_name}")
-
-            logger.info("\n")
-
-        logger.info(
-            "------------------------------------------------------------------------------------\n"
-        )
+                logger.info(format_case_summary(summary))
+                logger.info(f"Saved case outputs -> {folder}")
 
     # Consolidate completed cases into one experimental summary.
     output_csv = output_root / SUMMARY_NAME
     count = build_summary(output_root, output_csv)
-    logger.info(f"SUMMARY: {count} cases -> {output_csv}")
+    logger.info(f"Consolidated {count} ES cases -> {output_csv}")
 
     return output_root
 
@@ -235,19 +236,24 @@ def main() -> None:
     if args.seed is not None:
         if not (args.dataset and args.alpha is not None and args.variant):
             parser.error("--seed requires --dataset, --alpha, and --variant.")
+        portfolio = PORTFOLIOS[args.dataset]
         result = run_es(
-            portfolio=PORTFOLIOS[args.dataset],
+            portfolio=portfolio,
             alpha=args.alpha,
             variant=args.variant,
             max_iterations=30000,
             seed=args.seed,
         )
+        initial_var = result.history[0] if result.history else result.cost
+        ret_cmp = ">=" if result.profit >= result.target_return - 1e-8 else "<"
+        label = VARIANT_LABELS.get(args.variant, args.variant)
         logger.info(
-            f"ES Single Run | case={args.dataset}_alpha{int(args.alpha * 100):03d} | "
-            f"variant={args.variant} | seed={args.seed} | feasible={result.is_valid} | "
-            f"return={result.profit:.6f} (target={result.target_return:.6f}) | "
-            f"variance={result.cost:.9g} | evaluations={len(result.history)} | "
-            f"runtime={result.runtime_seconds:.3f}s"
+            f"{args.dataset}_alpha{int(args.alpha * 100):03d} | {label} | "
+            f"n={len(portfolio)} | seed={args.seed} | "
+            f"var: {initial_var:.4e} -> {result.cost:.4e} | "
+            f"R(w)={result.profit:.6f} {ret_cmp} R*={result.target_return:.6f} | "
+            f"feasible={result.is_valid} | evals={len(result.history)} | "
+            f"{result.runtime_seconds:.2f}s"
         )
         return
 
@@ -255,11 +261,20 @@ def main() -> None:
         datasets = (args.dataset,) if args.dataset else tuple(PORTFOLIOS.keys())
         alphas = (args.alpha,) if args.alpha is not None else ALPHAS
         variants = (args.variant,) if args.variant else tuple(VARIANTS.keys())
+        total_cases = len(datasets) * len(alphas) * len(variants)
+        case_idx = 0
 
         for dataset_name in datasets:
             portfolio = PORTFOLIOS[dataset_name]
             for alpha in alphas:
+                target = get_target_return(portfolio, alpha)
                 for variant in variants:
+                    case_idx += 1
+                    label = VARIANT_LABELS.get(variant, variant)
+                    logger.info(
+                        f"[{case_idx}/{total_cases}] {dataset_name}_alpha{int(alpha * 100):03d} | "
+                        f"{label} | n={len(portfolio)} | alpha={alpha:.2f} | R*={target:.6f}"
+                    )
                     summary = summarize_case(
                         dataset_name=dataset_name,
                         portfolio=portfolio,
@@ -268,13 +283,7 @@ def main() -> None:
                         num_runs=10,
                         max_iterations=30000,
                     )
-                    logger.info(
-                        f"{summary.case_name:14s} | {summary.variant:17s} | "
-                        f"n={summary.num_assets:3d} | R*={summary.target_return:.6f} | "
-                        f"best={summary.best_cost:.6g} | mean={summary.mean_cost:.6g} | "
-                        f"std={summary.std_cost:.4g} | valid={summary.feasible_rate:5.1f}% | "
-                        f"time={summary.mean_runtime:.3f}s"
-                    )
+                    logger.info(format_case_summary(summary))
         return
 
     optimise_es()
