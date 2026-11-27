@@ -1,10 +1,9 @@
 """Generate ES convergence and comparison plots from saved results.
 
-Reads exported CSV files and creates convergence, summary,
-runtime, boxplot, and dataset-correlation figures.
+Reads exported CSV files and creates the required port5_alpha050
+convergence plot along with summary, runtime, and boxplot figures.
 """
 
-import argparse
 import csv
 from pathlib import Path
 
@@ -13,7 +12,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-from evolution_strategy.results import ALPHAS, DEFAULT_RESULTS_DIR, PORTFOLIOS
+from evolution_strategy.results import DEFAULT_RESULTS_DIR
 from logger import get_logger
 
 logger = get_logger(__name__)
@@ -33,12 +32,12 @@ def plot_convergence(dataset, alpha, results_root, budget=30000, num_runs=10):
     histories and verify the expected number of evaluations.
     """
     case = f"{dataset}_alpha{int(alpha * 100):03d}"
-    results_dir = results_root / "full"
+    results_root = Path(results_root)
 
     fig, ax = plt.subplots(figsize=(8, 5))
 
     for variant, label in VARIANT_LABELS.items():
-        folder = results_dir / (
+        folder = results_root / (
             f"{case}_{variant}_e{budget}_r{num_runs}"
         )
         csv_path = folder / "convergence.csv"
@@ -118,12 +117,11 @@ def plot_convergence(dataset, alpha, results_root, budget=30000, num_runs=10):
 
 def generate_all_plots_es(
     results_dir: Path | str = DEFAULT_RESULTS_DIR,
-    dataset_figures_dir: Path | str | None = None,
 ) -> None:
     """Generate all ES figures from saved experimental results.
 
-    Creates per-case convergence plots, summary comparison plots,
-    runtime plots, boxplots, and dataset-correlation figures.
+    Creates the required port5_alpha050 convergence plot, summary
+    comparison plots, runtime plots, and boxplots.
     """
     from evolution_strategy.plot_comparisons import (
         load_summary,
@@ -131,17 +129,11 @@ def generate_all_plots_es(
         plot_mean_variance,
         plot_runtime,
     )
-    from evolution_strategy.plot_datasets import (
-        DEFAULT_OUT_DIR as DEFAULT_DATASET_FIGURES_DIR,
-        FIGURE_NAME as DATASET_FIGURE_NAME,
-        plot_dataset_correlations,
-    )
 
     results_root = Path(results_dir)
 
-    for dataset in PORTFOLIOS:
-        for alpha in ALPHAS:
-            plot_convergence(dataset, alpha, results_root)
+    # Required convergence plot: port5_alpha050 only (REQUIREMENTS.md).
+    plot_convergence("port5", 0.50, results_root)
 
     summary = load_summary(results_root / "es_summary_45_cases.csv")
     figures_dir = results_root / "figures"
@@ -149,34 +141,10 @@ def generate_all_plots_es(
     plot_runtime(summary, figures_dir)
     plot_boxplot(summary, results_root, figures_dir)
 
-    if dataset_figures_dir is not None:
-        dataset_out_dir = Path(dataset_figures_dir)
-    elif results_root == DEFAULT_RESULTS_DIR:
-        dataset_out_dir = DEFAULT_DATASET_FIGURES_DIR
-    else:
-        dataset_out_dir = results_root / "figures"
-
-    plot_dataset_correlations(
-        PORTFOLIOS, dataset_out_dir / DATASET_FIGURE_NAME
-    )
-
 
 def main():
-    """Generate one ES convergence plot from command-line arguments."""
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--dataset", default="port5")
-    parser.add_argument("--alpha", type=float, default=0.50)
-    parser.add_argument(
-        "--results-dir", default=str(DEFAULT_RESULTS_DIR)
-    )
-
-    args = parser.parse_args()
-
-    plot_convergence(
-        args.dataset,
-        args.alpha,
-        Path(args.results_dir),
-    )
+    """Generate all ES plots from saved results."""
+    generate_all_plots_es()
 
 
 if __name__ == "__main__":
