@@ -4,14 +4,11 @@ from copy import deepcopy
 from bees_algorithm.core.bee import Bee
 from bees_algorithm.interface import OptimisationProblem
 from bees_algorithm.utils.exceptions import BudgetExhausted
-from logger import get_logger
-
-logger = get_logger(__name__)
 
 
 class TrackedProblem(OptimisationProblem):
     """
-    A wrapper to track the evaluations, log the metics and stop the experiment cleanly on max evaluations
+    A wrapper to track the evaluations, log the metrics and stop the experiment cleanly on max evaluations
 
     Args:
         problem (OptimisationProblem): The problem to be solved TSP or continuous
@@ -38,11 +35,6 @@ class TrackedProblem(OptimisationProblem):
 
     def get_neighbour(self, solution):
         return self.problem.get_neighbour(solution)
-
-    def save_experiment(self, run_time):
-        logger.info(
-            f"Initial Best: {self.tracker.initial_best.fitness} | Final Best: {self.tracker.best_solution.fitness} | Evaluations: {self.tracker.evaluations} | Runtime: {run_time}"
-        )
 
 
 class ProblemTracker:

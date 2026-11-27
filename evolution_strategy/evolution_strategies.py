@@ -13,14 +13,8 @@ from evolution_strategy.algorithms import (
     run_ten_comma_seventy,
     run_ten_plus_seventy,
 )
-from evolution_strategy.evaluation import (
-    get_target_return,
-)
-from evolution_strategy.portfolio import (
-    Portfolio,
-)
-from evolution_strategy.repair import repair
-
+from evolution_strategy.evaluation import get_target_return
+from evolution_strategy.portfolio import Portfolio
 
 # Map variant names to their corresponding ES algorithms.
 VARIANTS = {
@@ -51,10 +45,10 @@ class ESResult:
 
 
 def is_feasible(
-        weights: list[float],
-        profit: float,
-        target_return: float,
-        tol: float = 1e-8,
+    weights: list[float],
+    profit: float,
+    target_return: float,
+    tol: float = 1e-8,
 ) -> bool:
     """Validate the three portfolio constraints:
 
@@ -73,11 +67,11 @@ def is_feasible(
 
 
 def run_es(
-        portfolio: list[Portfolio],
-        alpha: float = 0.5,
-        variant: str = "one_plus_one",
-        max_iterations: int = 30000,
-        seed: int | None = None,
+    portfolio: list[Portfolio],
+    alpha: float = 0.5,
+    variant: str = "one_plus_one",
+    max_iterations: int = 30000,
+    seed: int | None = None,
 ) -> ESResult:
     """Run one ES experiment with a fixed evaluation budget.
 

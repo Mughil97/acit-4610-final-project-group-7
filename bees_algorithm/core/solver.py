@@ -1,7 +1,4 @@
 from bees_algorithm.core.bee import Bee
-from logger import get_logger
-
-logger = get_logger(__name__)
 
 
 class BeesAlgorithmSolver:
@@ -40,7 +37,7 @@ class BeesAlgorithmSolver:
                 fitness = self.problem.evaluate(neighbour_vector)
 
                 # Greedy selection
-                if fitness < site.fitness:  # If the neighbour is bette,replace
+                if fitness < site.fitness:  # If the neighbour is better, replace
                     site.site = neighbour_vector
                     site.fitness = fitness
                     site.stagnation_count = 0
@@ -91,6 +88,3 @@ class BeesAlgorithmSolver:
 
             # 30 recruits, 10 selected, 5 abandoned; then (30 - 10) + 5 = 25 new scouts
             self.replenish_scouts((self.config.ns - self.config.nb) + abandoned)
-
-    def save_experiment(self, run_time):
-        self.problem.save_experiment(run_time)

@@ -3,16 +3,12 @@
 Runs seeded experiments and calculates solution quality,
 feasibility, runtime, and convergence statistics.
 """
+
 from dataclasses import dataclass, field
 import math
 from pathlib import Path
 
-from evolution_strategy.evaluation import get_target_return
-from evolution_strategy.evolution_strategies import (
-    ESResult,
-    VARIANTS,
-    run_es,
-)
+from evolution_strategy.evolution_strategies import ESResult, run_es
 from evolution_strategy.portfolio import (
     Portfolio,
     portfolio1,
@@ -51,6 +47,7 @@ class CaseSummary:
     Each case represents one dataset, return target,
     and ES variant evaluated across multiple seeds.
     """
+
     case_name: str
     dataset_name: str
     alpha: float
@@ -96,17 +93,17 @@ def format_case_summary(summary: CaseSummary) -> str:
 
 
 def summarize_case(
-        dataset_name: str,
-        portfolio: list[Portfolio],
-        alpha: float,
-        variant: str,
-        num_runs: int = 10,
-        max_iterations: int = 30000,
+    dataset_name: str,
+    portfolio: list[Portfolio],
+    alpha: float,
+    variant: str,
+    num_runs: int = 10,
+    max_iterations: int = 30000,
 ) -> CaseSummary:
     """Execute repeated ES runs for one experimental case.
 
-    Calculate variance statistics from feasible runs,
-    runtime across all runs, and mean convergence history.
+    Calculate variance statistics and mean convergence history
+    from feasible runs, and runtime across all runs.
     """
     case_name = f"{dataset_name}_alpha{int(alpha * 100):03d}"
     runs: list[ESResult] = []
@@ -153,9 +150,10 @@ def summarize_case(
     feasible_rate = 100.0 * len(valid_runs) / len(runs)
     mean_runtime = sum(run.runtime_seconds for run in runs) / len(runs)
 
-    # Average convergence curve across all runs
+    # Average convergence curve across feasible runs (fall back to all runs if none are feasible).
+    history_runs = valid_runs if valid_runs else runs
     mean_history = [
-        sum(run.history[step] for run in runs) / len(runs)
+        sum(run.history[step] for run in history_runs) / len(history_runs)
         for step in range(max_iterations)
     ]
 
@@ -175,46 +173,3 @@ def summarize_case(
         mean_history=mean_history,
         runs=runs,
     )
-
-
-def run_all_experiments(
-        portfolios: dict[str, list[Portfolio]] = PORTFOLIOS,
-        alphas: tuple[float, ...] = ALPHAS,
-        variants: tuple[str, ...] = tuple(VARIANTS.keys()),
-        num_runs: int = 10,
-        max_iterations: int = 30000,
-) -> list[CaseSummary]:
-    """Execute the complete ES experimental design.
-
-    Five datasets, three return targets, three ES variants,
-    and ten seeds produce 45 cases and 450 runs by default.
-    """
-    all_summaries: list[CaseSummary] = []
-    total_cases = len(portfolios) * len(alphas) * len(variants)
-    case_idx = 0
-
-    logger.info(
-        f"========== Evolution Strategies — Portfolio Optimisation ({total_cases} cases, {num_runs} runs x {max_iterations} evals) =========="
-    )
-    for dataset_name, portfolio in portfolios.items():
-        for alpha in alphas:
-            target = get_target_return(portfolio, alpha)
-            for variant in variants:
-                case_idx += 1
-                label = VARIANT_LABELS.get(variant, variant)
-                logger.info(
-                    f"[{case_idx}/{total_cases}] {dataset_name}_alpha{int(alpha * 100):03d} | "
-                    f"{label} | n={len(portfolio)} | alpha={alpha:.2f} | R*={target:.6f}"
-                )
-                summary = summarize_case(
-                    dataset_name=dataset_name,
-                    portfolio=portfolio,
-                    alpha=alpha,
-                    variant=variant,
-                    num_runs=num_runs,
-                    max_iterations=max_iterations,
-                )
-                all_summaries.append(summary)
-                logger.info(format_case_summary(summary))
-
-    return all_summaries
