@@ -216,11 +216,14 @@ def plot_best_berlin52_route(
     ax.annotate(
         f"Start: City {start_city}",
         xy=(coords[start_city][0], coords[start_city][1]),
-        xytext=(8, 8),
+        xytext=(0, -32),
         textcoords="offset points",
+        ha="center",
         fontsize=9,
         fontweight="bold",
-        bbox=dict(boxstyle="round,pad=0.25", fc="#fff3cd", ec="#ff7f0e", alpha=0.9),
+        bbox=dict(boxstyle="round,pad=0.25", fc="#fff3cd", ec="#ff7f0e", alpha=0.95),
+        arrowprops=dict(arrowstyle="->", color="#ff7f0e", lw=1.3),
+        zorder=6,
     )
 
     tour_len = float(best_row["final_best"])
@@ -354,6 +357,7 @@ def plot_d30_boxplots(
         ax.boxplot(
             vals,
             widths=0.45,
+            showfliers=False,
             patch_artist=True,
             boxprops=dict(facecolor="#cfe2f3", color="#1f77b4", linewidth=1.3),
             medianprops=dict(color="#d62728", linewidth=1.8),
