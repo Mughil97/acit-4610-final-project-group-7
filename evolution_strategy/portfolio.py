@@ -10,7 +10,6 @@ according to Portfolio 2026, Problem 2, page 9.
 from dataclasses import dataclass, field
 from pathlib import Path
 
-
 # Locate the data directory relative to this Python file.
 # This allows the datasets to be loaded independently of
 # the current working directory.
@@ -72,11 +71,7 @@ def construct_covariance_matrix(
         for j in range(i + 1, n):
 
             # Calculate covariance between assets i and j.
-            value = (
-                portfolio[i].risk
-                * portfolio[j].risk
-                * portfolio[i].correlations[j]
-            )
+            value = portfolio[i].risk * portfolio[j].risk * portfolio[i].correlations[j]
 
             # Covariance is symmetric:
             # Sigma[i][j] = Sigma[j][i].
@@ -113,9 +108,7 @@ def read_portfolio_data(file_path: str) -> list[Portfolio]:
             profit = float(value[0])
             risk = float(value[1])
 
-            data.append(
-                Portfolio(profit, risk, [0.0] * n)
-            )
+            data.append(Portfolio(profit, risk, [0.0] * n))
 
         # Construct the symmetric correlation matrix.
         for line in f:

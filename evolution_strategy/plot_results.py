@@ -37,35 +37,23 @@ def plot_convergence(dataset, alpha, results_root, budget=30000, num_runs=10):
     fig, ax = plt.subplots(figsize=(8, 5))
 
     for variant, label in VARIANT_LABELS.items():
-        folder = results_root / (
-            f"{case}_{variant}_e{budget}_r{num_runs}"
-        )
+        folder = results_root / (f"{case}_{variant}_e{budget}_r{num_runs}")
         csv_path = folder / "convergence.csv"
 
         if not csv_path.exists():
-            raise FileNotFoundError(
-                f"Missing convergence data: {csv_path}"
-            )
+            raise FileNotFoundError(f"Missing convergence data: {csv_path}")
 
         # Read the saved mean best-so-far convergence history.
-        with csv_path.open(
-            newline="", encoding="utf-8"
-        ) as handle:
+        with csv_path.open(newline="", encoding="utf-8") as handle:
             rows = list(csv.DictReader(handle))
 
         if len(rows) != budget:
             raise ValueError(
-                f"{label}: expected {budget} evaluations, "
-                f"found {len(rows)}"
+                f"{label}: expected {budget} evaluations, " f"found {len(rows)}"
             )
 
-        evaluations = [
-            int(row["evaluation"]) for row in rows
-        ]
-        mean_variance = [
-            float(row["mean_best_variance"])
-            for row in rows
-        ]
+        evaluations = [int(row["evaluation"]) for row in rows]
+        mean_variance = [float(row["mean_best_variance"]) for row in rows]
 
         ax.plot(
             evaluations,
@@ -82,19 +70,14 @@ def plot_convergence(dataset, alpha, results_root, budget=30000, num_runs=10):
         )
 
     ax.set_title(
-        f"ES Convergence — {case} "
-        f"({num_runs} seeds, {budget:,} evaluations)"
+        f"ES Convergence — {case} " f"({num_runs} seeds, {budget:,} evaluations)"
     )
     ax.set_xlabel("Objective evaluations")
-    ax.set_ylabel(
-        "Mean archive best-so-far portfolio variance"
-    )
+    ax.set_ylabel("Mean archive best-so-far portfolio variance")
 
     ax.grid(True, alpha=0.3)
     ax.legend()
-    ax.ticklabel_format(
-        axis="y", style="sci", scilimits=(-3, 3)
-    )
+    ax.ticklabel_format(axis="y", style="sci", scilimits=(-3, 3))
 
     fig.tight_layout()
 

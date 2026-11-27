@@ -26,9 +26,7 @@ def test_exact_evaluation_budget(monkeypatch, algorithm_name, budget):
         # Equal costs ensure offspring are not strictly better.
         return 0.05, 0.50, list(weights)
 
-    monkeypatch.setattr(
-        algorithms, "evaluate_one_plus_one", fake_evaluate
-    )
+    monkeypatch.setattr(algorithms, "evaluate_one_plus_one", fake_evaluate)
 
     portfolio = [
         Portfolio(0.02, 0.1),

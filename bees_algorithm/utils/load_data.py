@@ -10,12 +10,7 @@ def load_data(file):
     city_coordinates = {}
 
     # Store the expected header information
-    headers = {
-        "NAME": None,
-        "TYPE": None,
-        "DIMENSION": None,
-        "EDGE_WEIGHT_TYPE": None
-    }
+    headers = {"NAME": None, "TYPE": None, "DIMENSION": None, "EDGE_WEIGHT_TYPE": None}
 
     node_section_found = False
     dimension = None

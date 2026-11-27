@@ -212,7 +212,9 @@ def optimise_tsp(writer: ExperimentWriter | None = None):
                 logger.info(f"Saved convergence history -> {hist_path}")
 
 
-def run_single_tsp(instance_name: str, neighbourhood: str = REVERSE, seed: int = SEED) -> None:
+def run_single_tsp(
+    instance_name: str, neighbourhood: str = REVERSE, seed: int = SEED
+) -> None:
     """Execute one standalone TSP run without overwriting saved full-experiment files."""
     tsp_cfg = next(cfg for cfg in TSP_INSTANCES if cfg.name == instance_name)
     tsp = SymmetricTSP(seed, tsp_cfg.path, neighbourhood)
@@ -248,7 +250,9 @@ def run_single_tsp(instance_name: str, neighbourhood: str = REVERSE, seed: int =
         logger.warning(f"Validation errors: {errors}")
 
 
-def run_single_function(function_name: str, dimension: int = 10, seed: int = SEED) -> None:
+def run_single_function(
+    function_name: str, dimension: int = 10, seed: int = SEED
+) -> None:
     """Execute one standalone continuous run without overwriting saved full-experiment files."""
     func_config = next(
         cfg for cfg in BENCHMARK_FUNCTIONS if cfg.function.__name__ == function_name
@@ -333,7 +337,9 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.instance and args.function:
-        parser.error("Specify either --instance (Part A) or --function (Part B), not both.")
+        parser.error(
+            "Specify either --instance (Part A) or --function (Part B), not both."
+        )
 
     if args.instance is not None:
         run_single_tsp(args.instance, args.neighbourhood, args.seed)

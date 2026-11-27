@@ -14,6 +14,7 @@ The repair consists of two steps:
 
 The same repair procedure is used by all three ES variants.
 """
+
 import math
 
 from evolution_strategy.portfolio import Portfolio
@@ -72,7 +73,9 @@ def project_simplex(weights: list[float]) -> list[float]:
     return [max(value - theta, 0.0) for value in weights]
 
 
-def repair(portfolio: list[Portfolio], weights: list[float], target_return: float) -> list[float]:
+def repair(
+    portfolio: list[Portfolio], weights: list[float], target_return: float
+) -> list[float]:
     """Repair candidate weights before objective evaluation.
 
     Required portfolio constraints:
@@ -118,7 +121,7 @@ def repair(portfolio: list[Portfolio], weights: list[float], target_return: floa
     # transferred toward the highest-return asset.
     beta = min(1.0, (target_return - current_profit) / (max_profit - current_profit))
 
-    #Construct the convex combination:
+    # Construct the convex combination:
     #
     # w = (1 - beta) * q + beta * e_j
     #

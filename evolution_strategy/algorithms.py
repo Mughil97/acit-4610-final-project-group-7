@@ -19,15 +19,13 @@ All variants minimize portfolio variance, repair candidate
 weights before evaluation, and record the best solution found
 within the objective evaluation budget.
 """
+
 from dataclasses import dataclass
 import math
 import random
 
 from evolution_strategy.repair import repair
-from evolution_strategy.evaluation import (
-    evaluate_cost,
-    evaluate_profit
-)
+from evolution_strategy.evaluation import evaluate_cost, evaluate_profit
 from evolution_strategy.portfolio import Portfolio
 
 
@@ -54,18 +52,16 @@ class Individual:
     The weights represent the solution, while sigmas are
     strategy parameters controlling the mutation process.
     """
+
     weights: list[float]
     sigmas: list[float]
     profit: float
     cost: float
 
+
 def evaluate_one_plus_one(
-
-        portfolio: list[Portfolio],
-        weights: list[float],
-        target_return: float
+    portfolio: list[Portfolio], weights: list[float], target_return: float
 ):
-
     """Repair and evaluate a candidate portfolio.
 
     Despite its name, this helper is shared by all three
@@ -84,6 +80,7 @@ def evaluate_one_plus_one(
     cost = evaluate_cost(portfolio, repaired_weights)
     return profit, cost, repaired_weights
 
+
 def update_one_plus_one_sigma(sigma: float, improved: bool) -> float:
     """Apply the assignment's per-trial 1/5-success-rule update.
 
@@ -93,11 +90,12 @@ def update_one_plus_one_sigma(sigma: float, improved: bool) -> float:
     factor = math.exp(1.0 / 3.0) if improved else math.exp(-1.0 / 12.0)
     return max(1e-8, min(1.0, sigma * factor))
 
+
 def run_one_plus_one(
-        portfolio: list[Portfolio],
-        target_return: float,
-        max_iterations: int = 30000,
-        sigma: float | None = None,
+    portfolio: list[Portfolio],
+    target_return: float,
+    max_iterations: int = 30000,
+    sigma: float | None = None,
 ):
     """Run (1+1)-ES, counting initialization as one evaluation.
 
@@ -157,13 +155,14 @@ def run_one_plus_one(
 
     return best_weights, best_profit, best_cost, history
 
+
 # (10+70)-ES Algorithm
 def run_ten_plus_seventy(
-        portfolio: list[Portfolio],
-        target_return: float,
-        max_iterations: int = 30000,
-        mu: int = 10,
-        lambda_: int = 70,
+    portfolio: list[Portfolio],
+    target_return: float,
+    max_iterations: int = 30000,
+    mu: int = 10,
+    lambda_: int = 70,
 ):
     """Run the elitist (mu + lambda) Evolution Strategy.
 
@@ -193,7 +192,9 @@ def run_ten_plus_seventy(
 
     for _ in range(mu):
         raw_weights = [random.uniform(0.0, 1.0) for _ in range(n)]
-        profit, cost, weights = evaluate_one_plus_one(portfolio, raw_weights, target_return)
+        profit, cost, weights = evaluate_one_plus_one(
+            portfolio, raw_weights, target_return
+        )
         sigmas = [init_sigma] * n
         population.append(Individual(weights, sigmas, profit, cost))
         if cost < best_cost:
@@ -213,8 +214,12 @@ def run_ten_plus_seventy(
 
             # 2. Arithmetic recombination of weights and
             # geometric recombination of mutation step sizes.
-            child_weights = [(parent1.weights[i] + parent2.weights[i]) / 2.0 for i in range(n)]
-            child_sigmas = [math.sqrt(parent1.sigmas[i] * parent2.sigmas[i]) for i in range(n)]
+            child_weights = [
+                (parent1.weights[i] + parent2.weights[i]) / 2.0 for i in range(n)
+            ]
+            child_sigmas = [
+                math.sqrt(parent1.sigmas[i] * parent2.sigmas[i]) for i in range(n)
+            ]
 
             # 3. Log-normal self-adaptation of sigmas,
             # followed by Gaussian mutation of weights.
@@ -226,7 +231,9 @@ def run_ten_plus_seventy(
                 child_weights[i] += child_sigmas[i] * random.gauss(0, 1)
 
             # 4. Evaluate offspring
-            profit, cost, child_weights = evaluate_one_plus_one(portfolio, child_weights, target_return)
+            profit, cost, child_weights = evaluate_one_plus_one(
+                portfolio, child_weights, target_return
+            )
             offspring.append(Individual(child_weights, child_sigmas, profit, cost))
 
             if cost < best_cost:
@@ -245,11 +252,11 @@ def run_ten_plus_seventy(
 
 # (10,70)-ES Algorithm
 def run_ten_comma_seventy(
-        portfolio: list[Portfolio],
-        target_return: float,
-        max_iterations: int = 30000,
-        mu: int = 10,
-        lambda_: int = 70,
+    portfolio: list[Portfolio],
+    target_return: float,
+    max_iterations: int = 30000,
+    mu: int = 10,
+    lambda_: int = 70,
 ):
     """Run the non-elitist (mu, lambda) Evolution Strategy.
 
@@ -300,7 +307,9 @@ def run_ten_comma_seventy(
 
     for _ in range(mu):
         raw_weights = [random.uniform(0.0, 1.0) for _ in range(n)]
-        profit, cost, weights = evaluate_one_plus_one(portfolio, raw_weights, target_return)
+        profit, cost, weights = evaluate_one_plus_one(
+            portfolio, raw_weights, target_return
+        )
         sigmas = [init_sigma] * n
         population.append(Individual(weights, sigmas, profit, cost))
         if cost < best_cost:
@@ -322,8 +331,12 @@ def run_ten_comma_seventy(
 
             # 2. Arithmetic recombination of weights and
             # geometric recombination of mutation step sizes.
-            child_weights = [(parent1.weights[i] + parent2.weights[i]) / 2.0 for i in range(n)]
-            child_sigmas = [math.sqrt(parent1.sigmas[i] * parent2.sigmas[i]) for i in range(n)]
+            child_weights = [
+                (parent1.weights[i] + parent2.weights[i]) / 2.0 for i in range(n)
+            ]
+            child_sigmas = [
+                math.sqrt(parent1.sigmas[i] * parent2.sigmas[i]) for i in range(n)
+            ]
 
             # 3. Mutate sigmas (self-adaptation) and weights
             # Log-normal self-adaptation:
@@ -342,7 +355,9 @@ def run_ten_comma_seventy(
                 child_weights[i] += child_sigmas[i] * random.gauss(0, 1)
 
             # 4. Evaluate offspring
-            profit, cost, child_weights = evaluate_one_plus_one(portfolio, child_weights, target_return)
+            profit, cost, child_weights = evaluate_one_plus_one(
+                portfolio, child_weights, target_return
+            )
             offspring.append(Individual(child_weights, child_sigmas, profit, cost))
 
             if cost < best_cost:

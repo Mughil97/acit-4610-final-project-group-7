@@ -21,7 +21,6 @@ from evolution_strategy.evaluation import (
 )
 from evolution_strategy.results import PORTFOLIOS
 
-
 EXPECTED_DIMENSIONS = {
     "port1": 31,
     "port2": 85,
@@ -83,9 +82,7 @@ def test_covariance_matrix(dataset):
 
         for j in range(n):
             expected = (
-                portfolio[i].risk
-                * portfolio[j].risk
-                * portfolio[i].correlations[j]
+                portfolio[i].risk * portfolio[j].risk * portfolio[i].correlations[j]
             )
 
             assert covariance[i][j] == pytest.approx(
@@ -105,23 +102,17 @@ def test_port1_assignment_checkpoint():
     n = len(portfolio)
     weights = [1.0 / n] * n
 
-    assert evaluate_profit(
-        portfolio, weights
-    ) == pytest.approx(
+    assert evaluate_profit(portfolio, weights) == pytest.approx(
         0.003504064516129,
         abs=1e-14,
     )
 
-    assert evaluate_cost(
-        portfolio, weights
-    ) == pytest.approx(
+    assert evaluate_cost(portfolio, weights) == pytest.approx(
         0.001130937943724,
         abs=1e-14,
     )
 
-    assert get_target_return(
-        portfolio, 0.50
-    ) == pytest.approx(
+    assert get_target_return(portfolio, 0.50) == pytest.approx(
         0.007184532258065,
         abs=1e-14,
     )
@@ -137,14 +128,9 @@ def test_return_target(dataset, alpha):
     equal_return = math.fsum(returns) / len(returns)
     maximum_return = max(returns)
 
-    expected = (
-        (1.0 - alpha) * equal_return
-        + alpha * maximum_return
-    )
+    expected = (1.0 - alpha) * equal_return + alpha * maximum_return
 
-    assert get_target_return(
-        portfolio, alpha
-    ) == pytest.approx(
+    assert get_target_return(portfolio, alpha) == pytest.approx(
         expected,
         rel=1e-12,
         abs=1e-15,
@@ -210,14 +196,10 @@ def test_covariance_fallback():
     assert all(not asset.covariances for asset in portfolio)
 
     expected = (
-        0.60 ** 2 * 0.10 ** 2
-        + 0.40 ** 2 * 0.20 ** 2
-        + 2 * 0.60 * 0.40 * 0.10 * 0.20 * 0.25
+        0.60**2 * 0.10**2 + 0.40**2 * 0.20**2 + 2 * 0.60 * 0.40 * 0.10 * 0.20 * 0.25
     )
 
-    assert evaluate_cost(
-        portfolio, weights
-    ) == pytest.approx(
+    assert evaluate_cost(portfolio, weights) == pytest.approx(
         expected,
         rel=1e-12,
         abs=1e-15,
@@ -235,24 +217,12 @@ def test_assignment_numerical_example():
     candidate_a = [0.50, 0.30, 0.20]
     candidate_b = [0.60, 0.30, 0.10]
 
-    assert evaluate_profit(
-        portfolio, candidate_a
-    ) == pytest.approx(0.048)
+    assert evaluate_profit(portfolio, candidate_a) == pytest.approx(0.048)
 
-    assert evaluate_cost(
-        portfolio, candidate_a
-    ) == pytest.approx(0.0097)
+    assert evaluate_cost(portfolio, candidate_a) == pytest.approx(0.0097)
 
-    assert evaluate_profit(
-        portfolio, candidate_b
-    ) == pytest.approx(0.040)
+    assert evaluate_profit(portfolio, candidate_b) == pytest.approx(0.040)
 
-    assert evaluate_cost(
-        portfolio, candidate_b
-    ) == pytest.approx(0.0081)
+    assert evaluate_cost(portfolio, candidate_b) == pytest.approx(0.0081)
 
-    assert evaluate_cost(
-        portfolio, candidate_b
-    ) < evaluate_cost(
-        portfolio, candidate_a
-    )
+    assert evaluate_cost(portfolio, candidate_b) < evaluate_cost(portfolio, candidate_a)

@@ -27,9 +27,19 @@ SUMMARY_NAME = "es_summary_45_cases.csv"
 
 # A stable column order including the explicit case identifier (e.g. port1_alpha025).
 COLUMNS = (
-    "case_name", "dataset", "alpha", "variant", "num_assets", "target_return",
-    "num_runs", "evaluations_per_run", "best_variance", "mean_variance",
-    "std_variance", "feasible_rate_percent", "mean_runtime_seconds",
+    "case_name",
+    "dataset",
+    "alpha",
+    "variant",
+    "num_assets",
+    "target_return",
+    "num_runs",
+    "evaluations_per_run",
+    "best_variance",
+    "mean_variance",
+    "std_variance",
+    "feasible_rate_percent",
+    "mean_runtime_seconds",
 )
 assert set(COLUMNS) == SUMMARY_COLUMNS
 
@@ -79,8 +89,12 @@ def _case_row(folder: Path) -> dict[str, str | int]:
         int(row["num_runs"])
         int(row["evaluations_per_run"])
         for key in (
-            "target_return", "best_variance", "mean_variance", "std_variance",
-            "feasible_rate_percent", "mean_runtime_seconds",
+            "target_return",
+            "best_variance",
+            "mean_variance",
+            "std_variance",
+            "feasible_rate_percent",
+            "mean_runtime_seconds",
         ):
             float(row[key])
     except (KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
@@ -102,7 +116,8 @@ def build_summary(cases_dir: Path, out_path: Path) -> int:
 
     # Include case folders that have a completion marker.
     folders = sorted(
-        folder for folder in cases_dir.iterdir()
+        folder
+        for folder in cases_dir.iterdir()
         if folder.is_dir() and (folder / "complete.json").is_file()
     )
     if not folders:
@@ -143,14 +158,16 @@ def summarize_all_es(
 
 def main() -> None:
     """Generate the summary for the complete 45-case experiment."""
-    completed_count = sum(
-        folder.is_dir() and (folder / "complete.json").is_file()
-        for folder in DEFAULT_RESULTS_DIR.iterdir()
-    ) if DEFAULT_RESULTS_DIR.is_dir() else 0
-    if completed_count != 45:
-        raise ValueError(
-            f"Expected 45 completed cases; found {completed_count}"
+    completed_count = (
+        sum(
+            folder.is_dir() and (folder / "complete.json").is_file()
+            for folder in DEFAULT_RESULTS_DIR.iterdir()
         )
+        if DEFAULT_RESULTS_DIR.is_dir()
+        else 0
+    )
+    if completed_count != 45:
+        raise ValueError(f"Expected 45 completed cases; found {completed_count}")
     summarize_all_es(DEFAULT_RESULTS_DIR)
 
 

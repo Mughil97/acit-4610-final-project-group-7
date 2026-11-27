@@ -58,6 +58,8 @@ def _get_covariance(portfolio: list[Portfolio]) -> np.ndarray:
         _COV_CACHE.clear()
     _COV_CACHE[key] = (portfolio, cov_matrix)
     return cov_matrix
+
+
 # End AI Assisted Optimisation
 
 

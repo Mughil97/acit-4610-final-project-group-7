@@ -30,17 +30,10 @@ BA_CONTINUOUS_CSV = (
     / "tables"
     / "summary_continuous.csv"
 )
-ES_SUMMARY_CSV = (
-    ROOT_DIR
-    / "evolution_strategy"
-    / "results"
-    / "es_summary_45_cases.csv"
-)
+ES_SUMMARY_CSV = ROOT_DIR / "evolution_strategy" / "results" / "es_summary_45_cases.csv"
 
 ES_VARIANTS = ("one_plus_one", "ten_plus_seventy", "ten_comma_seventy")
-ES_LABELS = dict(
-    zip(ES_VARIANTS, ("$(1+1)$-ES", "$(10+70)$-ES", "$(10,70)$-ES"))
-)
+ES_LABELS = dict(zip(ES_VARIANTS, ("$(1+1)$-ES", "$(10+70)$-ES", "$(10,70)$-ES")))
 ES_DATASETS = tuple(f"port{i}" for i in range(1, 6))
 ES_ALPHAS = (0.25, 0.50, 0.75)
 
@@ -200,9 +193,7 @@ def generate_ba_continuous_table(
         ),
         label="tab:ba-continuous",
         col_spec="lrcrrrr",
-        header=(
-            r"Function & $D$ & Valid & Best & Mean & SD & Mean time (s)"
-        ),
+        header=(r"Function & $D$ & Valid & Best & Mean & SD & Mean time (s)"),
         body_lines=body_lines,
         size=r"\small",
         resize=False,
@@ -223,9 +214,7 @@ def generate_es_tables(
 
     rows = _read_csv(source)
     data = {(r["dataset"], float(r["alpha"]), r["variant"]): r for r in rows}
-    expected = {
-        (d, a, v) for d in ES_DATASETS for a in ES_ALPHAS for v in ES_VARIANTS
-    }
+    expected = {(d, a, v) for d in ES_DATASETS for a in ES_ALPHAS for v in ES_VARIANTS}
     if len(rows) != 45 or set(data) != expected:
         raise ValueError("Expected exactly 45 unique ES experiment cases")
 
@@ -253,9 +242,7 @@ def generate_es_tables(
                 body_lines.append(r"\addlinespace[2pt]")
             for v in ES_VARIANTS:
                 r = data[d, a, v]
-                case_tex = (
-                    r"\texttt{" + d + r"\_alpha" + f"{int(a * 100):03d}" + "}"
-                )
+                case_tex = r"\texttt{" + d + r"\_alpha" + f"{int(a * 100):03d}" + "}"
                 body_lines.append(
                     _row(
                         case_tex,
@@ -343,8 +330,7 @@ def generate_es_tables(
         label="tab:es-port5-focus",
         col_spec="lrrrrr",
         header=(
-            r"Variant & Best variance & Mean variance & SD & Feasible & "
-            r"Time (s)"
+            r"Variant & Best variance & Mean variance & SD & Feasible & " r"Time (s)"
         ),
         body_lines=focus_lines,
         size=r"\small",

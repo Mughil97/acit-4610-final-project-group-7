@@ -59,9 +59,11 @@ def _serialize_config(cfg: Any) -> dict[str, Any]:
     if cfg is None:
         return {}
     if is_dataclass(cfg):
-        return asdict(cfg) if not isinstance(cfg, type) else {
-            k: v.default for k, v in cfg.__dataclass_fields__.items()
-        }
+        return (
+            asdict(cfg)
+            if not isinstance(cfg, type)
+            else {k: v.default for k, v in cfg.__dataclass_fields__.items()}
+        )
     return {
         k: getattr(cfg, k)
         for k in dir(cfg)
@@ -91,7 +93,9 @@ class ExperimentWriter:
         self._tsp_solutions: dict[str, Any] = {}
         self._continuous_solutions: dict[str, Any] = {}
         self._tsp_histories: dict[tuple[str, str], list[tuple[int, list[float]]]] = {}
-        self._continuous_histories: dict[tuple[str, int], list[tuple[int, list[float]]]] = {}
+        self._continuous_histories: dict[
+            tuple[str, int], list[tuple[int, list[float]]]
+        ] = {}
 
         self._ensure_directories()
 

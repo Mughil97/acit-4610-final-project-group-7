@@ -1,8 +1,8 @@
-
 """Regression tests for Portfolio 2026 Problem 2, simplex projection.
 
 Run from the repository root: python -m pytest -q evolution_strategy/tests/test_repair_projection.py
 """
+
 import math
 import random
 
@@ -14,15 +14,11 @@ from evolution_strategy.repair import project_simplex, repair
 
 
 def test_projection_differs_from_clipping_and_normalizing():
-    assert project_simplex([0.8, 0.3, -0.2]) == pytest.approx(
-        [0.75, 0.25, 0.0]
-    )
+    assert project_simplex([0.8, 0.3, -0.2]) == pytest.approx([0.75, 0.25, 0.0])
 
 
 def test_projection_on_the_simplex_is_unchanged():
-    assert project_simplex([0.1, 0.4, 0.5]) == pytest.approx(
-        [0.1, 0.4, 0.5]
-    )
+    assert project_simplex([0.1, 0.4, 0.5]) == pytest.approx([0.1, 0.4, 0.5])
 
 
 def test_zero_vector_projects_to_uniform_allocation():
@@ -30,9 +26,7 @@ def test_zero_vector_projects_to_uniform_allocation():
 
 
 def test_all_negative_vector_can_be_projected():
-    assert project_simplex([-3.0, -2.0, -1.0]) == pytest.approx(
-        [0.0, 0.0, 1.0]
-    )
+    assert project_simplex([-3.0, -2.0, -1.0]) == pytest.approx([0.0, 0.0, 1.0])
 
 
 @pytest.mark.parametrize("n", [31, 85, 89, 98, 225])
@@ -48,19 +42,13 @@ def test_projection_feasible_at_portfolio_dimensions(n):
     assert math.fsum(output) == pytest.approx(1.0, abs=1e-12)
     assert raw == original
 
-    shifts = [
-        z - q for z, q in zip(raw, output)
-        if q > 1e-12
-    ]
+    shifts = [z - q for z, q in zip(raw, output) if q > 1e-12]
     assert shifts
     assert max(shifts) - min(shifts) <= 1e-12
 
 
 def test_return_target_repair_preserved():
-    p = [
-        Portfolio(0.02, 0.1, [1.0, 0.0]),
-        Portfolio(0.20, 0.2, [0.0, 1.0])
-    ]
+    p = [Portfolio(0.02, 0.1, [1.0, 0.0]), Portfolio(0.20, 0.2, [0.0, 1.0])]
 
     repaired = repair(p, [0.8, 0.2], 0.15)
 

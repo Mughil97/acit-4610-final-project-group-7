@@ -75,9 +75,7 @@ def validate_continuous_vector(
             errors.append(f"Non-finite coordinate at index {idx}: {val}")
             break
         if val < lower - tol or val > upper + tol:
-            errors.append(
-                f"Coordinate {idx}={val} out of bounds [{lower}, {upper}]"
-            )
+            errors.append(f"Coordinate {idx}={val} out of bounds [{lower}, {upper}]")
             break
 
     if reported_value is not None and not math.isfinite(reported_value):

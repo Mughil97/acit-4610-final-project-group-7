@@ -61,32 +61,46 @@ def export_case(summary, folder, budget):
     save_csv(
         folder / "summary.csv",
         [
-            "dataset", "alpha", "variant", "num_runs",
-            "evaluations", "best_variance", "mean_variance",
-            "std_variance", "feasible_rate_percent",
-            "mean_runtime_seconds", "best_weights_json",
+            "dataset",
+            "alpha",
+            "variant",
+            "num_runs",
+            "evaluations",
+            "best_variance",
+            "mean_variance",
+            "std_variance",
+            "feasible_rate_percent",
+            "mean_runtime_seconds",
+            "best_weights_json",
         ],
-        [[
-            summary.dataset_name,
-            summary.alpha,
-            summary.variant,
-            len(summary.runs),
-            budget,
-            summary.best_cost,
-            summary.mean_cost,
-            summary.std_cost,
-            summary.feasible_rate,
-            summary.mean_runtime,
-            json.dumps(summary.best_weights),
-        ]],
+        [
+            [
+                summary.dataset_name,
+                summary.alpha,
+                summary.variant,
+                len(summary.runs),
+                budget,
+                summary.best_cost,
+                summary.mean_cost,
+                summary.std_cost,
+                summary.feasible_rate,
+                summary.mean_runtime,
+                json.dumps(summary.best_weights),
+            ]
+        ],
     )
 
     save_csv(
         folder / "runs.csv",
         [
-            "seed", "final_variance", "portfolio_return",
-            "target_return", "feasible", "runtime_seconds",
-            "evaluations", "weights_json",
+            "seed",
+            "final_variance",
+            "portfolio_return",
+            "target_return",
+            "feasible",
+            "runtime_seconds",
+            "evaluations",
+            "weights_json",
         ],
         (
             [
@@ -108,18 +122,14 @@ def export_case(summary, folder, budget):
         ["evaluation", "mean_best_variance"],
         (
             [evaluation, value]
-            for evaluation, value in enumerate(
-                summary.mean_history, start=1
-            )
+            for evaluation, value in enumerate(summary.mean_history, start=1)
         ),
     )
 
     # Preserve the complete best-so-far history of every seed.
     save_csv(
         folder / "run_histories.csv",
-        ["evaluation"] + [
-            f"seed_{run.seed}" for run in summary.runs
-        ],
+        ["evaluation"] + [f"seed_{run.seed}" for run in summary.runs],
         (
             [evaluation, *values]
             for evaluation, values in enumerate(
@@ -133,14 +143,17 @@ def export_case(summary, folder, budget):
     marker = folder / "complete.json"
     temporary = folder / "complete.json.tmp"
     temporary.write_text(
-        json.dumps({
-            "status": "complete",
-            "dataset": summary.dataset_name,
-            "alpha": summary.alpha,
-            "variant": summary.variant,
-            "num_runs": len(summary.runs),
-            "evaluations_per_run": budget,
-        }, indent=2),
+        json.dumps(
+            {
+                "status": "complete",
+                "dataset": summary.dataset_name,
+                "alpha": summary.alpha,
+                "variant": summary.variant,
+                "num_runs": len(summary.runs),
+                "evaluations_per_run": budget,
+            },
+            indent=2,
+        ),
         encoding="utf-8",
     )
     os.replace(temporary, marker)
