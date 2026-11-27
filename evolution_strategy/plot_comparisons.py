@@ -387,12 +387,9 @@ def main() -> None:
     """Generate all ES comparison figures from saved results."""
     summary = load_summary(DEFAULT_RESULTS_DIR / "es_summary_45_cases.csv")
     figures_dir = DEFAULT_RESULTS_DIR / "figures"
-    """Generate all ES comparison figures from saved results."""
-    summary = load_summary(DEFAULT_RESULTS_DIR / "es_summary_45_cases.csv")
-    figures_dir = DEFAULT_RESULTS_DIR / "figures"
     plot_mean_variance(summary, figures_dir)
     plot_runtime(summary, figures_dir)
-    plot_boxplot(summary, DEFAULT_RESULTS_DIRDEFAULT_RESULTS_DIR, figures_dir)
+    plot_boxplot(summary, DEFAULT_RESULTS_DIR, figures_dir)
     logger.info("Done. No optimization runs were executed.")
 
 
