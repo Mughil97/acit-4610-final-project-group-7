@@ -96,13 +96,13 @@ only and does not participate in parent or survivor selection.
 
 ### Validated execution environment
 
-| Component | Tested version |
-|---|---|
-| Operating system | Windows / macOS |
-| Python | 3.13.5+ |
-| Matplotlib | 3.11.2 |
-| NumPy | 2.5.4+ |
-| pytest | 9.2.0 |
+| Component | Tested version | Requirement |
+|---|---|---|
+| Operating system | Windows / macOS | — |
+| Python | 3.13.5 / 3.14.6 | `>=3.10` |
+| NumPy | 2.5.4 | `>=1.26` |
+| Matplotlib | 3.11.2 | `>=3.8` |
+| pytest | 9.2.0 | `>=8.0` |
 
 NumPy is used for vectorized objective evaluation (`evaluation.py`) and plotting.
 
@@ -124,7 +124,7 @@ Latest validation:
 - ES regression suite: 66 passed.
 - Covariance regression suite: 33 passed.
 - Archive regression suite: 5 passed.
-- Overall project regression suite: 103 passed.
+- Overall project regression suite: 120 passed.
 - Archive numerical equivalence: 150/150 comparisons passed.
 
 ### Full pipeline via `main.py`

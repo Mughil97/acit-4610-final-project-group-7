@@ -24,7 +24,7 @@ LOGGING_CONFIG = {
             "class": "logging.FileHandler",
             "level": "INFO",
             "formatter": "file_formatter",
-            "mode": "w",
+            "mode": "a",
             "filename": "run.log",
             "encoding": "utf-8",
         },

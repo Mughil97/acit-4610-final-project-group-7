@@ -11,7 +11,11 @@ This repository contains two independent optimization subprojects for the ACIT46
 
 ## Running the Complete Project
 
-To run both Problem 1 (Bees Algorithm) and Problem 2 (Evolution Strategies) end-to-end and automatically generate all raw results, summary tables, and figures:
+Requires **Python 3.10+** (`requirements.txt` uses compatible lower bounds so evaluators on Python 3.10–3.14 can install without upgrading). Validated on **Python `3.14.6`** with `numpy 2.5.4`, `matplotlib 3.11.2`, and `pytest 9.2.0`.
+
+Requires **Python 3.10+** (`requirements.txt` uses compatible lower bounds so evaluators on Python 3.10–3.14 can install without upgrading). Validated on **Python `3.14.6`** with `numpy 2.5.4`, `matplotlib 3.11.2`, and `pytest 9.2.0`.
+
+To run both Problem 1 (Bees Algorithm) and Problem 2 (Evolution Strategies) end-to-end and automatically generate all raw results, summary tables, and figures (typically ~30 seconds for Problem 1 and a few minutes for all 450 Problem 2 runs thanks to NumPy-vectorized covariance evaluation):
 
 ```bash
 python -m pip install -r requirements.txt
@@ -55,7 +59,7 @@ All post-processing commands read the committed raw case outputs and `es_summary
 
 ## Generating LaTeX Report Tables (Optional)
 
-To generate standalone LaTeX tables for both Problem 1 (BA) and Problem 2 (ES) from the saved summary CSVs:
+To generate standalone LaTeX report tables for both Problem 1 (BA) and Problem 2 (ES) from the saved summary CSVs:
 
 ```bash
 python generate_tex_tables.py
